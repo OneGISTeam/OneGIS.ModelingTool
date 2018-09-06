@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CreateObjectClassDialog</class>
+ <widget class="QDialog" name="CreateObjectClassDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>835</width>
+    <height>527</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>创建对象类</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../ModelingTool.qrc">
+    <normaloff>:/ModelingTool/Images/createObjectClass.png</normaloff>:/ModelingTool/Images/createObjectClass.png</iconset>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout">
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QListWidget" name="listWidget">
+         <property name="maximumSize">
+          <size>
+           <width>160</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <item>
+          <property name="text">
+           <string>基本信息</string>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="icon">
+           <iconset resource="../ModelingTool.qrc">
+            <normaloff>:/ModelingTool/Images/basicinfo.png</normaloff>:/ModelingTool/Images/basicinfo.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>时空参照</string>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="icon">
+           <iconset resource="../ModelingTool.qrc">
+            <normaloff>:/ModelingTool/Images/reference.png</normaloff>:/ModelingTool/Images/reference.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>属性特征</string>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="icon">
+           <iconset resource="../ModelingTool.qrc">
+            <normaloff>:/ModelingTool/Images/attribute.png</normaloff>:/ModelingTool/Images/attribute.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>空间形态</string>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="icon">
+           <iconset resource="../ModelingTool.qrc">
+            <normaloff>:/ModelingTool/Images/form.png</normaloff>:/ModelingTool/Images/form.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>组成结构</string>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="icon">
+           <iconset resource="../ModelingTool.qrc">
+            <normaloff>:/ModelingTool/Images/compose.png</normaloff>:/ModelingTool/Images/compose.png</iconset>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>行为能力</string>
+          </property>
+          <property name="font">
+           <font>
+            <pointsize>10</pointsize>
+           </font>
+          </property>
+          <property name="icon">
+           <iconset resource="../ModelingTool.qrc">
+            <normaloff>:/ModelingTool/Images/behaviorComponent.png</normaloff>:/ModelingTool/Images/behaviorComponent.png</iconset>
+          </property>
+         </item>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_buttons">
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>358</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_create">
+         <property name="text">
+          <string>确定</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_cancel">
+         <property name="text">
+          <string>取消</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../ModelingTool.qrc"/>
+ </resources>
+ <connections/>
+</ui>

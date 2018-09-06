@@ -1,0 +1,686 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ObjectExportDialog</class>
+ <widget class="QDialog" name="ObjectExportDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>466</width>
+    <height>586</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>导出对象</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../ModelingTool.qrc">
+    <normaloff>:/ModelingTool/Images/exportObject.png</normaloff>:/ModelingTool/Images/exportObject.png</iconset>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_4">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <widget class="QGroupBox" name="m_groupBox_objects">
+       <property name="minimumSize">
+        <size>
+         <width>400</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>200</height>
+        </size>
+       </property>
+       <property name="title">
+        <string>导出对象选择</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QTabWidget" name="tabWidget">
+            <property name="minimumSize">
+             <size>
+              <width>300</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="currentIndex">
+             <number>0</number>
+            </property>
+            <widget class="QWidget" name="tab_objectView">
+             <attribute name="title">
+              <string>按对象树导出</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout_2">
+              <item row="0" column="0">
+               <widget class="QTreeWidget" name="treeWidget_objects">
+                <property name="minimumSize">
+                 <size>
+                  <width>100</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <attribute name="headerVisible">
+                 <bool>false</bool>
+                </attribute>
+                <column>
+                 <property name="text">
+                  <string notr="true">1</string>
+                 </property>
+                </column>
+                <item>
+                 <property name="text">
+                  <string>对象a</string>
+                 </property>
+                 <property name="checkState">
+                  <enum>Checked</enum>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>子对象1</string>
+                  </property>
+                  <property name="checkState">
+                   <enum>Checked</enum>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../ModelingTool.qrc">
+                    <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>子对象2</string>
+                  </property>
+                  <property name="checkState">
+                   <enum>Checked</enum>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../ModelingTool.qrc">
+                    <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                  </property>
+                 </item>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>对象b</string>
+                 </property>
+                 <property name="checkState">
+                  <enum>Checked</enum>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>子对象1</string>
+                  </property>
+                  <property name="checkState">
+                   <enum>Checked</enum>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../ModelingTool.qrc">
+                    <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>子对象2</string>
+                  </property>
+                  <property name="checkState">
+                   <enum>Checked</enum>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../ModelingTool.qrc">
+                    <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                  </property>
+                 </item>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+            <widget class="QWidget" name="tab_objectClassView">
+             <attribute name="title">
+              <string>按对象类导出</string>
+             </attribute>
+             <layout class="QGridLayout" name="gridLayout_5">
+              <item row="0" column="0">
+               <widget class="QTreeWidget" name="treeWidget_objectclass">
+                <property name="minimumSize">
+                 <size>
+                  <width>0</width>
+                  <height>0</height>
+                 </size>
+                </property>
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>16777215</height>
+                 </size>
+                </property>
+                <attribute name="headerVisible">
+                 <bool>false</bool>
+                </attribute>
+                <column>
+                 <property name="text">
+                  <string notr="true">1</string>
+                 </property>
+                </column>
+                <item>
+                 <property name="text">
+                  <string>类A</string>
+                 </property>
+                 <property name="checkState">
+                  <enum>Checked</enum>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/class.png</normaloff>:/ModelingTool/Images/class.png</iconset>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>对象1</string>
+                  </property>
+                  <property name="checkState">
+                   <enum>Checked</enum>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../ModelingTool.qrc">
+                    <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>对象2</string>
+                  </property>
+                  <property name="checkState">
+                   <enum>Checked</enum>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../ModelingTool.qrc">
+                    <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                  </property>
+                 </item>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>类B</string>
+                 </property>
+                 <property name="checkState">
+                  <enum>Checked</enum>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/class.png</normaloff>:/ModelingTool/Images/class.png</iconset>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>对象3</string>
+                  </property>
+                  <property name="checkState">
+                   <enum>Checked</enum>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../ModelingTool.qrc">
+                    <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>对象4</string>
+                  </property>
+                  <property name="checkState">
+                   <enum>Checked</enum>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../ModelingTool.qrc">
+                    <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                  </property>
+                 </item>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>您将导出</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="m_label_classCount">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>对象类数目</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>类对象，共计</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="m_label_objectCount">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>对象数目</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>个对象</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_3">
+       <item>
+        <widget class="QCheckBox" name="checkBox">
+         <property name="text">
+          <string>导出关联关系</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>308</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="m_groupBox_relations">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="minimumSize">
+        <size>
+         <width>400</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>16777215</width>
+         <height>200</height>
+        </size>
+       </property>
+       <property name="title">
+        <string>关系导出选择</string>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_4">
+            <item>
+             <widget class="QLabel" name="label_5">
+              <property name="acceptDrops">
+               <bool>false</bool>
+              </property>
+              <property name="text">
+               <string>请选择您要导出的对象间关联关系：</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>83</width>
+                <height>17</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QTreeWidget" name="m_treeWidget_relations">
+            <attribute name="headerVisible">
+             <bool>false</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string notr="true">1</string>
+             </property>
+            </column>
+            <item>
+             <property name="text">
+              <string>协同关系</string>
+             </property>
+             <property name="checkState">
+              <enum>Checked</enum>
+             </property>
+             <property name="icon">
+              <iconset resource="../ModelingTool.qrc">
+               <normaloff>:/ModelingTool/Images/network.png</normaloff>:/ModelingTool/Images/network.png</iconset>
+             </property>
+             <item>
+              <property name="text">
+               <string>直95001-直95003</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../ModelingTool.qrc">
+                <normaloff>:/ModelingTool/Images/relation.png</normaloff>:/ModelingTool/Images/relation.png</iconset>
+              </property>
+              <item>
+               <property name="text">
+                <string>起始对象：直95001</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../ModelingTool.qrc">
+                 <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>终止对象：直95003</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../ModelingTool.qrc">
+                 <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+               </property>
+              </item>
+             </item>
+             <item>
+              <property name="text">
+               <string>直95004-直95003</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../ModelingTool.qrc">
+                <normaloff>:/ModelingTool/Images/relation.png</normaloff>:/ModelingTool/Images/relation.png</iconset>
+              </property>
+              <item>
+               <property name="text">
+                <string>起始对象：直95004</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../ModelingTool.qrc">
+                 <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>终止对象：直95003</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../ModelingTool.qrc">
+                 <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+               </property>
+              </item>
+             </item>
+            </item>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <widget class="QLabel" name="label_6">
+              <property name="text">
+               <string>您将导出</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="m_label_relationClassCount">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>关系类数目</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>类关系，共计</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="m_label_relationCount">
+              <property name="font">
+               <font>
+                <weight>75</weight>
+                <bold>true</bold>
+               </font>
+              </property>
+              <property name="text">
+               <string>关系数目</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLabel" name="label_8">
+              <property name="text">
+               <string>对关系</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_6">
+       <item>
+        <widget class="QLabel" name="label_9">
+         <property name="text">
+          <string>导出路径：</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_6">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>175</width>
+           <height>14</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLineEdit" name="lineEdit">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>16777215</width>
+           <height>30</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="m_btn_file">
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>30</width>
+           <height>30</height>
+          </size>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="../ModelingTool.qrc">
+           <normaloff>:/ModelingTool/Images/search.png</normaloff>:/ModelingTool/Images/search.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>24</width>
+           <height>24</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_8">
+       <item>
+        <spacer name="horizontalSpacer_7">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="m_btn_ok">
+         <property name="text">
+          <string>确定</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="m_btn_cancel">
+         <property name="text">
+          <string>取消</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer name="verticalSpacer">
+       <property name="orientation">
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>20</width>
+         <height>13</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../ModelingTool.qrc"/>
+ </resources>
+ <connections/>
+</ui>

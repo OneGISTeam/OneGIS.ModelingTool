@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ObjectClassComposeWidget</class>
+ <widget class="QWidget" name="ObjectClassComposeWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>733</width>
+    <height>473</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>对象类组成结构</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_4">
+   <item row="0" column="0">
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>709</width>
+        <height>449</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QGroupBox" name="groupBox">
+           <property name="title">
+            <string>已有组成子类</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0">
+             <widget class="QTreeWidget" name="treeWidget">
+              <attribute name="headerVisible">
+               <bool>true</bool>
+              </attribute>
+              <attribute name="headerDefaultSectionSize">
+               <number>100</number>
+              </attribute>
+              <column>
+               <property name="text">
+                <string>组成类名称</string>
+               </property>
+              </column>
+              <column>
+               <property name="text">
+                <string>组成类标识</string>
+               </property>
+              </column>
+              <item>
+               <property name="text">
+                <string>机身</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../ModelingTool.qrc">
+                 <normaloff>:/ModelingTool/Images/class.png</normaloff>:/ModelingTool/Images/class.png</iconset>
+               </property>
+               <property name="text">
+                <string>C201113</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>机翼</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../ModelingTool.qrc">
+                 <normaloff>:/ModelingTool/Images/class.png</normaloff>:/ModelingTool/Images/class.png</iconset>
+               </property>
+               <property name="text">
+                <string>C201488</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout">
+           <item>
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_addPart">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../ModelingTool.qrc">
+               <normaloff>:/ModelingTool/Images/add.png</normaloff>:/ModelingTool/Images/add.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButton_removePart">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../ModelingTool.qrc">
+               <normaloff>:/ModelingTool/Images/remove_circle.png</normaloff>:/ModelingTool/Images/remove_circle.png</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="verticalSpacer">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_2">
+           <property name="title">
+            <string>类视图</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0">
+             <widget class="QTreeWidget" name="treeWidget_2">
+              <attribute name="headerVisible">
+               <bool>false</bool>
+              </attribute>
+              <column>
+               <property name="text">
+                <string>1</string>
+               </property>
+              </column>
+              <item>
+               <property name="text">
+                <string>飞机</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../ModelingTool.qrc">
+                 <normaloff>:/ModelingTool/Images/class.png</normaloff>:/ModelingTool/Images/class.png</iconset>
+               </property>
+               <item>
+                <property name="text">
+                 <string>歼击机</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../ModelingTool.qrc">
+                  <normaloff>:/ModelingTool/Images/class.png</normaloff>:/ModelingTool/Images/class.png</iconset>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>机身</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/class.png</normaloff>:/ModelingTool/Images/class.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>机翼</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/class.png</normaloff>:/ModelingTool/Images/class.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>歼击机001</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>歼击机002</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>歼击机003</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                 </property>
+                </item>
+               </item>
+               <item>
+                <property name="text">
+                 <string>预警机</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../ModelingTool.qrc">
+                  <normaloff>:/ModelingTool/Images/class.png</normaloff>:/ModelingTool/Images/class.png</iconset>
+                </property>
+                <item>
+                 <property name="text">
+                  <string>机身</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/class.png</normaloff>:/ModelingTool/Images/class.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>机翼</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/class.png</normaloff>:/ModelingTool/Images/class.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>预警机001</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>预警机002</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                 </property>
+                </item>
+               </item>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../ModelingTool.qrc"/>
+ </resources>
+ <connections/>
+</ui>

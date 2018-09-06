@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<script src="./plugins/jquery/jquery-1.10.2.js"></script>
+    <!-- 引入 ECharts 文件 -->
+    <script src="./plugins/echarts/echarts.js"></script>
+	<script src="./plugins/echarts/datatool.js"></script>
+</head>
+<body>
+    <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+    <div id="main" style="text-align:center;width: 900px;height:600px;"></div>
+	<script type="text/javascript">
+       var myChart = null;
+		$(function(){
+			var clientWidth = document.body.clientWidth;
+			var clientHeight = document.body.clientHeight;
+			$("#main").width(clientWidth);
+			$("#main").height(clientHeight);
+			// 基于准备好的dom，初始化echarts实例
+			myChart = echarts.init(document.getElementById('main'));
+			myChart.showLoading();
+		});
+		
+		function loadData(data){
+			var json = JSON.parse(data);
+			
+			var legendData = [];
+			for(var i=0; i<json.categories.length; i++){
+				legendData.push(json.categories[i].name);
+			}
+			
+			var option = {
+				title:{
+					text:"关联关系力引导图",
+					subtext:"",
+					top:"top",
+					left:"left"
+				},
+				tooltip: {},
+				legend:[{
+					data: legendData
+				}],
+				animation: false,
+				series:[{
+					name:"关联关系力引导图",
+					type:"graph",
+					layout:"force",
+					data:json.nodes,
+					links:json.links,
+					categories:json.categories,
+					roam:true,
+					label:{
+						normal:{
+							position:"right",
+							show:true
+						}
+					},
+					force:{
+						repulsion: 500
+					}
+				}]
+			};
+			myChart.hideLoading();
+			myChart.setOption(option);
+		}
+		
+    </script>
+</body>
+
+</html>

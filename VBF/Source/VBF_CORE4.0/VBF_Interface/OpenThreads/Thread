@@ -1,0 +1,334 @@
+#ifndef _OPENTHREADS_THREAD_
+#define _OPENTHREADS_THREAD_
+
+#include <sys/types.h>
+
+#include <OpenThreads/Mutex>
+
+namespace OpenThreads {
+
+/**
+ *  Get the number of processors.
+ *
+ *  Note, systems where no support exists for querrying the number of processors, 1 is returned. 
+ *
+ */
+extern OPENTHREAD_EXPORT_DIRECTIVE int GetNumberOfProcessors();
+
+/**
+ *  Set the processor affinity of current thread.
+ *
+ *  Note, systems where no support exists no affinity will be set, and -1 will be returned. 
+ *
+ */
+extern OPENTHREAD_EXPORT_DIRECTIVE int SetProcessorAffinityOfCurrentThread(unsigned int cpunum);
+
+/**
+ *  线程实现类：是一个面向对象的线程实现接口，定义一个Thread类对象就定义了一个共享进程资源，但可以独立调度的线程。
+
+	线程基本概念：同步，阻塞以及条件变量。
+	线程同步，简单来说就是使同一进程的多个线程可以协调工作， 例如让它们都在指定的执行点等待对方，直到全员到期之后才开始同步运行；
+	拥塞，即强制一个线程在某个执行点上等待，直到满足继续运行的条件为止。例如其它的线程到达同一执行点，某个变量初始化完成等等，可以通过条件变量来设计各种条件。
+ */
+class OPENTHREAD_EXPORT_DIRECTIVE Thread {
+
+public:
+
+    /**
+     *  Set the concurrency level for a running application.  This method
+     *  only has effect if the pthreads thread model is being used, and
+     *  then only when that model is many-to-one (eg. irix).
+     *  in other cases it is ignored.  The concurrency level is only a
+     *  *hint* as to the number of execution vehicles to use, the actual
+     *  implementation may do anything it wants.  Setting the value
+     *  to 0 returns things to their default state.
+     *
+     *  @return previous concurrency level, -1 indicates no-op.
+     */
+    static int SetConcurrency(int concurrencyLevel);
+
+    /**
+     *  Get the concurrency level for a running application.  In this
+     *  case, a return code of 0 means that the application is in default
+     *  mode.  A return code of -1 means that the application is incapable
+     *  of setting an arbitrary concurrency, because it is a one-to-one
+     *  execution model (sprocs, linuxThreads)
+     */
+    static int GetConcurrency();
+
+    /**
+     *  Enumerated Type for thread priority
+     */
+    enum ThreadPriority {
+
+	THREAD_PRIORITY_MAX,      /**< The maximum possible priority  */
+	THREAD_PRIORITY_HIGH,     /**< A high (but not max) setting   */
+	THREAD_PRIORITY_NOMINAL,  /**< An average priority            */
+	THREAD_PRIORITY_LOW,      /**< A low (but not min) setting    */
+	THREAD_PRIORITY_MIN,      /**< The miniumum possible priority */
+	THREAD_PRIORITY_DEFAULT   /**< Priority scheduling default    */
+
+    };
+
+    /**
+     *  Enumerated Type for thread scheduling policy
+     */
+    enum ThreadPolicy {
+
+	THREAD_SCHEDULE_FIFO,        /**< First in, First out scheduling         */
+	THREAD_SCHEDULE_ROUND_ROBIN, /**< Round-robin scheduling (LINUX_DEFAULT) */
+	THREAD_SCHEDULE_TIME_SHARE,  /**< Time-share scheduling (IRIX DEFAULT)   */
+	THREAD_SCHEDULE_DEFAULT      /**< Default scheduling                     */
+
+    };
+
+
+    Thread();
+    virtual ~Thread();
+
+
+    /**
+     *  Return a pointer to the current running thread
+     */
+    static Thread *CurrentThread();
+
+
+    /**
+     *  Initialize Threading in a program.  This method must be called before
+     *  you can do any threading in a program.
+     */
+    static void Init();
+
+
+    // 要求当前线程让出CPU控制权，交给其他正在等待的线程，正常返回0，否则返回错误号（没设置返回-1）
+    static int YieldCurrentThread();
+
+    /**
+     *  This method will return the ThreadPriority of the master process.
+     *  (ie, the one calling the thread->start() methods for the first time)
+     *  The method will almost certainly return
+     *  Thread::THREAD_PRIORITY_DEFAULT if
+     *  Init() has not been called.
+     *
+     *  @return the Thread::ThreadPriority of the master thread.
+     */
+    static ThreadPriority GetMasterPriority() {return s_masterThreadPriority;};
+
+
+	// 获取线程的唯一标识ID（ID值单调递增）
+    int getThreadId();
+
+    /**
+     *  Get the thread's process id.  This is the pthread_t or pid_t value
+     *  depending on the threading model being used.
+     *
+     *  @return thread process id.
+     */
+    size_t getProcessId();
+
+
+	// 启动线程。该方法配置线程，设置优先级。正常返回0，否则返回错误号（没设置返回-1）
+	// 如果setStackSize设定的堆栈大小小于允许的最小堆栈，则线程的堆栈大小设置为允许的最小堆栈
+	int start();
+	int startThread();
+
+    /**
+     * Test the cancel state of the thread.  If the thread has been canceled
+     * this method will cause the thread to exit now.  This method operates
+     * on the calling thread.
+     *
+     * Returns 0 if normal, -1 if called from a thread other that this.
+     */
+    int testCancel();
+
+
+	// 虚函数，用于终止线程执行，正常返回0，否则返回错误号（没设置返回-1）
+    virtual int cancel();
+
+    /**
+     *  Set the thread's schedule priority.  This is a complex method.
+     *  Beware of thread priorities when using a many-to-many kernel
+     *  entity implemenation (such as IRIX pthreads).  If one is not carefull
+     *  to manage the thread priorities, a priority inversion deadlock can
+     *  easily occur (Although the OpenThreads::Mutex & OpenThreads::Barrier
+     *  constructs have been designed with this senario in mind).  Unless
+     *  you have explicit need to set the schedule pirorites for a given
+     *  task, it is best to leave them alone.
+     *
+     *  @note some implementations (notably LinuxThreads and IRIX Sprocs)
+     *  only alow you to decrease thread priorities dynamically.  Thus,
+     *  a lower priority thread will not allow it's priority to be raised
+     *  on the fly.
+     *
+     *  @note seting the environment variable OUTPUT_THREADLIB_SCHEDULING_INFO
+     *  will output scheduling information for each thread to stdout.
+     *
+     *  @return 0 if normal, -1 if errno set, errno code otherwise.
+     */
+    int setSchedulePriority(ThreadPriority priority);
+
+    /**
+     *  Get the thread's schedule priority (if able)
+     *
+     *  @note seting the environment variable OUTPUT_THREADLIB_SCHEDULING_INFO
+     *  will output scheduling information for each thread to stdout.
+     *
+     *  @return 0 if normal, -1 if errno set, errno code otherwise.
+     */
+    int getSchedulePriority();
+
+    /**
+     *  Set the thread's scheduling policy (if able)
+     *
+     *  @note On some implementations (notably IRIX Sprocs & LinuxThreads)
+     *  The policy may prohibit the use of SCHEDULE_ROUND_ROBIN and
+     *  SCHEDULE_FIFO policies - due to their real-time nature, and
+     *  the danger of deadlocking the machine when used as super-user.
+     *  In such cases, the command is a no-op.
+     *
+     *  @note seting the environment variable OUTPUT_THREADLIB_SCHEDULING_INFO
+     *  will output scheduling information for each thread to stdout.
+     *
+     *  @return 0 if normal, -1 if errno set, errno code otherwise.
+     */
+    int setSchedulePolicy(ThreadPolicy policy);
+
+    /**
+     *  Get the thread's policy (if able)
+     *
+     *  @note seting the environment variable OUTPUT_THREADLIB_SCHEDULING_INFO
+     *  will output scheduling information for each thread to stdout.
+     *
+     *  @return policy if normal, -1 if errno set, errno code otherwise.
+     */
+    int getSchedulePolicy();
+
+    /**
+     *  Set the thread's desired stack size (in bytes).
+     *  This method is an attribute of the thread and must be called
+     *  *before* the start() method is invoked.
+     *
+     *  @note a return code of 13 (EACESS) means that the thread stack
+     *  size can no longer be changed.
+     *
+     *  @return 0 if normal, -1 if errno set, errno code otherwise.
+     */
+    int setStackSize(size_t size);
+
+    /**
+     *  Get the thread's desired stack size.
+     *
+     *  @return the thread's stack size.  0 indicates that the stack size
+     *   has either not yet been initialized, or not yet been specified by
+     *   the application.
+     */
+    size_t getStackSize();
+
+    /**
+     *  Print the thread's scheduling information to stdout.
+     */
+    void printSchedulingInfo();
+
+    /**
+     *  Detach the thread from the calling process.
+     *
+     *  @return 0 if normal, -1 if errno set, errno code otherwise.
+     */
+    int detach();
+
+    /**
+     *  Join the calling process with the thread
+     *
+     *  @return 0 if normal, -1 if errno set, errno code otherwise.
+     */
+    int join();
+
+    /**
+     *  Disable thread cancelation altogether. Thread::cancel() has no effect.
+     *
+     *  @return 0 if normal, -1 if errno set, errno code otherwise.
+     */
+    int setCancelModeDisable();
+
+    /**
+     *  Mark the thread to cancel aysncronously on Thread::cancel().
+     *  (May not be available with process-level implementations).
+     *
+     *  @return 0 if normal, -1 if errno set, errno code otherwise.
+     */
+    int setCancelModeAsynchronous();
+
+    /**
+     *  Mark the thread to cancel at the earliest convenience on
+     *  Thread::cancel() (This is the default)
+     *
+     *  @return 0 if normal, -1 if errno set, errno code otherwise.
+     */
+    int setCancelModeDeferred();
+
+
+	// 判断线程是否已经在运行
+    bool isRunning();
+
+	// 线程执行的主函数，在这个函数中可以循环执行一段线程代码，但最后一定要使用YieldCurrentThread让出CPU控制权
+    virtual void run() = 0;
+
+    /**
+     *  Thread's cancel cleanup routine, called upon cancel(), after the
+     *  cancelation has taken place, but before the thread exits completely.
+     *  This method should be used to repair parts of the thread's data
+     *  that may have been damaged by a pre-mature cancel.  No-op by default.
+     */
+    virtual void cancelCleanup() {};
+
+    void* getImplementation(){ return _prvData;	};
+
+	// 对于多CPU系统，设置线程所在CPU的位置。必须在start()或startThread()之前调用，线程运行之后再设置无效。
+	// 在pthreads实现中，仅在sgi上有效，其他平台无效。成功返回0，失败返回错误号（没设置返回-1）
+    int setProcessorAffinity( unsigned int cpunum );
+
+    /** microSleep method, equivilant to the posix usleep(microsec).
+      *  This is not strictly thread API but is used
+      * so often with threads. It's basically UNIX usleep. Parameter is
+      * number of microseconds we current thread to sleep. Returns 0 on
+      * succes, non-zero on failure (UNIX errno or GetLastError() will give
+      * detailed description.
+      */
+    static int microSleep( unsigned int microsec);
+
+private:
+
+    /**
+     *  The Private Actions class is allowed to operate on private data.
+     */
+    friend class ThreadPrivateActions;
+
+     /**
+      *  Private copy constructor, to prevent tampering.
+      */
+    Thread(const Thread &/*t*/) {};
+
+    /**
+      *  Private copy assignment, to prevent tampering.
+      */
+    Thread &operator=(const Thread &/*t*/) {return *(this);};
+
+    /**
+     *  Implementation-specific data
+     */
+    void * _prvData;
+    
+    /**
+     *  Master thread's priority, set by Thread::Init.
+     */
+    static ThreadPriority s_masterThreadPriority;
+
+    /**
+     *  Is initialized flag
+     */
+    static bool s_isInitialized;
+};
+
+}
+
+#endif // !_OPENTHREADS_THREAD_

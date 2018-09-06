@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SelectRuleWizardPage</class>
+ <widget class="QWizardPage" name="SelectRuleWizardPage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>470</width>
+    <height>375</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>WizardPage</string>
+  </property>
+  <property name="title">
+   <string>第二步：节点筛选</string>
+  </property>
+  <property name="subTitle">
+   <string>如果是”一对多/多对一“构建，您需要分别设置起始节点集合和终止节点集合；如果是”多对多“构建，则不再区分起始节点集合和终止节点集合。</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_6">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout_4">
+     <item>
+      <widget class="QGroupBox" name="groupBox_one2many">
+       <property name="title">
+        <string>“一对多/多对一”节点筛选</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>起始节点集合：</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QPushButton" name="pushButton_sourceRule">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>筛选条件</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../ModelingTool.qrc">
+                <normaloff>:/ModelingTool/Images/rule.png</normaloff>:/ModelingTool/Images/rule.png</iconset>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" colspan="2">
+             <widget class="QListWidget" name="listWidget_source">
+              <item>
+               <property name="text">
+                <string>直95001</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../ModelingTool.qrc">
+                 <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
+             <widget class="QPushButton" name="pushButton_one2manyRemove">
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="../ModelingTool.qrc">
+                <normaloff>:/ModelingTool/Images/remove_circle.png</normaloff>:/ModelingTool/Images/remove_circle.png</iconset>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>终止节点集合：</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QPushButton" name="pushButton_destinRule">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="text">
+               <string>筛选条件</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../ModelingTool.qrc">
+                <normaloff>:/ModelingTool/Images/rule.png</normaloff>:/ModelingTool/Images/rule.png</iconset>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0" colspan="2">
+             <widget class="QListWidget" name="listWidget_destin">
+              <item>
+               <property name="text">
+                <string>直95002</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../ModelingTool.qrc">
+                 <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>直95003</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../ModelingTool.qrc">
+                 <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>直95004</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../ModelingTool.qrc">
+                 <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>直95005</string>
+               </property>
+               <property name="icon">
+                <iconset resource="../ModelingTool.qrc">
+                 <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+               </property>
+              </item>
+             </widget>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <property name="sizeConstraint">
+        <enum>QLayout::SetMinimumSize</enum>
+       </property>
+       <item>
+        <widget class="QGroupBox" name="groupBox_many2many">
+         <property name="title">
+          <string>“多对多”节点筛选</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_5">
+          <property name="sizeConstraint">
+           <enum>QLayout::SetMinimumSize</enum>
+          </property>
+          <item row="0" column="0">
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <item>
+             <layout class="QGridLayout" name="gridLayout_4">
+              <item row="0" column="0">
+               <widget class="QLabel" name="label_3">
+                <property name="text">
+                 <string>节点集合：</string>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1">
+               <widget class="QPushButton" name="pushButton_rule">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+                <property name="text">
+                 <string>筛选条件</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../ModelingTool.qrc">
+                  <normaloff>:/ModelingTool/Images/rule.png</normaloff>:/ModelingTool/Images/rule.png</iconset>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" colspan="2">
+               <widget class="QListWidget" name="listWidget_nodes">
+                <item>
+                 <property name="text">
+                  <string>直95001</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                 </property>
+                </item>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <item>
+               <spacer name="verticalSpacer_3">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>17</width>
+                  <height>61</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButton_many2manyRemove">
+                <property name="text">
+                 <string/>
+                </property>
+                <property name="icon">
+                 <iconset resource="../ModelingTool.qrc">
+                  <normaloff>:/ModelingTool/Images/remove_circle.png</normaloff>:/ModelingTool/Images/remove_circle.png</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer name="verticalSpacer_4">
+                <property name="orientation">
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" stdset="0">
+                 <size>
+                  <width>17</width>
+                  <height>61</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QCheckBox" name="checkBox">
+             <property name="text">
+              <string>双向构建</string>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer name="verticalSpacer_5">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../ModelingTool.qrc"/>
+ </resources>
+ <connections/>
+</ui>

@@ -1,0 +1,271 @@
+GCS_Adrastea_2000							104909
+GCS_Amalthea_2000							104910
+GCS_Ananke_2000							104911
+GCS_Ariel_2000							104945
+GCS_Atlas_2000							104926
+GCS_Beijing_1954							4214
+GCS_Belinda_2000							104946
+GCS_Bianca_2000							104947
+GCS_CGCS2000							4490
+GCS_Callisto_2000							104912
+GCS_Calypso_2000							104927
+GCS_Carme_2000							104913
+GCS_Charon_2000							104970
+GCS_Cordelia_2000							104948
+GCS_Cressida_2000							104949
+GCS_Deimos_2000							104906
+GCS_Desdemona_2000							104950
+GCS_Despina_2000							104961
+GCS_Dione_2000							104928
+GCS_Elara_2000							104914
+GCS_Enceladus_2000							104929
+GCS_Epimetheus_2000							104930
+GCS_Europa_2000							104915
+GCS_European_1950							
+GCS_Galatea_2000							104962
+GCS_Ganymede_2000							104916
+GCS_Helene_2000							104931
+GCS_Himalia_2000							104917
+GCS_Hong_Kong_1963							4738
+GCS_Hong_Kong_1963_67							4739
+GCS_Hong_Kong_1980							4611
+GCS_Hyperion_2000							104932
+GCS_Iapetus_2000							104933
+GCS_Io_2000							104918
+GCS_Janus_2000							104934
+GCS_Juliet_2000							104951
+GCS_Jupiter_2000							104908
+GCS_Larissa_2000							104963
+GCS_Leda_2000							104919
+GCS_Lysithea_2000							104920
+GCS_Mars_1979							104904
+GCS_Mars_2000							104905
+GCS_Mercury_2000							104900
+GCS_Metis_2000							104921
+GCS_Mimas_2000							104935
+GCS_Miranda_2000							104952
+GCS_Moon_2000							104903
+GCS_Naiad_2000							104964
+GCS_Neptune_2000							104960
+GCS_Nereid_2000							104965
+GCS_North_American_1983							
+GCS_Oberon_2000							104953
+GCS_Ophelia_2000							104954
+GCS_Pan_2000							104936
+GCS_Pandora_2000							104937
+GCS_Pasiphae_2000							104922
+GCS_Phobos_2000							104907
+GCS_Phoebe_2000							104938
+GCS_Pluto_2000							104969
+GCS_Portia_2000							104955
+GCS_Prometheus_2000							104939
+GCS_Proteus_2000							104966
+GCS_Puck_2000							104956
+GCS_Rhea_2000							104940
+GCS_Rosalind_2000							104957
+GCS_Saturn_2000							104925
+GCS_Sinope_2000							104923
+GCS_South_American_1969							
+GCS_TWD_1967							104136
+GCS_TWD_1997							104137
+GCS_Telesto_2000							104941
+GCS_Tethys_2000							104942
+GCS_Thalassa_2000							104967
+GCS_Thebe_2000							104924
+GCS_Titan_2000							104943
+GCS_Titania_2000							104958
+GCS_Triton_2000							104968
+GCS_Umbriel_2000							104959
+GCS_Uranus_2000							104944
+GCS_Venus_1985							104901
+GCS_Venus_2000							104902
+GCS_WGS_1966							4760
+GCS_WGS_1972							4322
+GCS_WGS_1972_BE							4324
+GCS_WGS_1984							4326
+GCS_Xian_1980							4610
+Popular Visualisation CRS							4055
+Africa_Lambert_Conformal_Conic							102024
+Asia_Lambert_Conformal_Conic							102012
+Beijing_1954_3_Degree_GK_Zone_25							2401
+Beijing_1954_3_Degree_GK_Zone_26							2402
+Beijing_1954_3_Degree_GK_Zone_27							2403
+Beijing_1954_3_Degree_GK_Zone_28							2404
+Beijing_1954_3_Degree_GK_Zone_29							2405
+Beijing_1954_3_Degree_GK_Zone_30							2406
+Beijing_1954_3_Degree_GK_Zone_31							2407
+Beijing_1954_3_Degree_GK_Zone_32							2408
+Beijing_1954_3_Degree_GK_Zone_33							2409
+Beijing_1954_3_Degree_GK_Zone_34							2410
+Beijing_1954_3_Degree_GK_Zone_35							2411
+Beijing_1954_3_Degree_GK_Zone_36							2412
+Beijing_1954_3_Degree_GK_Zone_37							2413
+Beijing_1954_3_Degree_GK_Zone_38							2414
+Beijing_1954_3_Degree_GK_Zone_39							2415
+Beijing_1954_3_Degree_GK_Zone_40							2416
+Beijing_1954_3_Degree_GK_Zone_41							2417
+Beijing_1954_3_Degree_GK_Zone_42							2418
+Beijing_1954_3_Degree_GK_Zone_43							2419
+Beijing_1954_3_Degree_GK_Zone_44							2420
+Beijing_1954_3_Degree_GK_Zone_45							2421
+Beijing_1954_GK_Zone_13							21413
+Beijing_1954_GK_Zone_13N							21473
+Beijing_1954_GK_Zone_14							21414
+Beijing_1954_GK_Zone_14N							21474
+Beijing_1954_GK_Zone_15							21415
+Beijing_1954_GK_Zone_15N							21475
+Beijing_1954_GK_Zone_16							21416
+Beijing_1954_GK_Zone_16N							21476
+Beijing_1954_GK_Zone_17							21417
+Beijing_1954_GK_Zone_17N							21477
+Beijing_1954_GK_Zone_18							21418
+Beijing_1954_GK_Zone_18N							21478
+Beijing_1954_GK_Zone_19							21419
+Beijing_1954_GK_Zone_19N							21479
+Beijing_1954_GK_Zone_20							21420
+Beijing_1954_GK_Zone_20N							21480
+Beijing_1954_GK_Zone_21							21421
+Beijing_1954_GK_Zone_21N							21481
+Beijing_1954_GK_Zone_22							21422
+Beijing_1954_GK_Zone_22N							21482
+Beijing_1954_GK_Zone_23							21423
+Beijing_1954_GK_Zone_23N							21483
+CGCS2000_3_Degree_GK_Zone_25							302349
+CGCS2000_3_Degree_GK_Zone_26							302350
+CGCS2000_3_Degree_GK_Zone_27							302351
+CGCS2000_3_Degree_GK_Zone_28							302352
+CGCS2000_3_Degree_GK_Zone_29							302353
+CGCS2000_3_Degree_GK_Zone_30							302354
+CGCS2000_3_Degree_GK_Zone_31							302355
+CGCS2000_3_Degree_GK_Zone_32							302356
+CGCS2000_3_Degree_GK_Zone_33							302357
+CGCS2000_3_Degree_GK_Zone_34							302358
+CGCS2000_3_Degree_GK_Zone_35							302359
+CGCS2000_3_Degree_GK_Zone_36							302360
+CGCS2000_3_Degree_GK_Zone_37							302361
+CGCS2000_3_Degree_GK_Zone_38							302362
+CGCS2000_3_Degree_GK_Zone_39							302363
+CGCS2000_3_Degree_GK_Zone_40							302364
+CGCS2000_3_Degree_GK_Zone_41							302365
+CGCS2000_3_Degree_GK_Zone_42							302366
+CGCS2000_3_Degree_GK_Zone_43							302367
+CGCS2000_3_Degree_GK_Zone_44							302368
+CGCS2000_3_Degree_GK_Zone_45							302369
+CGCS2000_GK_CM_105E							302343
+CGCS2000_GK_CM_111E							302344
+CGCS2000_GK_CM_117E							302345
+CGCS2000_GK_CM_123E							302346
+CGCS2000_GK_CM_129E							302347
+CGCS2000_GK_CM_135E							302348
+CGCS2000_GK_CM_75E							302338
+CGCS2000_GK_CM_81E							302339
+CGCS2000_GK_CM_87E							302340
+CGCS2000_GK_CM_93E							302341
+CGCS2000_GK_CM_99E							302342
+CGCS2000_GK_Zone_13							302327
+CGCS2000_GK_Zone_14							302328
+CGCS2000_GK_Zone_15							302329
+CGCS2000_GK_Zone_16							302330
+CGCS2000_GK_Zone_17							302331
+CGCS2000_GK_Zone_18							302332
+CGCS2000_GK_Zone_19							302333
+CGCS2000_GK_Zone_20							302334
+CGCS2000_GK_Zone_21							302335
+CGCS2000_GK_Zone_22							302336
+CGCS2000_GK_Zone_23							302337
+China_Azimuthal_Equiarea_Beijing54							
+China_Azimuthal_Equiarea_CGCS2000							
+China_Azimuthal_Equiarea_Xian80							
+China_Azimuthal_Equidistant_Beijing54							
+China_Azimuthal_Equidistant_CGCS2000							
+China_Azimuthal_Equidistant_Xian80							
+China_Azimuthal_Stereographic_Beijing54							
+China_Azimuthal_Stereographic_CGCS2000							
+China_Azimuthal_Stereographic_Xian80							
+China_Lambert_Conformal_Conic_Beijing54							
+China_Lambert_Conformal_Conic_CGCS2000							
+China_Lambert_Conformal_Conic_Xian80							
+Europe_Lambert_Conformal_Conic							102014
+North_America_Lambert_Conformal_Conic							102009
+North_Pole_Azimuthal_Equidistant_90							102016
+North_Pole_Stereographic							102018
+Popular Visualisation CRS / Mercator							3785
+South_America_Lambert_Conformal_Conic							102015
+South_Pole_Azimuthal_Equidistant							102019
+South_Pole_Stereographic							102021
+World_Azimuthal_Equidistant							54032
+World_Azimuthal_Equidistant_CM_105E							
+World_Eckert_I							54015
+World_Eckert_II							54014
+World_Eckert_III							54013
+World_Eckert_III_CM_105E							
+World_Eckert_II_CM_105E							
+World_Eckert_IV							54012
+World_Eckert_IV_CM_105E							
+World_Eckert_I_CM_105E							54015
+World_Eckert_V							54011
+World_Eckert_VI							54010
+World_Eckert_VI_CM_105E							
+World_Eckert_V_CM_105E							
+World_Equidistant_Cylindrical							54002
+World_Equidistant_Cylindrical_CM_105E							54002
+World_Hammer_Aitoff							54044
+World_Hammer_Aitoff_CM_105E							
+World_Mercator							54004
+World_Mercator_CM_105E							
+World_Mollweide							54009
+World_Mollweide_CM_105E							
+World_Stereographic							54026
+World_Stereographic_CM_105E							
+Xian_1980_3_Degree_GK_Zone_25							2349
+Xian_1980_3_Degree_GK_Zone_26							2350
+Xian_1980_3_Degree_GK_Zone_27							2351
+Xian_1980_3_Degree_GK_Zone_28							2352
+Xian_1980_3_Degree_GK_Zone_29							2353
+Xian_1980_3_Degree_GK_Zone_30							2354
+Xian_1980_3_Degree_GK_Zone_31							2355
+Xian_1980_3_Degree_GK_Zone_32							2356
+Xian_1980_3_Degree_GK_Zone_33							2357
+Xian_1980_3_Degree_GK_Zone_34							2358
+Xian_1980_3_Degree_GK_Zone_35							2359
+Xian_1980_3_Degree_GK_Zone_36							2360
+Xian_1980_3_Degree_GK_Zone_37							2361
+Xian_1980_3_Degree_GK_Zone_38							2362
+Xian_1980_3_Degree_GK_Zone_39							2363
+Xian_1980_3_Degree_GK_Zone_40							2364
+Xian_1980_3_Degree_GK_Zone_41							2365
+Xian_1980_3_Degree_GK_Zone_42							2366
+Xian_1980_3_Degree_GK_Zone_43							2367
+Xian_1980_3_Degree_GK_Zone_44							2368
+Xian_1980_3_Degree_GK_Zone_45							2369
+Xian_1980_GK_CM_105E							2343
+Xian_1980_GK_CM_111E							2344
+Xian_1980_GK_CM_117E							2345
+Xian_1980_GK_CM_123E							2346
+Xian_1980_GK_CM_129E							2347
+Xian_1980_GK_CM_135E							2348
+Xian_1980_GK_CM_75E							2338
+Xian_1980_GK_CM_81E							2339
+Xian_1980_GK_CM_87E							2340
+Xian_1980_GK_CM_93E							2341
+Xian_1980_GK_CM_99E							2342
+Xian_1980_GK_Zone_13							2327
+Xian_1980_GK_Zone_14							2328
+Xian_1980_GK_Zone_15							2329
+Xian_1980_GK_Zone_16							2330
+Xian_1980_GK_Zone_17							2331
+Xian_1980_GK_Zone_18							2332
+Xian_1980_GK_Zone_19							2333
+Xian_1980_GK_Zone_20							2334
+Xian_1980_GK_Zone_21							2335
+Xian_1980_GK_Zone_22							2336
+Xian_1980_GK_Zone_23							2337
+EGM2008_Geoid							105790
+EGM84_Geoid							5798
+EGM96_Geoid							5773
+MSL_Depth							5715
+MSL_Height							5714
+WGS_1984							115700
+WGS_1984_Geoid							105700
+Yellow_Sea_1956							5736
+Yellow_Sea_1985							5737

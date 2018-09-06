@@ -1,0 +1,780 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1109</width>
+    <height>531</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>多粒度时空对象建模工具</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../ModelingTool.qrc">
+    <normaloff>:/ModelingTool/Images/modelingtool.ico</normaloff>:/ModelingTool/Images/modelingtool.ico</iconset>
+  </property>
+  <widget class="QWidget" name="centralWidget"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1109</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menu_file">
+    <property name="title">
+     <string>文件(&amp;File)</string>
+    </property>
+    <addaction name="action_newProject"/>
+    <addaction name="action_openProject"/>
+    <addaction name="action_saveProject"/>
+    <addaction name="action_saveProjectAs"/>
+    <addaction name="action_recentProjects"/>
+    <addaction name="separator"/>
+    <addaction name="action_exit"/>
+   </widget>
+   <widget class="QMenu" name="menu_view">
+    <property name="title">
+     <string>视图(&amp;View)</string>
+    </property>
+    <addaction name="action_show2dmapwnd"/>
+    <addaction name="action_show3dmapwnd"/>
+    <addaction name="action_showConvertWnd"/>
+    <addaction name="separator"/>
+    <addaction name="action_showobjectview"/>
+    <addaction name="action_showobjectclassview"/>
+    <addaction name="action_showrelationview"/>
+    <addaction name="separator"/>
+    <addaction name="action_showtraitsview"/>
+    <addaction name="separator"/>
+    <addaction name="action_showTimeAxisView"/>
+    <addaction name="action_show2dmaplayerview"/>
+   </widget>
+   <widget class="QMenu" name="menu_help">
+    <property name="title">
+     <string>帮助(&amp;Help)</string>
+    </property>
+    <addaction name="action_about"/>
+   </widget>
+   <widget class="QMenu" name="menu_object">
+    <property name="title">
+     <string>对象(&amp;Object)</string>
+    </property>
+    <addaction name="action_importObjectFile"/>
+    <addaction name="action_importObjectClass"/>
+    <addaction name="action_exportObjectFile"/>
+    <addaction name="action_exportObjectClass"/>
+    <addaction name="separator"/>
+    <addaction name="action_createObjectClass"/>
+    <addaction name="action_editObjectClass"/>
+    <addaction name="action_removeObjectClass"/>
+    <addaction name="separator"/>
+    <addaction name="action_createObject"/>
+    <addaction name="action_editObject"/>
+    <addaction name="action_removeObject"/>
+    <addaction name="separator"/>
+    <addaction name="action_traits"/>
+   </widget>
+   <widget class="QMenu" name="menu">
+    <property name="title">
+     <string>关系(&amp;Relation)</string>
+    </property>
+    <widget class="QMenu" name="menu_2">
+     <property name="title">
+      <string>创建关系</string>
+     </property>
+     <addaction name="action_manualCreateRelation"/>
+     <addaction name="action_batchCreateRelation"/>
+    </widget>
+    <widget class="QMenu" name="menu_3">
+     <property name="title">
+      <string>关系可视化</string>
+     </property>
+     <addaction name="action_2DMapRelationVisual"/>
+     <addaction name="action_3DMapRelationVisual"/>
+     <addaction name="action_radarRelationVisual"/>
+     <addaction name="action_forcelayoutRelationVisual"/>
+     <addaction name="action_chordRelationVisual"/>
+    </widget>
+    <addaction name="action_createRelationClass"/>
+    <addaction name="action_3"/>
+    <addaction name="action_4"/>
+    <addaction name="separator"/>
+    <addaction name="menu_2"/>
+    <addaction name="action_editRelation"/>
+    <addaction name="action_removeRelation"/>
+    <addaction name="separator"/>
+    <addaction name="menu_3"/>
+   </widget>
+   <widget class="QMenu" name="menu_4">
+    <property name="title">
+     <string>转换(&amp;Convert)</string>
+    </property>
+    <addaction name="action_importData"/>
+    <addaction name="action_removeData"/>
+    <addaction name="separator"/>
+    <addaction name="action_filterRule"/>
+    <addaction name="action_mappingRule"/>
+    <addaction name="action_mergeRule"/>
+    <addaction name="action_editRule"/>
+    <addaction name="action_removeRule"/>
+    <addaction name="separator"/>
+    <addaction name="action_convert"/>
+   </widget>
+   <widget class="QMenu" name="menu_5">
+    <property name="title">
+     <string>行为(Behavior)</string>
+    </property>
+    <addaction name="action_behaviorComponent"/>
+    <addaction name="action_behaviorComponentInfo"/>
+    <addaction name="action_behaviorDebug"/>
+   </widget>
+   <widget class="QMenu" name="menu_6">
+    <property name="title">
+     <string>设置(&amp;Settings)</string>
+    </property>
+    <addaction name="action_trs"/>
+    <addaction name="action_srs"/>
+    <addaction name="separator"/>
+    <addaction name="action_simulatorTime"/>
+   </widget>
+   <addaction name="menu_file"/>
+   <addaction name="menu_object"/>
+   <addaction name="menu"/>
+   <addaction name="menu_5"/>
+   <addaction name="menu_4"/>
+   <addaction name="menu_view"/>
+   <addaction name="menu_6"/>
+   <addaction name="menu_help"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_newProject"/>
+   <addaction name="action_openProject"/>
+   <addaction name="action_saveProject"/>
+   <addaction name="action_saveProjectAs"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="toolBar_object">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_importObjectFile"/>
+   <addaction name="action_exportObjectFile"/>
+   <addaction name="separator"/>
+   <addaction name="action_createObjectClass"/>
+   <addaction name="action_editObjectClass"/>
+   <addaction name="action_removeObjectClass"/>
+   <addaction name="separator"/>
+   <addaction name="action_createObject"/>
+   <addaction name="action_editObject"/>
+   <addaction name="action_removeObject"/>
+   <addaction name="separator"/>
+   <addaction name="action_traits"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_relation">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_createRelationClass"/>
+   <addaction name="action_3"/>
+   <addaction name="action_4"/>
+   <addaction name="separator"/>
+   <addaction name="action_manualCreateRelation"/>
+   <addaction name="action_batchCreateRelation"/>
+   <addaction name="action_editRelation"/>
+   <addaction name="action_removeRelation"/>
+   <addaction name="separator"/>
+   <addaction name="action_2DMapRelationVisual"/>
+   <addaction name="action_3DMapRelationVisual"/>
+   <addaction name="action_radarRelationVisual"/>
+   <addaction name="action_forcelayoutRelationVisual"/>
+   <addaction name="action_chordRelationVisual"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_convert">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_importData"/>
+   <addaction name="action_removeData"/>
+   <addaction name="separator"/>
+   <addaction name="action_filterRule"/>
+   <addaction name="action_mappingRule"/>
+   <addaction name="action_mergeRule"/>
+   <addaction name="action_editRule"/>
+   <addaction name="action_removeRule"/>
+   <addaction name="separator"/>
+   <addaction name="action_convert"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar_bahavior">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="action_behaviorComponent"/>
+   <addaction name="action_behaviorComponentInfo"/>
+   <addaction name="action_behaviorDebug"/>
+  </widget>
+  <action name="action_newProject">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/newFile.png</normaloff>:/ModelingTool/Images/newFile.png</iconset>
+   </property>
+   <property name="text">
+    <string>新建工程</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="action_openProject">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/openProject.png</normaloff>:/ModelingTool/Images/openProject.png</iconset>
+   </property>
+   <property name="text">
+    <string>打开工程</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="action_saveProject">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/saveProject.png</normaloff>:/ModelingTool/Images/saveProject.png</iconset>
+   </property>
+   <property name="text">
+    <string>保存工程</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="action_saveProjectAs">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/saveProjectAs.png</normaloff>:/ModelingTool/Images/saveProjectAs.png</iconset>
+   </property>
+   <property name="text">
+    <string>另存工程</string>
+   </property>
+   <property name="shortcut">
+    <string>F12</string>
+   </property>
+  </action>
+  <action name="action_recentProjects">
+   <property name="text">
+    <string>最近打开的项目...</string>
+   </property>
+  </action>
+  <action name="action_exit">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/exit.png</normaloff>:/ModelingTool/Images/exit.png</iconset>
+   </property>
+   <property name="text">
+    <string>退出</string>
+   </property>
+  </action>
+  <action name="action_about">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/about.png</normaloff>:/ModelingTool/Images/about.png</iconset>
+   </property>
+   <property name="text">
+    <string>关于</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="action_show2dmapwnd">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>二维显示窗口</string>
+   </property>
+  </action>
+  <action name="action_show3dmapwnd">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>三维显示窗口</string>
+   </property>
+  </action>
+  <action name="action_showobjectview">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>对象视图</string>
+   </property>
+  </action>
+  <action name="action_showobjectclassview">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>类视图</string>
+   </property>
+  </action>
+  <action name="action_showrelationview">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>关系视图</string>
+   </property>
+  </action>
+  <action name="action_showtraitsview">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>特征项视图</string>
+   </property>
+  </action>
+  <action name="action_show2dmaplayerview">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>图层视图</string>
+   </property>
+  </action>
+  <action name="action_importObjectFile">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/importObject.png</normaloff>:/ModelingTool/Images/importObject.png</iconset>
+   </property>
+   <property name="text">
+    <string>导入对象文件</string>
+   </property>
+  </action>
+  <action name="action_exportObjectFile">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/exportObject.png</normaloff>:/ModelingTool/Images/exportObject.png</iconset>
+   </property>
+   <property name="text">
+    <string>导出对象文件</string>
+   </property>
+  </action>
+  <action name="action_createObject">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/createObject.png</normaloff>:/ModelingTool/Images/createObject.png</iconset>
+   </property>
+   <property name="text">
+    <string>创建对象</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+C</string>
+   </property>
+  </action>
+  <action name="action_editObject">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/editObject.png</normaloff>:/ModelingTool/Images/editObject.png</iconset>
+   </property>
+   <property name="text">
+    <string>编辑对象</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+M</string>
+   </property>
+  </action>
+  <action name="action_removeObject">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/removeObject.png</normaloff>:/ModelingTool/Images/removeObject.png</iconset>
+   </property>
+   <property name="text">
+    <string>删除对象</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+D</string>
+   </property>
+  </action>
+  <action name="action_traits">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/traits.png</normaloff>:/ModelingTool/Images/traits.png</iconset>
+   </property>
+   <property name="text">
+    <string>特征项查看</string>
+   </property>
+  </action>
+  <action name="action_createObjectClass">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/createObjectClass.png</normaloff>:/ModelingTool/Images/createObjectClass.png</iconset>
+   </property>
+   <property name="text">
+    <string>创建对象类</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+C</string>
+   </property>
+  </action>
+  <action name="action_editObjectClass">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/editObjectClass.png</normaloff>:/ModelingTool/Images/editObjectClass.png</iconset>
+   </property>
+   <property name="text">
+    <string>编辑对象类</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+M</string>
+   </property>
+  </action>
+  <action name="action_removeObjectClass">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/removeObjectClass.png</normaloff>:/ModelingTool/Images/removeObjectClass.png</iconset>
+   </property>
+   <property name="text">
+    <string>删除对象类</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+D</string>
+   </property>
+  </action>
+  <action name="action_createRelationClass">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/createRelationClass.png</normaloff>:/ModelingTool/Images/createRelationClass.png</iconset>
+   </property>
+   <property name="text">
+    <string>创建关系类</string>
+   </property>
+  </action>
+  <action name="action_3">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/editRelationClass.png</normaloff>:/ModelingTool/Images/editRelationClass.png</iconset>
+   </property>
+   <property name="text">
+    <string>编辑关系类</string>
+   </property>
+  </action>
+  <action name="action_4">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/removeRelationClass.png</normaloff>:/ModelingTool/Images/removeRelationClass.png</iconset>
+   </property>
+   <property name="text">
+    <string>删除关系类</string>
+   </property>
+  </action>
+  <action name="action_manualCreateRelation">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/manualCreateRelation.png</normaloff>:/ModelingTool/Images/manualCreateRelation.png</iconset>
+   </property>
+   <property name="text">
+    <string>手动创建</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
+   </property>
+  </action>
+  <action name="action_batchCreateRelation">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/batchCreateRelation.png</normaloff>:/ModelingTool/Images/batchCreateRelation.png</iconset>
+   </property>
+   <property name="text">
+    <string>批量创建</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
+  </action>
+  <action name="action_editRelation">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/editRelation.png</normaloff>:/ModelingTool/Images/editRelation.png</iconset>
+   </property>
+   <property name="text">
+    <string>编辑关系</string>
+   </property>
+  </action>
+  <action name="action_removeRelation">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/removeRelation.png</normaloff>:/ModelingTool/Images/removeRelation.png</iconset>
+   </property>
+   <property name="text">
+    <string>删除关系</string>
+   </property>
+  </action>
+  <action name="action_radarRelationVisual">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/radar.png</normaloff>:/ModelingTool/Images/radar.png</iconset>
+   </property>
+   <property name="text">
+    <string>雷达图可视化</string>
+   </property>
+  </action>
+  <action name="action_forcelayoutRelationVisual">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/forceLayout.png</normaloff>:/ModelingTool/Images/forceLayout.png</iconset>
+   </property>
+   <property name="text">
+    <string>力导向图可视化</string>
+   </property>
+  </action>
+  <action name="action_chordRelationVisual">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/chordVisual.png</normaloff>:/ModelingTool/Images/chordVisual.png</iconset>
+   </property>
+   <property name="text">
+    <string>和弦图可视化</string>
+   </property>
+  </action>
+  <action name="action_2DMapRelationVisual">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/2DMap.png</normaloff>:/ModelingTool/Images/2DMap.png</iconset>
+   </property>
+   <property name="text">
+    <string>2D地图可视化</string>
+   </property>
+  </action>
+  <action name="action_3DMapRelationVisual">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/3DMap.png</normaloff>:/ModelingTool/Images/3DMap.png</iconset>
+   </property>
+   <property name="text">
+    <string>3D地图可视化</string>
+   </property>
+  </action>
+  <action name="action_showConvertWnd">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>数据批量转换窗口</string>
+   </property>
+  </action>
+  <action name="action_importData">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/importData.png</normaloff>:/ModelingTool/Images/importData.png</iconset>
+   </property>
+   <property name="text">
+    <string>添加数据源</string>
+   </property>
+  </action>
+  <action name="action_importObjectClass">
+   <property name="text">
+    <string>导入对象类文件</string>
+   </property>
+  </action>
+  <action name="action_exportObjectClass">
+   <property name="text">
+    <string>导出对象类文件</string>
+   </property>
+  </action>
+  <action name="action_removeData">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/removeData.png</normaloff>:/ModelingTool/Images/removeData.png</iconset>
+   </property>
+   <property name="text">
+    <string>移除数据源</string>
+   </property>
+  </action>
+  <action name="action_filterRule">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/filterRule.png</normaloff>:/ModelingTool/Images/filterRule.png</iconset>
+   </property>
+   <property name="text">
+    <string>过滤规则</string>
+   </property>
+  </action>
+  <action name="action_mappingRule">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/mappingRule.png</normaloff>:/ModelingTool/Images/mappingRule.png</iconset>
+   </property>
+   <property name="text">
+    <string>映射规则</string>
+   </property>
+  </action>
+  <action name="action_mergeRule">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/mergeRule.png</normaloff>:/ModelingTool/Images/mergeRule.png</iconset>
+   </property>
+   <property name="text">
+    <string>融合规则</string>
+   </property>
+  </action>
+  <action name="action_convert">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/convert.png</normaloff>:/ModelingTool/Images/convert.png</iconset>
+   </property>
+   <property name="text">
+    <string>执行转换</string>
+   </property>
+  </action>
+  <action name="action_behaviorComponent">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/behaviorComponent.png</normaloff>:/ModelingTool/Images/behaviorComponent.png</iconset>
+   </property>
+   <property name="text">
+    <string>生成行为组件框架</string>
+   </property>
+  </action>
+  <action name="action_behaviorDebug">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/behaviorDebug.png</normaloff>:/ModelingTool/Images/behaviorDebug.png</iconset>
+   </property>
+   <property name="text">
+    <string>行为调试</string>
+   </property>
+  </action>
+  <action name="action_behaviorComponentInfo">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/behaviorComponentInfo.png</normaloff>:/ModelingTool/Images/behaviorComponentInfo.png</iconset>
+   </property>
+   <property name="text">
+    <string>查看行为组件信息</string>
+   </property>
+  </action>
+  <action name="action_simulatorTime">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/simulatorTime.png</normaloff>:/ModelingTool/Images/simulatorTime.png</iconset>
+   </property>
+   <property name="text">
+    <string>仿真时间设置</string>
+   </property>
+  </action>
+  <action name="action_trs">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/TRS.png</normaloff>:/ModelingTool/Images/TRS.png</iconset>
+   </property>
+   <property name="text">
+    <string>时间参考</string>
+   </property>
+  </action>
+  <action name="action_srs">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/SRS.png</normaloff>:/ModelingTool/Images/SRS.png</iconset>
+   </property>
+   <property name="text">
+    <string>空间参考</string>
+   </property>
+  </action>
+  <action name="action_editRule">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/editRule.png</normaloff>:/ModelingTool/Images/editRule.png</iconset>
+   </property>
+   <property name="text">
+    <string>编辑规则</string>
+   </property>
+  </action>
+  <action name="action_removeRule">
+   <property name="icon">
+    <iconset resource="../ModelingTool.qrc">
+     <normaloff>:/ModelingTool/Images/removeRule.png</normaloff>:/ModelingTool/Images/removeRule.png</iconset>
+   </property>
+   <property name="text">
+    <string>移除规则</string>
+   </property>
+  </action>
+  <action name="action_showTimeAxisView">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>时间轴视图</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources>
+  <include location="../ModelingTool.qrc"/>
+ </resources>
+ <connections/>
+</ui>

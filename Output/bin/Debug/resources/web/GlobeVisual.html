@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+	<script src="./plugins/jquery/jquery-1.10.2.js"></script>
+    <!-- 引入 ECharts 文件 -->
+    <script src="./plugins/echarts/echarts.js"></script>
+	<script src="./plugins/echarts/echarts-gl.js"></script>
+</head>
+<body style="margin:0;padding:0">
+    <!-- 为 ECharts 准备一个具备大小（宽高）的 DOM -->
+    <div id="main" style="text-align:center;width: 900px;height:610px;"></div>
+	<script type="text/javascript">
+       var myChart = null;
+		$(function(){
+			var clientWidth = document.body.clientWidth;
+			var clientHeight = document.body.clientHeight;
+			$("#main").width(clientWidth);
+			$("#main").height(clientHeight);
+			// 基于准备好的dom，初始化echarts实例
+			myChart = echarts.init(document.getElementById('main'));
+			myChart.showLoading();
+		});
+	
+		
+		function loadData(data){
+			var json = JSON.parse(data);
+			
+			var series = [];
+			for(var i=0; i<json.seriesData.length;i++){
+				var seriesitem = {
+					"type": "lines3D",
+					"name": json.seriesData[i].name,
+					"effect": {
+						"show": true,
+						"trailWidth": 2,
+						"trailLength": 0.15,
+						"trailOpacity": 1,
+						"trailColor": "rgb(30, 30, 60)"
+					},
+					"lineStyle": {
+						"width": 2,
+						"color": json.seriesData[i].lineColor,
+						"opacity": 0.5
+					},
+					"blendMode": "lighter",
+					"data": json.seriesData[i].data
+				};
+				series.push(seriesitem);
+			}
+			
+			var option = {
+				"legend": {
+					"selectedMode": "multi",
+					"left": "left",
+					"data": json.legendData,
+					"orient": "vertical",
+					"textStyle": {
+						"color": "#fff"
+					}
+				},
+				"globe": {
+					"baseTexture": "data/earth.jpg",
+					"heightTexture": "data/height.jpg",
+					"displacementScale": 0.1,
+					"shading": "lambert",
+					"environment": "data/starfield.jpg",
+					"light": {
+						"ambient": {
+							"intensity": 1
+						},
+						"main": {
+							"intensity": 1,
+							"shadow": true
+						}
+					},
+					"layers": [
+						{
+							"type": "overlay",
+							"texture": "data/clouds.png",
+							"shading": "lambert",
+							"distance": 5
+						}
+					]
+				},
+				"series": series
+			};
+			console.log(option);
+			myChart.hideLoading();
+			myChart.setOption(option);
+		}
+		
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,46 @@
+#ifndef _OPENTHREADS_CONDITION_
+#define _OPENTHREADS_CONDITION_
+
+#include <OpenThreads/Exports>
+#include <OpenThreads/Mutex>
+
+namespace OpenThreads {
+
+
+// 条件量接口类：它依赖于某个Mutex互斥体，互斥体加锁时阻塞所在的线程，解锁或者超过时限则释放此线程，允许其继续运行。
+
+class OPENTHREAD_EXPORT_DIRECTIVE Condition 
+{
+
+public:
+
+    Condition();
+    virtual ~Condition();
+
+    
+	// 等待一个互斥体
+    virtual int wait(Mutex *mutex);
+
+	// 等待一个互斥体一定的时间。正常返回0，否则返回错误号（没设置返回-1）
+    virtual int wait(Mutex *mutex, unsigned long int ms);
+
+	// 唤醒一个线程。正常返回0，否则返回错误号（没设置返回-1）
+    virtual int signal();
+
+	// 唤醒所有被阻塞的线程。正常返回0，否则返回错误号（没设置返回-1）
+    virtual int broadcast();
+
+private:
+
+
+    Condition(const Condition &/*c*/) {};
+    Condition &operator=(const Condition &/*c*/) {return *(this);};
+
+    // 实现类私有数据
+    void* _prvData;
+
+};
+
+}
+
+#endif // !_OPENTHREADS_CONDITION_

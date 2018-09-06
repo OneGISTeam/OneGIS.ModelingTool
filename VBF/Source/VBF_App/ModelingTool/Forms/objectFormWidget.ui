@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ObjectFormWidget</class>
+ <widget class="QWidget" name="ObjectFormWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>583</width>
+    <height>544</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>对象空间形态</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_4">
+   <item row="0" column="0">
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>538</width>
+        <height>575</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="0" column="0">
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QGroupBox" name="groupBox">
+           <property name="title">
+            <string>公有形态</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0">
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <widget class="QLabel" name="label_2">
+                <property name="font">
+                 <font>
+                  <italic>true</italic>
+                 </font>
+                </property>
+                <property name="text">
+                 <string>您可以更改继承自继承自对象模板中的形态数据，但不可以删除任何公有形态</string>
+                </property>
+                <property name="wordWrap">
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QTableWidget" name="tableWidget_publicForm">
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>160</height>
+                 </size>
+                </property>
+                <row>
+                 <property name="text">
+                  <string>1</string>
+                 </property>
+                </row>
+                <column>
+                 <property name="text">
+                  <string>名称</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>继承自</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>时间</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>状态</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>尺度</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>是否位置依赖</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>形态部件</string>
+                 </property>
+                </column>
+                <item row="0" column="0">
+                 <property name="text">
+                  <string>default</string>
+                 </property>
+                 <property name="flags">
+                  <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsUserCheckable</set>
+                 </property>
+                </item>
+                <item row="0" column="1">
+                 <property name="text">
+                  <string>airplane</string>
+                 </property>
+                 <property name="flags">
+                  <set>ItemIsSelectable|ItemIsDragEnabled|ItemIsUserCheckable</set>
+                 </property>
+                </item>
+                <item row="0" column="2">
+                 <property name="text">
+                  <string>2018-07-16 16:56:00.00</string>
+                 </property>
+                 <property name="flags">
+                  <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+                 </property>
+                </item>
+                <item row="0" column="3">
+                 <property name="text">
+                  <string>normal</string>
+                 </property>
+                </item>
+                <item row="0" column="4">
+                 <property name="text">
+                  <string>10000</string>
+                 </property>
+                </item>
+                <item row="0" column="5">
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="checkState">
+                  <enum>Checked</enum>
+                 </property>
+                </item>
+                <item row="0" column="6">
+                 <property name="text">
+                  <string>机身/机翼</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButton_editPublicFormPart">
+                <property name="text">
+                 <string>编辑公有形态部件</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../ModelingTool.qrc">
+                  <normaloff>:/ModelingTool/Images/edit.png</normaloff>:/ModelingTool/Images/edit.png</iconset>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_2">
+           <property name="title">
+            <string>私有形态</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0">
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_2">
+                <item>
+                 <widget class="QLabel" name="label_3">
+                  <property name="font">
+                   <font>
+                    <italic>true</italic>
+                   </font>
+                  </property>
+                  <property name="text">
+                   <string>您可以添加、修改、删除对象的任意私有形态</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>false</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>40</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QTableWidget" name="tableWidget_privateForm">
+                <property name="maximumSize">
+                 <size>
+                  <width>16777215</width>
+                  <height>160</height>
+                 </size>
+                </property>
+                <row>
+                 <property name="text">
+                  <string>1</string>
+                 </property>
+                </row>
+                <column>
+                 <property name="text">
+                  <string>名称</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>时间</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>状态</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>尺度</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>是否位置依赖</string>
+                 </property>
+                </column>
+                <column>
+                 <property name="text">
+                  <string>形态部件</string>
+                 </property>
+                </column>
+                <item row="0" column="0">
+                 <property name="text">
+                  <string>default</string>
+                 </property>
+                </item>
+                <item row="0" column="1">
+                 <property name="text">
+                  <string>2018-07-16 16:56:00.00</string>
+                 </property>
+                 <property name="flags">
+                  <set>ItemIsSelectable|ItemIsEditable|ItemIsDragEnabled|ItemIsUserCheckable|ItemIsEnabled</set>
+                 </property>
+                </item>
+                <item row="0" column="2">
+                 <property name="text">
+                  <string>normal</string>
+                 </property>
+                </item>
+                <item row="0" column="3">
+                 <property name="text">
+                  <string>10000</string>
+                 </property>
+                </item>
+                <item row="0" column="4">
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="checkState">
+                  <enum>Checked</enum>
+                 </property>
+                </item>
+                <item row="0" column="5">
+                 <property name="text">
+                  <string>机身/机翼</string>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout">
+                <item>
+                 <widget class="QPushButton" name="pushButton_addPrivateForm">
+                  <property name="text">
+                   <string>添加私有形态</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../ModelingTool.qrc">
+                    <normaloff>:/ModelingTool/Images/add.png</normaloff>:/ModelingTool/Images/add.png</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_removePrivateForm">
+                  <property name="text">
+                   <string>移除私有形态</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../ModelingTool.qrc">
+                    <normaloff>:/ModelingTool/Images/remove_circle.png</normaloff>:/ModelingTool/Images/remove_circle.png</iconset>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_editPrivateFormPart">
+                  <property name="text">
+                   <string>编辑私有形态部件</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../ModelingTool.qrc">
+                    <normaloff>:/ModelingTool/Images/edit.png</normaloff>:/ModelingTool/Images/edit.png</iconset>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../ModelingTool.qrc"/>
+ </resources>
+ <connections/>
+</ui>

@@ -1,0 +1,299 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>BehaviorDebugDialog</class>
+ <widget class="QDialog" name="BehaviorDebugDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>758</width>
+    <height>436</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>对象行为调试</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../ModelingTool.qrc">
+    <normaloff>:/ModelingTool/Images/behaviorDebug.png</normaloff>:/ModelingTool/Images/behaviorDebug.png</iconset>
+  </property>
+  <property name="modal">
+   <bool>false</bool>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_7">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout_6">
+     <item row="0" column="0" rowspan="3">
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>具有行为的对象视图</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>请选择您要调试的对象行为：</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTreeWidget" name="treeWidget_objects">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="minimumSize">
+             <size>
+              <width>120</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="maximumSize">
+             <size>
+              <width>16777215</width>
+              <height>16777215</height>
+             </size>
+            </property>
+            <attribute name="headerVisible">
+             <bool>false</bool>
+            </attribute>
+            <column>
+             <property name="text">
+              <string>1</string>
+             </property>
+            </column>
+            <item>
+             <property name="text">
+              <string>直95</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../ModelingTool.qrc">
+               <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+             </property>
+             <item>
+              <property name="text">
+               <string>飞行行为</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../ModelingTool.qrc">
+                <normaloff>:/ModelingTool/Images/behaviorComponent.png</normaloff>:/ModelingTool/Images/behaviorComponent.png</iconset>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>打击行为</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../ModelingTool.qrc">
+                <normaloff>:/ModelingTool/Images/behaviorComponent.png</normaloff>:/ModelingTool/Images/behaviorComponent.png</iconset>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>巡航行为</string>
+              </property>
+              <property name="icon">
+               <iconset resource="../ModelingTool.qrc">
+                <normaloff>:/ModelingTool/Images/behaviorComponent.png</normaloff>:/ModelingTool/Images/behaviorComponent.png</iconset>
+              </property>
+             </item>
+            </item>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QGroupBox" name="groupBox_2">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="title">
+        <string>行为基本信息</string>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>行为名称：</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEdit_name"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>行为别名：</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineEdit_alias"/>
+          </item>
+          <item row="2" column="0">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>行为描述：</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="1">
+           <widget class="QTextEdit" name="textEdit_desc"/>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QGroupBox" name="groupBox_3">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="title">
+        <string>参数列表</string>
+       </property>
+       <property name="checkable">
+        <bool>false</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="0">
+         <widget class="QTableWidget" name="tableWidget_params">
+          <column>
+           <property name="text">
+            <string>参数名称</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>参数别名</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>参数类型</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>参数值</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QGroupBox" name="groupBox_4">
+       <property name="title">
+        <string>*输入列表*</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <widget class="QTableWidget" name="tableWidget_inputs">
+          <column>
+           <property name="text">
+            <string>输入名称</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>输入别名</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>输入类型</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>输入值</string>
+           </property>
+          </column>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="2">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>288</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_debug">
+         <property name="text">
+          <string>调试</string>
+         </property>
+         <property name="icon">
+          <iconset resource="../ModelingTool.qrc">
+           <normaloff>:/ModelingTool/Images/behaviorDebug.png</normaloff>:/ModelingTool/Images/behaviorDebug.png</iconset>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_cancel">
+         <property name="text">
+          <string>取消</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../ModelingTool.qrc"/>
+ </resources>
+ <connections/>
+</ui>

@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<Datum> 
+  <Catalog name="TRSID" Desc="时间参考ID"> 
+    <Item ID="1" Alias="UTC" Desc="UTC时间"/>  
+    <Item ID="2" Alias="BJ" Desc="北京时间"/>  
+    <Item ID="3" Alias="BD" Desc="北斗时间"/>  
+    <Item ID="4" Alias="GPS" Desc="GPS时间"/>  
+    <Item ID="5" Alias="" Desc="网络时间"/>  
+    <Item ID="6" Alias="" Desc="计算机时间"/>  
+    <Item ID="7" Alias="Unix" Desc="Unix时间戳"/>  
+    <Item ID="8" Alias="SIM" Desc="仿真时间"/> 
+  </Catalog>  
+  <Catalog name="TimeFormat" Desc="时间格式"> 
+    <Item ID="1" Alias="yyyy-mm-dd" Desc="年月日"/>  
+    <Item ID="2" Alias="yyyy-mm-dd:hh-mm-ss.xxx" Desc="年月日时分秒"/>  
+    <Item ID="3" Alias="yyyy-mm-dd:hh-mm-ss.xxx" Desc="儒略日"/>  
+    <Item ID="4" Alias="hh-mm-ss.xxx" Desc="时分秒"/>  
+    <Item ID="101" Alias="double Centenary" Desc="相对时间：世纪"/>  
+    <Item ID="102" Alias="double Year" Desc="相对时间：年"/>  
+    <Item ID="103" Alias="double Day" Desc="相对时间：日"/>  
+    <Item ID="104" Alias="double Second" Desc="相对时间：秒"/>  
+    <Item ID="105" Alias="double MilliSecond" Desc="相对时间：毫秒"/>  
+    <Item ID="106" Alias="Int64 ClockPeriod" Desc="相对时间：时钟周期"/> 
+  </Catalog>  
+  <Catalog name="SRSID" Desc="空间参考ID"> 
+    <!--说明：参见http://spatialreference.org/
+			兼容EPSG的SRID（OGC标准中空间参照系统的SRID与其一致）、ESRI（如ESRI:37001）、IAU2000-->  
+    <!--说明：补充定义如下坐标系统-->  
+    <Item ID="60001" Alias="onegis:xxx" Desc="XXXXXX"/>  
+    <!--说明：各对象所用的局部坐标系统由各对象定义--> 
+  </Catalog>  
+  <Catalog name="ValueType" Desc="参数值的类型"> 
+    <Item ID="10100" Alias="chars" Desc="字符串，默认"/>  
+    <Item ID="10001" Alias="char" Desc="有符号字符，1字节"/>  
+    <Item ID="10002" Alias="unsigned char" Desc="无符号字符，1字节"/>  
+    <Item ID="10003" Alias="short" Desc="有符号短整型，2字节"/>  
+    <Item ID="10004" Alias="unsigned short" Desc="无符号短整型，2字节"/>  
+    <Item ID="10005" Alias="int32" Desc="有符号整型，4字节"/>  
+    <Item ID="10006" Alias="unsigned int32" Desc="无符号整型，4字节"/>  
+    <Item ID="10007" Alias="int64" Desc="有符号长整型，8字节，-2^64~2^64-1"/>  
+    <Item ID="10008" Alias="unsigned int64" Desc="无符号长整型，8字节"/>  
+    <Item ID="10009" Alias="float" Desc="单精度浮点，4字节，范围-2^128~2^128，精度为6~7位有效数字"/>  
+    <Item ID="10010" Alias="double" Desc="双精度浮点数，8字节，范围-2^1024~2^1024精度为15~16位"/>  
+    <Item ID="20021" Alias="Vec2s" Desc="短整型2维向量"/>  
+    <Item ID="20022" Alias="Vec2n" Desc="整型2维向量"/>  
+    <Item ID="20023" Alias="Vec2l" Desc="长整型2维向量"/>  
+    <Item ID="20024" Alias="Vec2f" Desc="单精度2维向量"/>  
+    <Item ID="20025" Alias="Vec2d" Desc="双精度2维向量"/>  
+    <Item ID="20031" Alias="Vec3s" Desc="短整型3维向量"/>  
+    <Item ID="20032" Alias="Vec3n" Desc="整型3维向量"/>  
+    <Item ID="20033" Alias="Vec3l" Desc="长整型3维向量"/>  
+    <Item ID="20034" Alias="Vec3f" Desc="单精度3维向量"/>  
+    <Item ID="20035" Alias="Vec3d" Desc="双精度3维向量"/>  
+    <Item ID="20041" Alias="Vec4s" Desc="短整型4维向量"/>  
+    <Item ID="20042" Alias="Vec4n" Desc="整型4维向量"/>  
+    <Item ID="20043" Alias="Vec4l" Desc="长整型4维向量"/>  
+    <Item ID="20044" Alias="Vec4f" Desc="单精度4维向量"/>  
+    <Item ID="20045" Alias="Vec4d" Desc="双精度4维向量"/>  
+    <Item ID="20051" Alias="Matrix2f" Desc="单精度2维矩阵"/>  
+    <Item ID="20052" Alias="Matrix2d" Desc="双精度2维矩阵"/>  
+    <Item ID="20053" Alias="Matrix3f" Desc="单精度3维矩阵"/>  
+    <Item ID="20054" Alias="Matrix3d" Desc="双精度3维矩阵"/>  
+    <Item ID="20055" Alias="Matrix4f" Desc="单精度4维矩阵"/>  
+    <Item ID="20056" Alias="Matrix4d" Desc="双精度4维矩阵"/>  
+    <Item ID="20061" Alias="Quat" Desc="双精度4元数"/>是否重复？ 
+    <Item ID="30001" Alias="Color" Desc="颜色"/>  
+    <Item ID="30002" Alias="Time" Desc="时间"/>  
+    <Item ID="30003" Alias="Date" Desc="日期"/>  
+    <Item ID="99999" Alias="JSon" Desc="自定义复杂格式（Json串）"/> 
+  </Catalog>  
+  <Catalog name="Object::Type" Desc="对象的类型，需根据对象分类表细化"> 
+    <!--说明：参照课题组的分类，划分为：
+			地理实体：传统GIS领域内研究的，分布在地表的实体。		基本特征：地表、（基本）固定、自然、多抽象表达
+			地质实体：地质领域研究的，分布在地表以下的底层中的实体。基本特征：地下、（基本）固定、自然、多抽象表达
+			流体与场实体：包括海洋实体、大气实体、各种场。			基本特征：地上或充满空间、可流动、自然、多抽象表达
+			生命体：在地球上分布的包括人在内的各种生命体。			基本特征：有行为和认知
+			固定设备体：由人创造的，在人的社会活动中能够被反复使用的物质资料。 基本特征：（基本）固定、人造、具象表达（也可抽象）
+			移动设备体：													   基本特征：运动、人造、具象表达（也可抽象）
+			天文实体：地球外层空间的各种星体、天文现象等客观实体。			基本特征：轨道运动、自然、具象表达（也可抽象）、
+			人文实体：由人的社会活动所产生的各种客观实体，包括组织机构等。	基本特征：人造、多抽象表达
+			其他实体：上述内容以外的实体
+		-->  
+    <Item ID="10000000" Alias="GeographicEntity" Desc="地理实体"/>  
+    <Item ID="20000000" Alias="GeologicSolid" Desc="地质实体"/>  
+    <Item ID="30000000" Alias="FluidAndField" Desc="流体与场"/>  
+    <Item ID="30100000" Alias="Ocean" Desc="海洋"/>  
+    <Item ID="30200000" Alias="Atmosphere" Desc="大气"/>  
+    <Item ID="30300000" Alias="GeomagneticField" Desc="地磁场"/>  
+    <Item ID="30400000" Alias="ElectromagneticField" Desc="电磁场"/>  
+    <Item ID="30500000" Alias="Water" Desc="海洋以外的水体"/>  
+    <Item ID="30600000" Alias="SmokeDust" Desc="烟尘"/>  
+    <Item ID="40000000" Alias="LifeEntity" Desc="生命体"/>  
+    <Item ID="50000000" Alias="CelestialBody" Desc="天文实体"/>  
+    <Item ID="50100000" Alias="CelestialSphere" Desc="天体::天球"/>  
+    <Item ID="50101000" Alias="CelestialBoundary" Desc="天体::天球::天区"/>  
+    <Item ID="50102000" Alias="Constellation" Desc="天体::天球::星座"/>  
+    <Item ID="50103000" Alias="Orbit" Desc="天体::天球::轨道"/>  
+    <Item ID="50200000" Alias="Galaxy" Desc="天体::星系"/>  
+    <Item ID="50201000" Alias="Galactics" Desc="天体::星系::银河系"/>  
+    <Item ID="50300000" Alias="Star" Desc="天体::恒星"/>  
+    <Item ID="50400000" Alias="Planet" Desc="天体::行星"/>  
+    <Item ID="50400010" Alias="SolarPlanet" Desc="天体::行星::太阳系行星"/>  
+    <Item ID="50500000" Alias="Satellite" Desc="天体::卫星"/>  
+    <Item ID="50501000" Alias="EarthSatellite" Desc="天体::卫星::地球卫星"/>  
+    <Item ID="50600000" Alias="Satellite" Desc="天体::人造卫星"/>  
+    <Item ID="50601000" Alias="EarthSatellite" Desc="天体::人造卫星::人造地球卫星"/>  
+    <Item ID="50700000" Alias="SpaceDebris" Desc="天体::空间碎片"/>  
+    <Item ID="60000000" Alias="FixedEuipment" Desc="固定设备"/>  
+    <Item ID="70000000" Alias="MobileEuipment" Desc="可移动设备（经常性移动）"/> 飞行设备、航行设备、行走设备、弹射设备、被动设备 
+    <Item ID="80000000" Alias="HumaneEntity" Desc="人文实体"/>  
+    <Item ID="90000000" Alias="OtherEntity" Desc="其他实体"/> 
+  </Catalog>  
+  <Catalog name="Position::Type" Desc="位置的类型"> 
+    <Item ID="0" Alias="static" Desc="静态位置"/>  
+    <Item ID="1" Alias="dynamic" Desc="动态位置"/>  
+    <Item ID="2" Alias="real-time" Desc="实时位置"/>  
+    <Item ID="3" Alias="function" Desc="函数位置"/> 
+  </Catalog>  
+  <Catalog name="Position::Formats" Desc="位置的数据格式"> 
+    <Item ID="11" Alias="X" Desc="一维线性坐标"/>  
+    <Item ID="12" Alias="A" Desc="角度坐标"/>  
+    <Item ID="13" Alias="XY" Desc="二维直角坐标"/>  
+    <Item ID="14" Alias="BL" Desc="地理坐标"/>  
+    <Item ID="15" Alias="XYZ" Desc="三维直角坐标"/>  
+    <Item ID="16" Alias="BLH" Desc="地理坐标（含高程）"/>  
+    <!--Item ID="21" Alias="XYS" Desc="线：二维直角坐标"/>
+		<Item ID="22" Alias="BLS" Desc="线：地理坐标"/>
+		<Item ID="23" Alias="XYZS" Desc="线：三维直角坐标"/>	
+		<Item ID="24" Alias="BLHS" Desc="线：地理坐标（含高程）"/>	
+		
+		<Item ID="11" Alias="RX" Desc="一维欧拉角旋转"/>	
+		<Item ID="12" Alias="RXRY" Desc="二维欧拉角旋转"/>	
+		<Item ID="13" Alias="RXRYRZ" Desc="三维欧拉角旋转"/>
+		<Item ID="21" Alias="MATRIX" Desc="矩阵"/>	
+		<Item ID="31" Alias="QUAT" Desc="四元数"/--> 
+  </Catalog>  
+  <Catalog name="Form::Type" Desc="形态的类型"> 
+    <Item ID="1" Alias="" Desc="几何体"/>
+    <!--说明：几何参数描述的-->  
+    <Item ID="1" Alias="" Desc="二维矢量"/>  
+    <Item ID="1" Alias="" Desc="点云"/>  
+    <Item ID="1" Alias="" Desc="街景"/>  
+    <Item ID="1" Alias="" Desc="全景图"/>  
+    <Item ID="1" Alias="" Desc="二维矢量场"/>  
+    <Item ID="1" Alias="" Desc="三维矢量场"/>  
+    <Item ID="1" Alias="" Desc="二维标量场"/>  
+    <Item ID="1" Alias="" Desc="三维标量场"/>  
+    <Item ID="1" Alias="" Desc="等值线"/>  
+    <Item ID="1" Alias="" Desc="等值面"/>  
+    <Item ID="1" Alias="" Desc="影像"/>  
+    <Item ID="1" Alias="" Desc="复合"/>
+    <!--说明：使用Json描述的各种数据--> 
+  </Catalog>  
+  <Catalog name="Form::Type" Desc="形态的类型"> 
+    <Item ID="0" Alias="Geometry" Desc="几何要素"/>  
+    <Item ID="1" Alias="ParameterizedModel" Desc="参数化几何体模型"/>  
+    <Item ID="2" Alias="3DModel" Desc="三维模型"/>  
+    <Item ID="3" Alias="Function" Desc="仿真函数"/>  
+    <Item ID="4" Alias="VectorField2D" Desc="二维规则矢量场"/>  
+    <Item ID="5" Alias="ScalarField2D" Desc="二维规则标量场"/>  
+    <Item ID="6" Alias="VectorField3D" Desc="三维规则矢量场"/>  
+    <Item ID="7" Alias="ScalarField3D" Desc="三维规则标量场"/>  
+    <Item ID="8" Alias="TIN" Desc="不规则三角形"/>  
+    <Item ID="9" Alias="StreetScape" Desc="街景"/>  
+    <Item ID="10" Alias="StreetScape" Desc="全景图"/>  
+    <Item ID="11" Alias="PointCloud" Desc="点云"/>  
+    <Item ID="12" Alias="Overlay" Desc="覆盖"/>  
+    <Item ID="13" Alias="Combined" Desc="复合"/>  
+    <Item ID="1" Alias="ContourLine" Desc="等值线"/>  
+    <Item ID="1" Alias="ContourSurface" Desc="等值面"/> 
+  </Catalog>  
+  <Catalog name="Form::DataFormats" Desc="形态的数据格式"> 
+    <Item ID="10001" Alias="3DS" Desc="3DMax 交换格式"/>  
+    <Item ID="10002" Alias="FLT" Desc="FLT 交换格式"/>  
+    <Item ID="20001" Alias="IFC" Desc="BIM数据 交换格式"/>  
+    <Item ID="30001" Alias="MIT2002" Desc="军标交换格式2002"/>  
+    <Item ID="30002" Alias="Shp" Desc="Shp格式数据"/>  
+    <Item ID="30003" Alias="MIF" Desc="MIF/MID格式数据"/> 
+  </Catalog>  
+  <Catalog name="Arrange::Type" Desc="排列的类型"> 
+    <Item ID="0" Alias="Rectangle" Desc="矩形，M行N列"/>  
+    <Item ID="1" Alias="Rectangle" Desc="矩形，仅排在边上"/> 
+  </Catalog>  
+  <Catalog name="Attr::Type" Desc="属性值的类型"> 
+    <Item ID="0" Alias="static" Desc="静态属性值，只有一个不变的值"/>  
+    <Item ID="1" Alias="dynamic" Desc="动态属性值，随时间变化的值"/>  
+    <Item ID="2" Alias="real-time" Desc="实时属性值，实时获取（传感器或数据库）的值"/> 
+  </Catalog>  
+  <Catalog name="Action::ControlMode" Desc="行为控制方式"> 
+    <Item ID="0" Alias="COMMAND" Desc="命令控制，通过命令触发，对应的【ControlParameter】即为对应的【命令ID】"/>  
+    <Item ID="1" Alias="AUTO" Desc="自动控制（算法控制），含规则触发、状态触发，如自动告警行为，对应的【ControlParameter】为空"/>  
+    <Item ID="2" Alias="OPERATION" Desc="人工操作控制，多为交互性操作行为，对应的【ControlParameter】为空"/>  
+    <Item ID="3" Alias="SIMULATION" Desc="外部仿真模型控制，对应的【ControlParameter】为【仿真模型ID】"/>  
+    <Item ID="4" Alias="TIMER" Desc="定时（一次性）控制，对应的【ControlParameter】为【时间】"/>  
+    <Item ID="5" Alias="CLOCK" Desc="定时（等时间间隔）控制，对应的【ControlParameter】为【时间间隔】"/> 
+  </Catalog>  
+  <Catalog name="ObjectRelation::Class" Desc="关系类别"> 
+    <Item ID="0" Alias="Relation" Desc="关联关系"/>  
+    <Item ID="0" Alias="DependencyConstrain,DC" Desc="依赖约束关系"/>  
+    <Item ID="0" Alias="AttributeConstrain,AC" Desc="属性约束关系"/>  
+    <Item ID="0" Alias="SpaceConstrain,SC" Desc="空间约束关系"/> 
+  </Catalog> 
+</Datum>

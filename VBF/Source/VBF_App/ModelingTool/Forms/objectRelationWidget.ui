@@ -1,0 +1,524 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ObjectRelationWidget</class>
+ <widget class="QWidget" name="ObjectRelationWidget">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>590</width>
+    <height>488</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>对象关联关系</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0">
+    <widget class="QScrollArea" name="scrollArea">
+     <property name="widgetResizable">
+      <bool>true</bool>
+     </property>
+     <widget class="QWidget" name="scrollAreaWidgetContents">
+      <property name="geometry">
+       <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>545</width>
+        <height>487</height>
+       </rect>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="0" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_8">
+         <item>
+          <widget class="QGroupBox" name="groupBox">
+           <property name="title">
+            <string>涉及该对象的关联关系</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_4">
+            <item row="0" column="0">
+             <layout class="QVBoxLayout" name="verticalLayout_2">
+              <item>
+               <widget class="QTreeWidget" name="treeWidget_relatedRelations">
+                <property name="wordWrap">
+                 <bool>false</bool>
+                </property>
+                <attribute name="headerVisible">
+                 <bool>false</bool>
+                </attribute>
+                <column>
+                 <property name="text">
+                  <string>1</string>
+                 </property>
+                </column>
+                <item>
+                 <property name="text">
+                  <string>协同关系</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/network.png</normaloff>:/ModelingTool/Images/network.png</iconset>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>直95001-&gt;直95003</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../ModelingTool.qrc">
+                    <normaloff>:/ModelingTool/Images/relation.png</normaloff>:/ModelingTool/Images/relation.png</iconset>
+                  </property>
+                  <item>
+                   <property name="text">
+                    <string>起始对象：直95001</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../ModelingTool.qrc">
+                     <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>终止对象：直95003</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../ModelingTool.qrc">
+                     <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                   </property>
+                  </item>
+                 </item>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>指挥关系</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/network.png</normaloff>:/ModelingTool/Images/network.png</iconset>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>直95002-&gt;直95001</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../ModelingTool.qrc">
+                    <normaloff>:/ModelingTool/Images/relation.png</normaloff>:/ModelingTool/Images/relation.png</iconset>
+                  </property>
+                  <item>
+                   <property name="text">
+                    <string>起始对象：直95002</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../ModelingTool.qrc">
+                     <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                   </property>
+                  </item>
+                  <item>
+                   <property name="text">
+                    <string>终止对象：直95001</string>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../ModelingTool.qrc">
+                     <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                   </property>
+                  </item>
+                 </item>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButton">
+                <property name="text">
+                 <string>添加关系</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../ModelingTool.qrc">
+                  <normaloff>:/ModelingTool/Images/add.png</normaloff>:/ModelingTool/Images/add.png</iconset>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="pushButton_2">
+                <property name="text">
+                 <string>移除关系</string>
+                </property>
+                <property name="icon">
+                 <iconset resource="../ModelingTool.qrc">
+                  <normaloff>:/ModelingTool/Images/remove_circle.png</normaloff>:/ModelingTool/Images/remove_circle.png</iconset>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="groupBox_2">
+           <property name="title">
+            <string>关联关系</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="0" column="0">
+             <layout class="QVBoxLayout" name="verticalLayout">
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout">
+                <item>
+                 <widget class="QLabel" name="label">
+                  <property name="text">
+                   <string>请选择要添加的关系：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>108</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QComboBox" name="comboBox_relations">
+                <item>
+                 <property name="text">
+                  <string>协同关系</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/network.png</normaloff>:/ModelingTool/Images/network.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>指挥关系</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/network.png</normaloff>:/ModelingTool/Images/network.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>供给关系</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/network.png</normaloff>:/ModelingTool/Images/network.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>通信关系</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/network.png</normaloff>:/ModelingTool/Images/network.png</iconset>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_2">
+                <item>
+                 <widget class="QLabel" name="label_2">
+                  <property name="text">
+                   <string>请选择要建立关系的对象：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_2">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>108</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_3">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QLineEdit" name="lineEdit">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>24</height>
+                   </size>
+                  </property>
+                  <property name="sizeIncrement">
+                   <size>
+                    <width>0</width>
+                    <height>24</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_selectObject">
+                  <property name="minimumSize">
+                   <size>
+                    <width>24</width>
+                    <height>24</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>24</width>
+                    <height>24</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../ModelingTool.qrc">
+                    <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>20</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_4">
+                <item>
+                 <widget class="QLabel" name="label_3">
+                  <property name="text">
+                   <string>请选择该对象的节点性质：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_3">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>108</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QComboBox" name="comboBox_nodeType">
+                <item>
+                 <property name="text">
+                  <string>源节点</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/fromNode.png</normaloff>:/ModelingTool/Images/fromNode.png</iconset>
+                 </property>
+                </item>
+                <item>
+                 <property name="text">
+                  <string>端节点</string>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="../ModelingTool.qrc">
+                   <normaloff>:/ModelingTool/Images/endNode.png</normaloff>:/ModelingTool/Images/endNode.png</iconset>
+                 </property>
+                </item>
+               </widget>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_5">
+                <item>
+                 <widget class="QLabel" name="label_4">
+                  <property name="text">
+                   <string>请设置关系的强度：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_4">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>108</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_6">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QDoubleSpinBox" name="doubleSpinBox_intensity">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>24</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>16777215</width>
+                    <height>24</height>
+                   </size>
+                  </property>
+                  <property name="maximum">
+                   <double>1.000000000000000</double>
+                  </property>
+                  <property name="singleStep">
+                   <double>0.010000000000000</double>
+                  </property>
+                  <property name="value">
+                   <double>1.000000000000000</double>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="pushButton_intensityModel">
+                  <property name="minimumSize">
+                   <size>
+                    <width>24</width>
+                    <height>24</height>
+                   </size>
+                  </property>
+                  <property name="maximumSize">
+                   <size>
+                    <width>24</width>
+                    <height>24</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string/>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="../ModelingTool.qrc">
+                    <normaloff>:/ModelingTool/Images/mathModel.png</normaloff>:/ModelingTool/Images/mathModel.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>20</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <layout class="QHBoxLayout" name="horizontalLayout_7">
+                <item>
+                 <widget class="QLabel" name="label_5">
+                  <property name="text">
+                   <string>请设置关系的参数：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="horizontalSpacer_5">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>108</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QTableWidget" name="tableWidget_params">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <layout class="QGridLayout" name="gridLayout_2">
+                <item row="0" column="0">
+                 <widget class="QLabel" name="label_6">
+                  <property name="text">
+                   <string>起始时间：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="0" column="1">
+                 <widget class="QDateTimeEdit" name="dateTimeEdit_beginTime">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0">
+                 <widget class="QLabel" name="label_7">
+                  <property name="text">
+                   <string>终止时间：</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1">
+                 <widget class="QDateTimeEdit" name="dateTimeEdit_endTime">
+                  <property name="sizePolicy">
+                   <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                   </sizepolicy>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../ModelingTool.qrc"/>
+ </resources>
+ <connections/>
+</ui>

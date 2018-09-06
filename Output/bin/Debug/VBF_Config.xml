@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="GB2312"?>
+
+<Root Desc="VBF系统配置文件" Author="武玉国">	
+	<SysSetPath> D:/OneGIS.ModelingTool/SysSet </SysSetPath>
+	<DataPath> D:/OneGIS.ModelingTool/VBF_DATA </DataPath>
+</Root>

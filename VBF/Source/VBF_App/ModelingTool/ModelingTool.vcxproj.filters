@@ -1,0 +1,1285 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;cxx;c;def</Extensions>
+    </Filter>
+    <Filter Include="Form Files">
+      <UniqueIdentifier>{99349809-55BA-4b9d-BF79-8FDBB0286EB3}</UniqueIdentifier>
+      <Extensions>ui</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{D9D6E242-F8AF-46E4-B9FD-80ECBC20BA3E}</UniqueIdentifier>
+      <Extensions>qrc;*</Extensions>
+      <ParseFiles>false</ParseFiles>
+    </Filter>
+    <Filter Include="Generated Files">
+      <UniqueIdentifier>{71ED8ED8-ACB9-4CE9-BBE1-E00B30144E11}</UniqueIdentifier>
+      <Extensions>moc;h;cpp</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Debug">
+      <UniqueIdentifier>{4d261020-ab1a-496f-bb47-f6aaa06f67f6}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Generated Files\Release">
+      <UniqueIdentifier>{d7215292-2f7c-40f0-8ea0-58b153c56c4c}</UniqueIdentifier>
+      <Extensions>cpp;moc</Extensions>
+      <SourceControlFiles>False</SourceControlFiles>
+    </Filter>
+    <Filter Include="Source Files\View">
+      <UniqueIdentifier>{ad56c405-d7b4-4b29-9bbe-5ad0b9337604}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Wnd">
+      <UniqueIdentifier>{78a0f153-b2b5-4fc7-ae94-659d56f4f859}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Status">
+      <UniqueIdentifier>{05fc4512-1ea0-4e51-968d-905a6ec92e28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\View\3rdSource">
+      <UniqueIdentifier>{e27e7429-4ba2-4a0d-873a-648c49d71df0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h</Extensions>
+    </Filter>
+    <Filter Include="Header Files\View">
+      <UniqueIdentifier>{a89d578a-e348-4b22-a405-8d945a95893d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Wnd">
+      <UniqueIdentifier>{d5d4b79e-59d5-49ff-9492-304399d5317f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Object">
+      <UniqueIdentifier>{c3bc55e8-9503-48b4-acb7-db6704b03a00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Status">
+      <UniqueIdentifier>{41cf77df-0072-4062-88dd-b02584b94499}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\View\3rdSource">
+      <UniqueIdentifier>{dd0ea83c-df9c-476d-88c8-897f749b30a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Object">
+      <UniqueIdentifier>{f518c8ef-8bbd-425c-9196-34dd4467b880}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Relation">
+      <UniqueIdentifier>{4b31325c-dad7-4bd0-b0e8-546810275388}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Relation">
+      <UniqueIdentifier>{9b47e1ba-b504-4c8e-b4f0-9722469ce3ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GraphicsItem">
+      <UniqueIdentifier>{a61f40af-20f4-4cc5-add2-6e2053060a44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GraphicsItem">
+      <UniqueIdentifier>{a728bd5c-13f3-40ba-b0e0-f3251e91352b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Behavior">
+      <UniqueIdentifier>{b7707cb6-c12a-4600-8e3f-73f08d2f2118}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Behavior">
+      <UniqueIdentifier>{e6d6be8e-1ded-497c-97fd-9cf345b7fadc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core">
+      <UniqueIdentifier>{07741070-a5e6-4eb2-8065-fbad7ecffa3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{53450f2d-6ad7-455d-bccd-bbc6737a058d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Forms\mainwindow.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\operateobjectwidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\searcherobjectwidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="ModelingTool.qrc">
+      <Filter>Resource Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_OperateObject.h">
+      <Filter>Header Files\View</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_ViewObject.h">
+      <Filter>Header Files\View</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_ViewObjectClass.h">
+      <Filter>Header Files\View</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\searcherrelationwidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_SearcherObject.h">
+      <Filter>Header Files\View</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\operaterelationwidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\2dcoordinatewidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\3dcoordinatewidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\createObjectDialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_DialogObjectCreate.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_ViewWidgetTimeAxis.h">
+      <Filter>Header Files\View</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GeneratedFiles\Debug\qteditorfactory.moc">
+      <Filter>Generated Files\Debug</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GeneratedFiles\Release\qteditorfactory.moc">
+      <Filter>Generated Files\Release</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GeneratedFiles\Debug\qtpropertymanager.moc">
+      <Filter>Generated Files\Debug</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GeneratedFiles\Release\qtpropertymanager.moc">
+      <Filter>Generated Files\Release</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GeneratedFiles\Debug\qttreepropertybrowser.moc">
+      <Filter>Generated Files\Debug</Filter>
+    </CustomBuild>
+    <CustomBuild Include="GeneratedFiles\Release\qttreepropertybrowser.moc">
+      <Filter>Generated Files\Release</Filter>
+    </CustomBuild>
+    <CustomBuild Include="qtbuttonpropertybrowser.h">
+      <Filter>Header Files\View\3rdSource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="qtvariantproperty.h">
+      <Filter>Header Files\View\3rdSource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="qteditorfactory.h">
+      <Filter>Header Files\View\3rdSource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="qtgroupboxpropertybrowser.h">
+      <Filter>Header Files\View\3rdSource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="qtpropertybrowser.h">
+      <Filter>Header Files\View\3rdSource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="qtpropertybrowserutils_p.h">
+      <Filter>Header Files\View\3rdSource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="qtpropertymanager.h">
+      <Filter>Header Files\View\3rdSource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="qttreepropertybrowser.h">
+      <Filter>Header Files\View\3rdSource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\operateclasswidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\searchclasswidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_OperateClass.h">
+      <Filter>Header Files\View</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\formPartDialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\objectClassExportDialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\objectExportDialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_DialogFormPart.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\timeAxisViewWidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_DialogObjectClassExport.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_DialogObjectExport.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\objectBasicinfoWidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\objectReferenceWidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_WidgetObjectBasicInfo.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_WidgetObjectReference.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\objectPositionWidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_WidgetObjectPosition.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_WidgetObjectForm.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_WidgetObjectCompose.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_WidgetObjectAttribute.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\objectAttributeWidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\objectComposeWidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\objectFormWidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\objectRelationWidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_WidgetObjectRelation.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\createObjectClassDialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_DialogObjectClassCreate.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_ViewWidgetTraits.h">
+      <Filter>Header Files\View</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\objectClassComposeWidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="qcustomplot.h">
+      <Filter>Header Files\View\3rdSource</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_WidgetObjectClassCompose.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\createRelationClassDialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_DialogRelationClassCreate.h">
+      <Filter>Header Files\Relation</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\createRelationManualWidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_ViewWidgetRelationCreateManual.h">
+      <Filter>Header Files\Relation</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\createRelationDialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_DialogRelationCreate.h">
+      <Filter>Header Files\Relation</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\objectClassAttributeWidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\objectClassBasicinfoWidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\objectClassFormWidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\objectClassReferenceWidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_WidgetObjectClassAttribute.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_WidgetObjectClassBasicInfo.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_WidgetObjectClassForm.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_WidgetObjectClassReference.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\setSimulationTimeDialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_DialogSimulationTimeSet.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_ConvertCanvas.h">
+      <Filter>Header Files\Wnd</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\filterRuleDlg.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\mergeRuleDlg.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\behaviorViewerDlg.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_DialogBehaviorAdd.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_WidgetObjectBehavior.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_WidgetObjectClassBehavior.h">
+      <Filter>Header Files\Object</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\addBehaviorDialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\objectBehaviorWidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\objectClassBehaviorWidget.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_DialogBehaviorViewer.h">
+      <Filter>Header Files\Behavior</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_DialogFilterRule.h">
+      <Filter>Header Files\GraphicsItem</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_DialogMergeRule.h">
+      <Filter>Header Files\GraphicsItem</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\selectRuleWizardPage.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\selectTypeWizardPage.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\setParamsWizardPage.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_WizardPageSelectRule.h">
+      <Filter>Header Files\Relation</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_WizardPageSelectType.h">
+      <Filter>Header Files\Relation</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_WizardPageSetParams.h">
+      <Filter>Header Files\Relation</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_WizardRelationCreateBatch.h">
+      <Filter>Header Files\Relation</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\behaviorDebugDialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Forms\frameProducerDialog.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_DialogBehaviorDebug.h">
+      <Filter>Header Files\Behavior</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_DialogFrameProducer.h">
+      <Filter>Header Files\Behavior</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_Broadcaster.h">
+      <Filter>Header Files\Core</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_MainUI.h">
+      <Filter>Header Files\Core</Filter>
+    </CustomBuild>
+    <CustomBuild Include="MainWindow.h">
+      <Filter>Header Files\Core</Filter>
+    </CustomBuild>
+    <CustomBuild Include="C_ManagerDisplay.h">
+      <Filter>Header Files\Core</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="GeneratedFiles\ui_mainwindow.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_operateobjectwidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_searcherobjectwidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C_ViewWidgetObject.h">
+      <Filter>Header Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="C_2DWnd.h">
+      <Filter>Header Files\Wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="C_3DWnd.h">
+      <Filter>Header Files\Wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="C_ViewWidgetRelation.h">
+      <Filter>Header Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="C_SearcherRelation.h">
+      <Filter>Header Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_searcherrelationwidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_operaterelationwidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C_OperateRelation.h">
+      <Filter>Header Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="C_ViewRelation.h">
+      <Filter>Header Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="C_2DCoordinateWidget.h">
+      <Filter>Header Files\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="C_MessageFrame.h">
+      <Filter>Header Files\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_2dcoordinatewidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C_3DCoordinateWidget.h">
+      <Filter>Header Files\Status</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_3dcoordinatewidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_createObjectDialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_operateclasswidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_searchclasswidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C_SearchClass.h">
+      <Filter>Header Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="C_ViewWidgetClass.h">
+      <Filter>Header Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_formPartDialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_objectClassExportDialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_objectExportDialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_timeAxisViewWidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_objectBasicinfoWidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_objectReferenceWidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_objectPositionWidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_objectAttributeWidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_objectComposeWidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_objectFormWidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_objectRelationWidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_createObjectClassDialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_objectClassComposeWidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_createRelationClassDialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_createRelationManualWidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_createRelationDialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_objectClassAttributeWidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_objectClassBasicinfoWidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_objectClassFormWidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_objectClassReferenceWidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_setSimulationTimeDialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AC_ItemGraphic.h">
+      <Filter>Header Files\GraphicsItem</Filter>
+    </ClInclude>
+    <ClInclude Include="C_ItemAttribute.h">
+      <Filter>Header Files\GraphicsItem</Filter>
+    </ClInclude>
+    <ClInclude Include="C_ItemConnection.h">
+      <Filter>Header Files\GraphicsItem</Filter>
+    </ClInclude>
+    <ClInclude Include="C_ItemFeatureSet.h">
+      <Filter>Header Files\GraphicsItem</Filter>
+    </ClInclude>
+    <ClInclude Include="C_ItemForm.h">
+      <Filter>Header Files\GraphicsItem</Filter>
+    </ClInclude>
+    <ClInclude Include="C_ItemGeometry.h">
+      <Filter>Header Files\GraphicsItem</Filter>
+    </ClInclude>
+    <ClInclude Include="C_ItemGroupFeatureSet.h">
+      <Filter>Header Files\GraphicsItem</Filter>
+    </ClInclude>
+    <ClInclude Include="C_ItemGroupObjectClass.h">
+      <Filter>Header Files\GraphicsItem</Filter>
+    </ClInclude>
+    <ClInclude Include="C_ItemMap.h">
+      <Filter>Header Files\GraphicsItem</Filter>
+    </ClInclude>
+    <ClInclude Include="C_ItemMatch.h">
+      <Filter>Header Files\GraphicsItem</Filter>
+    </ClInclude>
+    <ClInclude Include="C_ItemObjectClass.h">
+      <Filter>Header Files\GraphicsItem</Filter>
+    </ClInclude>
+    <ClInclude Include="C_ItemPosition.h">
+      <Filter>Header Files\GraphicsItem</Filter>
+    </ClInclude>
+    <ClInclude Include="C_SubitemAttribute.h">
+      <Filter>Header Files\GraphicsItem</Filter>
+    </ClInclude>
+    <ClInclude Include="C_SubitemForm.h">
+      <Filter>Header Files\GraphicsItem</Filter>
+    </ClInclude>
+    <ClInclude Include="C_SubitemGeometry.h">
+      <Filter>Header Files\GraphicsItem</Filter>
+    </ClInclude>
+    <ClInclude Include="C_ConvertWnd.h">
+      <Filter>Header Files\Wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_filterRuleDlg.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_mergeRuleDlg.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_behaviorViewerDlg.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_addBehaviorDialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_objectBehaviorWidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_objectClassBehaviorWidget.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_selectRuleWizardPage.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_selectTypeWizardPage.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_setParamsWizardPage.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_behaviorDebugDialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_frameProducerDialog.h">
+      <Filter>Generated Files</Filter>
+    </ClInclude>
+    <ClInclude Include="C_MainCtrl.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="AC_FilterSTObject.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="C_AccessFileSTObject.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="C_ManagerSTObject.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="C_ManagerSTObjectRelation.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="C_OperatorSTObject.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="C_EngineDisplay3D.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="C_EngineDisplay2D.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="C_ViewerWidget3D.h">
+      <Filter>Header Files\Wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="GraphicsWindowQt.h">
+      <Filter>Header Files\Wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="C_GlobalGIS.h">
+      <Filter>Header Files\Wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="VBF_UpdateOperation.h">
+      <Filter>Header Files\Wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="VBF_LoadThread.h">
+      <Filter>Header Files\Wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="VBF_GlobalGIS_Plot.h">
+      <Filter>Header Files\Wnd</Filter>
+    </ClInclude>
+    <ClInclude Include="VBF_FunctionRegister.h">
+      <Filter>Header Files\Wnd</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_OperateObject.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_OperateObject.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_ViewObject.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_ViewObject.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_MainWindow.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_MainWindow.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\qrc_ModelingTool.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="C_OperateObject.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="C_SearcherObject.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ViewObject.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ViewWidgetObject.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="C_2DWnd.cpp">
+      <Filter>Source Files\Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="C_3DWnd.cpp">
+      <Filter>Source Files\Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_ViewObjectClass.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_ViewObjectClass.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ViewObjectClass.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ViewWidgetRelation.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="C_SearcherRelation.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_SearcherObject.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_SearcherObject.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_OperateRelation.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ViewRelation.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="C_2DCoordinateWidget.cpp">
+      <Filter>Source Files\Status</Filter>
+    </ClCompile>
+    <ClCompile Include="C_MessageFrame.cpp">
+      <Filter>Source Files\Status</Filter>
+    </ClCompile>
+    <ClCompile Include="C_3DCoordinateWidget.cpp">
+      <Filter>Source Files\Status</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_MainUI.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_MainUI.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_DialogObjectCreate.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_DialogObjectCreate.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_DialogObjectCreate.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_ViewWidgetTimeAxis.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_ViewWidgetTimeAxis.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ViewWidgetTimeAxis.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_qcustomplot.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_qcustomplot.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="qcustomplot.cpp">
+      <Filter>Source Files\View\3rdSource</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_qtbuttonpropertybrowser.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_qtbuttonpropertybrowser.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_qteditorfactory.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_qteditorfactory.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_qtgroupboxpropertybrowser.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_qtgroupboxpropertybrowser.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_qtpropertybrowser.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_qtpropertybrowser.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_qtpropertybrowserutils_p.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_qtpropertybrowserutils_p.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_qtpropertymanager.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_qtpropertymanager.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_qttreepropertybrowser.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_qttreepropertybrowser.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_qtvariantproperty.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_qtvariantproperty.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="qtvariantproperty.cpp">
+      <Filter>Source Files\View\3rdSource</Filter>
+    </ClCompile>
+    <ClCompile Include="qtbuttonpropertybrowser.cpp">
+      <Filter>Source Files\View\3rdSource</Filter>
+    </ClCompile>
+    <ClCompile Include="qtgroupboxpropertybrowser.cpp">
+      <Filter>Source Files\View\3rdSource</Filter>
+    </ClCompile>
+    <ClCompile Include="qtpropertybrowser.cpp">
+      <Filter>Source Files\View\3rdSource</Filter>
+    </ClCompile>
+    <ClCompile Include="qtpropertybrowserutils.cpp">
+      <Filter>Source Files\View\3rdSource</Filter>
+    </ClCompile>
+    <ClCompile Include="qteditorfactory.cpp">
+      <Filter>Source Files\View\3rdSource</Filter>
+    </ClCompile>
+    <ClCompile Include="qtpropertymanager.cpp">
+      <Filter>Source Files\View\3rdSource</Filter>
+    </ClCompile>
+    <ClCompile Include="qttreepropertybrowser.cpp">
+      <Filter>Source Files\View\3rdSource</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_OperateClass.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_OperateClass.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_OperateClass.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="C_SearchClass.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ViewWidgetClass.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_DialogFormPart.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_DialogFormPart.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_DialogFormPart.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_DialogObjectClassExport.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_DialogObjectClassExport.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_DialogObjectExport.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_DialogObjectExport.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_DialogObjectClassExport.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="C_DialogObjectExport.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_WidgetObjectBasicInfo.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_WidgetObjectBasicInfo.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_WidgetObjectBasicInfo.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="C_WidgetObjectReference.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_WidgetObjectReference.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_WidgetObjectReference.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_WidgetObjectPosition.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_WidgetObjectPosition.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_WidgetObjectForm.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_WidgetObjectForm.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_WidgetObjectForm.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_WidgetObjectCompose.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_WidgetObjectCompose.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_WidgetObjectCompose.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_WidgetObjectAttribute.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_WidgetObjectAttribute.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_WidgetObjectAttribute.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_WidgetObjectRelation.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_WidgetObjectRelation.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_WidgetObjectRelation.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="C_WidgetObjectPosition.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_DialogObjectClassCreate.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_DialogObjectClassCreate.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_DialogObjectClassCreate.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ViewWidgetTraits.cpp">
+      <Filter>Source Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_WidgetObjectClassCompose.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_WidgetObjectClassCompose.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_WidgetObjectClassCompose.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_DialogRelationClassCreate.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_DialogRelationClassCreate.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_DialogRelationClassCreate.cpp">
+      <Filter>Source Files\Relation</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_ViewWidgetRelationCreateManual.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_ViewWidgetRelationCreateManual.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ViewWidgetRelationCreateManual.cpp">
+      <Filter>Source Files\Relation</Filter>
+    </ClCompile>
+    <ClCompile Include="C_DialogRelationCreate.cpp">
+      <Filter>Source Files\Relation</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_DialogRelationCreate.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_DialogRelationCreate.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_WidgetObjectClassAttribute.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_WidgetObjectClassAttribute.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_WidgetObjectClassBasicInfo.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_WidgetObjectClassBasicInfo.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_WidgetObjectClassForm.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_WidgetObjectClassForm.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_WidgetObjectClassReference.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_WidgetObjectClassReference.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_WidgetObjectClassAttribute.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="C_WidgetObjectClassForm.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="C_WidgetObjectClassBasicInfo.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="C_WidgetObjectClassReference.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_DialogSimulationTimeSet.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_DialogSimulationTimeSet.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_DialogSimulationTimeSet.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="AC_ItemGraphic.cpp">
+      <Filter>Source Files\GraphicsItem</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ItemAttribute.cpp">
+      <Filter>Source Files\GraphicsItem</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ItemConnection.cpp">
+      <Filter>Source Files\GraphicsItem</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ItemFeatureSet.cpp">
+      <Filter>Source Files\GraphicsItem</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ItemForm.cpp">
+      <Filter>Source Files\GraphicsItem</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ItemGeometry.cpp">
+      <Filter>Source Files\GraphicsItem</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ItemGroupFeatureSet.cpp">
+      <Filter>Source Files\GraphicsItem</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ItemGroupObjectClass.cpp">
+      <Filter>Source Files\GraphicsItem</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ItemMap.cpp">
+      <Filter>Source Files\GraphicsItem</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ItemMatch.cpp">
+      <Filter>Source Files\GraphicsItem</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ItemObjectClass.cpp">
+      <Filter>Source Files\GraphicsItem</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ItemPosition.cpp">
+      <Filter>Source Files\GraphicsItem</Filter>
+    </ClCompile>
+    <ClCompile Include="C_SubitemAttribute.cpp">
+      <Filter>Source Files\GraphicsItem</Filter>
+    </ClCompile>
+    <ClCompile Include="C_SubitemForm.cpp">
+      <Filter>Source Files\GraphicsItem</Filter>
+    </ClCompile>
+    <ClCompile Include="C_SubitemGeometry.cpp">
+      <Filter>Source Files\GraphicsItem</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_ConvertCanvas.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_ConvertCanvas.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ConvertCanvas.cpp">
+      <Filter>Source Files\Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ConvertWnd.cpp">
+      <Filter>Source Files\Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_DialogBehaviorAdd.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_DialogBehaviorAdd.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_WidgetObjectBehavior.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_WidgetObjectBehavior.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_WidgetObjectClassBehavior.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_WidgetObjectClassBehavior.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_DialogBehaviorAdd.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="C_WidgetObjectBehavior.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="C_WidgetObjectClassBehavior.cpp">
+      <Filter>Source Files\Object</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_DialogBehaviorViewer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_DialogBehaviorViewer.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_DialogBehaviorViewer.cpp">
+      <Filter>Source Files\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_DialogFilterRule.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_DialogFilterRule.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_DialogMergeRule.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_DialogMergeRule.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_DialogFilterRule.cpp">
+      <Filter>Source Files\GraphicsItem</Filter>
+    </ClCompile>
+    <ClCompile Include="C_DialogMergeRule.cpp">
+      <Filter>Source Files\GraphicsItem</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_WizardPageSelectRule.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_WizardPageSelectRule.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_WizardPageSelectType.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_WizardPageSelectType.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_WizardPageSetParams.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_WizardPageSetParams.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_WizardRelationCreateBatch.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_WizardRelationCreateBatch.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_WizardPageSelectRule.cpp">
+      <Filter>Source Files\Relation</Filter>
+    </ClCompile>
+    <ClCompile Include="C_WizardPageSelectType.cpp">
+      <Filter>Source Files\Relation</Filter>
+    </ClCompile>
+    <ClCompile Include="C_WizardPageSetParams.cpp">
+      <Filter>Source Files\Relation</Filter>
+    </ClCompile>
+    <ClCompile Include="C_WizardRelationCreateBatch.cpp">
+      <Filter>Source Files\Relation</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_DialogBehaviorDebug.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_DialogBehaviorDebug.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_DialogFrameProducer.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_DialogFrameProducer.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_DialogBehaviorDebug.cpp">
+      <Filter>Source Files\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="C_DialogFrameProducer.cpp">
+      <Filter>Source Files\Behavior</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_Broadcaster.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_Broadcaster.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_Broadcaster.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="C_MainCtrl.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="C_MainUI.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="MainWindow.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="AC_FilterSTObject.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="C_OperatorSTObject.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="C_AccessFileSTObject.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ManagerSTObject.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ManagerSTObjectRelation.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ManagerDisplay.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_C_ManagerDisplay.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_C_ManagerDisplay.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="C_EngineDisplay3D.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="C_EngineDisplay2D.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="C_ViewerWidget3D.cpp">
+      <Filter>Source Files\Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="GraphicsWindowQt.cpp">
+      <Filter>Source Files\Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="C_GlobalGIS.cpp">
+      <Filter>Source Files\Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="VBF_UpdateOperation.cpp">
+      <Filter>Source Files\Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="VBF_LoadThread.cpp">
+      <Filter>Source Files\Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="VBF_GlobalGIS_Plot.cpp">
+      <Filter>Source Files\Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="VBF_FunctionRegister.cpp">
+      <Filter>Source Files\Wnd</Filter>
+    </ClCompile>
+    <ClCompile Include="VBF_GlobalGIS_Script.cpp">
+      <Filter>Source Files\Wnd</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ModelingTool.rc" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,404 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FrameProducerDialog</class>
+ <widget class="QDialog" name="FrameProducerDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>586</width>
+    <height>568</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>行为组件框架生成</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../ModelingTool.qrc">
+    <normaloff>:/ModelingTool/Images/behaviorComponent.png</normaloff>:/ModelingTool/Images/behaviorComponent.png</iconset>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_6">
+   <item row="0" column="0">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>行为组件基本信息</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>行为组件标识：</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="lineEdit_componentID"/>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_3">
+            <property name="font">
+             <font>
+              <italic>true</italic>
+             </font>
+            </property>
+            <property name="text">
+             <string>类别标识用于唯一标识该行为组件动态库</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>行为组件类名：</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="lineEdit_componentName"/>
+          </item>
+          <item row="1" column="2">
+           <widget class="QLabel" name="label_4">
+            <property name="font">
+             <font>
+              <italic>true</italic>
+             </font>
+            </property>
+            <property name="text">
+             <string>组件名称将作为组件工厂库的类名（.h）</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>行为组件别名：</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="lineEdit_componentAlias"/>
+          </item>
+          <item row="2" column="2">
+           <widget class="QLabel" name="label_8">
+            <property name="font">
+             <font>
+              <italic>true</italic>
+             </font>
+            </property>
+            <property name="text">
+             <string>用于用户识别该行为组件的易读名称</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0">
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="QLabel" name="label_5">
+              <property name="text">
+               <string>行为组件描述：</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>18</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item row="3" column="1">
+           <widget class="QTextEdit" name="textEdit_componentDesc"/>
+          </item>
+          <item row="3" column="2">
+           <layout class="QVBoxLayout" name="verticalLayout_2">
+            <item>
+             <widget class="QLabel" name="label_6">
+              <property name="font">
+               <font>
+                <italic>true</italic>
+               </font>
+              </property>
+              <property name="text">
+               <string>对行为组件进行一个整体的描述</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="verticalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>18</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox_2">
+       <property name="title">
+        <string>行为列表</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0" colspan="2">
+           <widget class="QTableWidget" name="tableWidget_beheviors">
+            <property name="minimumSize">
+             <size>
+              <width>0</width>
+              <height>200</height>
+             </size>
+            </property>
+            <row>
+             <property name="text">
+              <string>1</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>2</string>
+             </property>
+            </row>
+            <row>
+             <property name="text">
+              <string>3</string>
+             </property>
+            </row>
+            <column>
+             <property name="text">
+              <string>行为别名</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>行为名称</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>行为类名称</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>行为描述</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>参数列表</string>
+             </property>
+            </column>
+            <column>
+             <property name="text">
+              <string>输入列表</string>
+             </property>
+            </column>
+            <item row="0" column="0">
+             <property name="text">
+              <string>起飞</string>
+             </property>
+            </item>
+            <item row="0" column="1">
+             <property name="text">
+              <string>PlaneTakeOff</string>
+             </property>
+            </item>
+            <item row="0" column="2">
+             <property name="text">
+              <string>C_PlaneTakeOff</string>
+             </property>
+            </item>
+            <item row="0" column="3">
+             <property name="text">
+              <string>主要是通过滑行、加速之后达到平飞高度。</string>
+             </property>
+            </item>
+            <item row="0" column="4">
+             <property name="text">
+              <string>机长/机高/翼展</string>
+             </property>
+            </item>
+            <item row="0" column="5">
+             <property name="text">
+              <string>起飞点/载重/风速/风向</string>
+             </property>
+            </item>
+            <item row="1" column="0">
+             <property name="text">
+              <string>平飞</string>
+             </property>
+            </item>
+            <item row="1" column="1">
+             <property name="text">
+              <string>PlaneFly</string>
+             </property>
+            </item>
+            <item row="1" column="2">
+             <property name="text">
+              <string>C_PlaneFly</string>
+             </property>
+            </item>
+            <item row="1" column="3">
+             <property name="text">
+              <string>主要是飞机在高空的平稳飞行</string>
+             </property>
+            </item>
+            <item row="1" column="4">
+             <property name="text">
+              <string>机长/机高/翼展</string>
+             </property>
+            </item>
+            <item row="1" column="5">
+             <property name="text">
+              <string>时速/平飞高度/起始点</string>
+             </property>
+            </item>
+            <item row="2" column="0">
+             <property name="text">
+              <string>降落</string>
+             </property>
+            </item>
+            <item row="2" column="1">
+             <property name="text">
+              <string>PlaneLanding</string>
+             </property>
+            </item>
+            <item row="2" column="2">
+             <property name="text">
+              <string>C_PlaneLanding</string>
+             </property>
+            </item>
+            <item row="2" column="3">
+             <property name="text">
+              <string>主要是飞机的减速、降落、滑行直到停止。</string>
+             </property>
+            </item>
+            <item row="2" column="4">
+             <property name="text">
+              <string>机长/机高/翼展</string>
+             </property>
+            </item>
+            <item row="2" column="5">
+             <property name="text">
+              <string>降落点/时速</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QPushButton" name="pushButton_add">
+            <property name="text">
+             <string>添加行为</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../ModelingTool.qrc">
+              <normaloff>:/ModelingTool/Images/add.png</normaloff>:/ModelingTool/Images/add.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QPushButton" name="pushButton_remove">
+            <property name="text">
+             <string>移除行为</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../ModelingTool.qrc">
+              <normaloff>:/ModelingTool/Images/remove_circle.png</normaloff>:/ModelingTool/Images/remove_circle.png</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="groupBox_3">
+       <property name="title">
+        <string>代码生成路径</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <layout class="QHBoxLayout" name="horizontalLayout">
+          <item>
+           <widget class="QLineEdit" name="lineEdit_outputPath"/>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pushButton_search">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="../ModelingTool.qrc">
+              <normaloff>:/ModelingTool/Images/search.png</normaloff>:/ModelingTool/Images/search.png</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
+       <item>
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_produce">
+         <property name="text">
+          <string>生成</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_cancel">
+         <property name="text">
+          <string>取消</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../ModelingTool.qrc"/>
+ </resources>
+ <connections/>
+</ui>

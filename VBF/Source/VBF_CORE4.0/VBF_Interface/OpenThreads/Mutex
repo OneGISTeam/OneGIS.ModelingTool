@@ -1,0 +1,54 @@
+#ifndef _OPENTHREADS_MUTEX_
+#define _OPENTHREADS_MUTEX_
+
+#include <OpenThreads/Exports>
+
+namespace OpenThreads {
+
+/**
+ *  互斥体接口类：提供了互斥体操作的机制，可效地避免了各个线程对同一资源的相互竞争，即，
+                 某一线程欲操作某一共享资源时，首先使用lock()函数加锁，操作完成之后再使用unlock函数解锁。
+				 一个线程类中可以存在多个互斥体对象，用于不同的地点或情形下为共享区域加锁；但是一定要在适当的时候解锁，以免造成线程的共享数据无法再访问。
+ */
+class OPENTHREAD_EXPORT_DIRECTIVE Mutex 
+{
+    friend class Condition;
+
+public:
+
+    enum MutexType
+    {
+        MUTEX_NORMAL,	// 正常
+        MUTEX_RECURSIVE	// 递归（循环）
+    };
+
+
+    Mutex(MutexType type=MUTEX_NORMAL);
+    virtual ~Mutex();
+
+	// 获取互斥体的类型
+    MutexType getMutexType() const { return _mutexType; }
+
+	// 互斥体加锁/解锁。正常返回0，否则返回错误号（没设置返回-1）
+    virtual int lock();
+    virtual int unlock();
+
+	// 测试是否可以加锁。正常返回0，否则返回错误号（没设置返回-1）
+    virtual int trylock();
+
+
+
+    // wuyuguo
+    Mutex(const Mutex &/*m*/) {};
+private:
+    Mutex &operator=(const Mutex &/*m*/) {return *(this);};
+
+	// 私有数据
+    void*     _prvData;
+    MutexType _mutexType;
+
+};
+
+}
+
+#endif // _OPENTHREADS_MUTEX_

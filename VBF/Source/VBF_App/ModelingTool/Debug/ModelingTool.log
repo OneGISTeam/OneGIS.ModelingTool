@@ -1,0 +1,693 @@
+﻿生成启动时间为 2018/9/6 10:49:28。
+     1>项目“D:\OneGIS.ModelingTool\VBF\Source\VBF_App\ModelingTool\ModelingTool.vcxproj”在节点 2 上(build 个目标)。
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.CppBuild.targets(299,5): warning MSB8004: Output 目录未以斜杠结尾。此生成实例将添加斜杠，因为必须有这个斜杠才能正确计算 Output 目录。
+     1>InitializeBuildStatus:
+         正在对“Debug\ModelingTool.unsuccessfulbuild”执行 Touch 任务。
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.CppCommon.targets(151,5): warning MSB8017: 针对项“GeneratedFiles\Debug\qteditorfactory.moc”执行自定义生成命令时检测到了循环依赖项。这可能会导致增量生成无法正确运行。
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.CppCommon.targets(151,5): warning MSB8017: 针对项“GeneratedFiles\Debug\qtpropertymanager.moc”执行自定义生成命令时检测到了循环依赖项。这可能会导致增量生成无法正确运行。
+     1>C:\Program Files (x86)\MSBuild\Microsoft.Cpp\v4.0\Microsoft.CppCommon.targets(151,5): warning MSB8017: 针对项“GeneratedFiles\Debug\qttreepropertybrowser.moc”执行自定义生成命令时检测到了循环依赖项。这可能会导致增量生成无法正确运行。
+         Moc'ing C_MainUI.h...
+         Moc'ing C_SearcherObject.h...
+         Moc'ing C_DialogObjectCreate.h...
+         Moc'ing C_DialogFormPart.h...
+         Moc'ing C_DialogObjectClassExport.h...
+         Moc'ing C_DialogObjectExport.h...
+         Moc'ing C_DialogObjectClassCreate.h...
+         Moc'ing C_DialogRelationClassCreate.h...
+         Moc'ing C_ViewWidgetRelationCreateManual.h...
+         Moc'ing C_DialogRelationCreate.h...
+         Moc'ing C_DialogSimulationTimeSet.h...
+         Moc'ing C_DialogFilterRule.h...
+         Moc'ing C_DialogMergeRule.h...
+         Moc'ing C_ConvertCanvas.h...
+         Moc'ing C_Broadcaster.h...
+         Moc'ing C_DialogBehaviorViewer.h...
+         Moc'ing C_DialogBehaviorAdd.h...
+         Moc'ing C_DialogBehaviorDebug.h...
+         Moc'ing C_DialogFrameProducer.h...
+         Moc'ing C_ManagerDisplay.h...
+         Moc'ing C_OperateClass.h...
+         Moc'ing C_ViewWidgetTimeAxis.h...
+         Moc'ing C_WidgetObjectPosition.h...
+         Moc'ing C_WidgetObjectAttribute.h...
+         Moc'ing C_WidgetObjectBasicInfo.h...
+         Moc'ing C_WidgetObjectCompose.h...
+         Moc'ing C_WidgetObjectForm.h...
+         Moc'ing C_WidgetObjectReference.h...
+         Moc'ing C_WidgetObjectRelation.h...
+         Moc'ing C_WidgetObjectClassCompose.h...
+         Moc'ing C_WidgetObjectClassAttribute.h...
+         Moc'ing C_WidgetObjectClassBasicInfo.h...
+         Moc'ing C_WidgetObjectClassForm.h...
+         Moc'ing C_WidgetObjectClassReference.h...
+         Moc'ing C_WidgetObjectBehavior.h...
+         Moc'ing C_WidgetObjectClassBehavior.h...
+         Moc'ing C_WizardPageSelectRule.h...
+         Moc'ing C_WizardPageSelectType.h...
+         Moc'ing C_WizardPageSetParams.h...
+         Moc'ing C_WizardRelationCreateBatch.h...
+         Moc'ing qcustomplot.h...
+         Moc'ing qtbuttonpropertybrowser.h...
+         Moc'ing qteditorfactory.h...
+         Moc'ing qtgroupboxpropertybrowser.h...
+         Moc'ing qtpropertybrowser.h...
+         Moc'ing qtpropertymanager.h...
+         Moc'ing qttreepropertybrowser.h...
+         Moc'ing qtvariantproperty.h...
+         Moc'ing MainWindow.h...
+         Moc'ing C_ViewObject.h...
+         Moc'ing C_ViewObjectClass.h...
+         Moc'ing C_OperateObject.h...
+         Moc'ing qteditorfactory.cpp...
+         Moc'ing qtpropertymanager.cpp...
+         Moc'ing qttreepropertybrowser.cpp...
+       ClCompile:
+         d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I.\GeneratedFiles /ID:\Qt\4.8.6\include /I.\GeneratedFiles\Debug /ID:\Qt\4.8.6\include\QtCore /ID:\Qt\4.8.6\include\QtGui /ID:\Qt\4.8.6\include\QtXml /ID:\Qt\4.8.6\include\QtOpenGL /ID:\Qt\4.8.6\include\QtNetwork /I.\ /I.\Include /I..\..\..\3rdParty\3rdParty_vs2010_x86\include /I..\..\VBF_CORE4.0\VBF_Interface /I..\..\VBF_CORE4.0\VBF_Public /I..\..\VBF_CORE4.0\VBF_Plot\QWT_Plot3D\include /I..\..\VBF_CORE4.0\VBF_Interface\VBF_2DCom /I..\..\VBF_CORE4.0\VBF_Interface\VBF_2DCom\OneGIS_2DMapCore /I..\..\VBF_CORE4.0\VBF_Interface\VBF_2DCom\OneGIS_2DMapGui /Zi /nologo /W1 /WX- /Od /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D VBF_OS_WINDOWS /D __QT4_USE_UNICODE /D QT_CORE_LIB /D QT_GUI_LIB /D QT_XML_LIB /D QT_OPENGL_LIB /D QT4_FOUND /D WINDOW_USING_QT /D "CMAKE_INTDIR=\"Debug\"" /D NOMINMAX /D _USE_MATH_DEFINES /D "CORE_EXPORT=__declspec(dllimport)" /D "GUI_EXPORT=__declspec(dllimport)" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t- /Zc:forScope /GR /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt AC_FilterSTObject.cpp AC_ItemGraphic.cpp C_2DCoordinateWidget.cpp C_2DWnd.cpp C_3DCoordinateWidget.cpp C_3DWnd.cpp C_AccessFileSTObject.cpp C_Broadcaster.cpp C_ConvertCanvas.cpp C_ConvertWnd.cpp C_DialogBehaviorAdd.cpp C_DialogBehaviorDebug.cpp C_DialogFormPart.cpp C_DialogFrameProducer.cpp C_DialogObjectClassCreate.cpp C_DialogObjectClassExport.cpp C_DialogObjectCreate.cpp C_DialogObjectExport.cpp C_DialogRelationClassCreate.cpp C_DialogRelationCreate.cpp C_DialogSimulationTimeSet.cpp C_DialogBehaviorViewer.cpp C_DialogFilterRule.cpp C_DialogMergeRule.cpp C_EngineDisplay2D.cpp C_EngineDisplay3D.cpp C_GlobalGIS.cpp C_ItemAttribute.cpp C_ItemConnection.cpp C_ItemFeatureSet.cpp C_ItemForm.cpp C_ItemGeometry.cpp C_ItemGroupFeatureSet.cpp C_ItemGroupObjectClass.cpp C_ItemMap.cpp C_ItemMatch.cpp C_ItemObjectClass.cpp C_ItemPosition.cpp C_MainCtrl.cpp C_ManagerDisplay.cpp C_ManagerSTObject.cpp C_ManagerSTObjectRelation.cpp C_OperatorSTObject.cpp C_SubitemAttribute.cpp C_SubitemForm.cpp C_SubitemGeometry.cpp C_ViewerWidget3D.cpp C_ViewWidgetRelationCreateManual.cpp C_MainUI.cpp C_MessageFrame.cpp C_OperateClass.cpp C_OperateObject.cpp C_OperateRelation.cpp C_SearchClass.cpp C_SearcherObject.cpp C_SearcherRelation.cpp C_ViewWidgetTraits.cpp C_ViewObjectClass.cpp C_ViewObject.cpp C_ViewRelation.cpp C_ViewWidgetClass.cpp C_ViewWidgetObject.cpp C_ViewWidgetRelation.cpp C_ViewWidgetTimeAxis.cpp C_WidgetObjectAttribute.cpp C_WidgetObjectBasicInfo.cpp C_WidgetObjectBehavior.cpp C_WidgetObjectClassAttribute.cpp C_WidgetObjectClassBasicInfo.cpp C_WidgetObjectClassBehavior.cpp C_WidgetObjectClassCompose.cpp C_WidgetObjectClassForm.cpp C_WidgetObjectClassReference.cpp C_WidgetObjectCompose.cpp C_WidgetObjectForm.cpp C_WidgetObjectPosition.cpp C_WidgetObjectReference.cpp C_WidgetObjectRelation.cpp C_WizardPageSelectRule.cpp C_WizardPageSelectType.cpp C_WizardPageSetParams.cpp C_WizardRelationCreateBatch.cpp GeneratedFiles\Debug\moc_C_Broadcaster.cpp GeneratedFiles\Debug\moc_C_ConvertCanvas.cpp GeneratedFiles\Debug\moc_C_DialogBehaviorAdd.cpp GeneratedFiles\Debug\moc_C_DialogBehaviorDebug.cpp GeneratedFiles\Debug\moc_C_DialogBehaviorViewer.cpp GeneratedFiles\Debug\moc_C_DialogFilterRule.cpp GeneratedFiles\Debug\moc_C_DialogFormPart.cpp GeneratedFiles\Debug\moc_C_DialogFrameProducer.cpp GeneratedFiles\Debug\moc_C_DialogMergeRule.cpp GeneratedFiles\Debug\moc_C_DialogObjectClassCreate.cpp GeneratedFiles\Debug\moc_C_DialogObjectClassExport.cpp GeneratedFiles\Debug\moc_C_DialogObjectCreate.cpp GeneratedFiles\Debug\moc_C_DialogObjectExport.cpp GeneratedFiles\Debug\moc_C_DialogRelationClassCreate.cpp GeneratedFiles\Debug\moc_C_DialogRelationCreate.cpp GeneratedFiles\Debug\moc_C_DialogSimulationTimeSet.cpp GeneratedFiles\Debug\moc_C_MainUI.cpp GeneratedFiles\Debug\moc_C_ManagerDisplay.cpp GeneratedFiles\Debug\moc_C_OperateClass.cpp GeneratedFiles\Debug\moc_C_OperateObject.cpp GeneratedFiles\Debug\moc_C_SearcherObject.cpp GeneratedFiles\Debug\moc_C_ViewObject.cpp GeneratedFiles\Debug\moc_C_ViewObjectClass.cpp GeneratedFiles\Debug\moc_C_ViewWidgetRelationCreateManual.cpp GeneratedFiles\Debug\moc_C_ViewWidgetTimeAxis.cpp GeneratedFiles\Debug\moc_C_WidgetObjectAttribute.cpp GeneratedFiles\Debug\moc_C_WidgetObjectBasicInfo.cpp GeneratedFiles\Debug\moc_C_WidgetObjectBehavior.cpp GeneratedFiles\Debug\moc_C_WidgetObjectClassAttribute.cpp GeneratedFiles\Debug\moc_C_WidgetObjectClassBasicInfo.cpp GeneratedFiles\Debug\moc_C_WidgetObjectClassBehavior.cpp GeneratedFiles\Debug\moc_C_WidgetObjectClassCompose.cpp GeneratedFiles\Debug\moc_C_WidgetObjectClassForm.cpp GeneratedFiles\Debug\moc_C_WidgetObjectClassReference.cpp GeneratedFiles\Debug\moc_C_WidgetObjectCompose.cpp GeneratedFiles\Debug\moc_C_WidgetObjectForm.cpp GeneratedFiles\Debug\moc_C_WidgetObjectPosition.cpp GeneratedFiles\Debug\moc_C_WidgetObjectReference.cpp GeneratedFiles\Debug\moc_C_WidgetObjectRelation.cpp GeneratedFiles\Debug\moc_C_WizardPageSelectRule.cpp GeneratedFiles\Debug\moc_C_WizardPageSelectType.cpp GeneratedFiles\Debug\moc_C_WizardPageSetParams.cpp GeneratedFiles\Debug\moc_C_WizardRelationCreateBatch.cpp GeneratedFiles\Debug\moc_MainWindow.cpp GeneratedFiles\Debug\moc_qcustomplot.cpp GeneratedFiles\Debug\moc_qtpropertybrowserutils_p.cpp GraphicsWindowQt.cpp main.cpp MainWindow.cpp qcustomplot.cpp qtbuttonpropertybrowser.cpp qteditorfactory.cpp qtgroupboxpropertybrowser.cpp qtpropertybrowser.cpp qtpropertybrowserutils.cpp qtpropertymanager.cpp qttreepropertybrowser.cpp qtvariantproperty.cpp VBF_FunctionRegister.cpp VBF_GlobalGIS_Plot.cpp VBF_GlobalGIS_Script.cpp VBF_LoadThread.cpp VBF_UpdateOperation.cpp
+         AC_FilterSTObject.cpp
+         AC_ItemGraphic.cpp
+         C_2DCoordinateWidget.cpp
+         C_2DWnd.cpp
+     1>D:\OneGIS.ModelingTool\VBF\Source\VBF_CORE4.0\VBF_Interface\VBF_2DCom\OneGIS_2DMapCore\qgsvectorlayer.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+         C_3DCoordinateWidget.cpp
+         C_3DWnd.cpp
+     1>D:\OneGIS.ModelingTool\VBF\Source\VBF_CORE4.0\VBF_Interface\VBF_Common/VBF_Utils/VBF_StringUtils.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+         C_AccessFileSTObject.cpp
+         C_Broadcaster.cpp
+         C_ConvertCanvas.cpp
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemFeatureSet.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemObjectClass.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_SubitemAttribute.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_SubitemGeometry.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemAttribute.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemGeometry.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemPosition.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemForm.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_SubitemForm.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+         C_ConvertWnd.cpp
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemFeatureSet.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemObjectClass.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+         C_DialogBehaviorAdd.cpp
+         C_DialogBehaviorDebug.cpp
+         C_DialogFormPart.cpp
+         C_DialogFrameProducer.cpp
+         C_DialogObjectClassCreate.cpp
+         C_DialogObjectClassExport.cpp
+         C_DialogObjectCreate.cpp
+         C_DialogObjectExport.cpp
+         C_DialogRelationClassCreate.cpp
+         C_DialogRelationCreate.cpp
+         正在生成代码...
+         正在编译...
+         C_DialogSimulationTimeSet.cpp
+         C_DialogBehaviorViewer.cpp
+         C_DialogFilterRule.cpp
+         C_DialogMergeRule.cpp
+         C_EngineDisplay2D.cpp
+         C_EngineDisplay3D.cpp
+         C_GlobalGIS.cpp
+     1>D:\OneGIS.ModelingTool\VBF\Source\VBF_CORE4.0\VBF_Interface\VBF_Common/VBF_Utils/VBF_StringUtils.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+         C_ItemAttribute.cpp
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemAttribute.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemAttribute.cpp(11): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemAttribute.cpp(25): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+         C_ItemConnection.cpp
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemFeatureSet.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemObjectClass.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_SubitemAttribute.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_SubitemGeometry.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemAttribute.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemGeometry.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemPosition.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemForm.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_SubitemForm.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemConnection.cpp(20): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemConnection.cpp(98): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemConnection.cpp(100): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemConnection.cpp(100): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemConnection.cpp(103): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemConnection.cpp(103): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+         C_ItemFeatureSet.cpp
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemFeatureSet.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemFeatureSet.cpp(13): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+         C_ItemForm.cpp
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemForm.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemForm.cpp(12): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+         C_ItemGeometry.cpp
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemGeometry.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemGeometry.cpp(13): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+         C_ItemGroupFeatureSet.cpp
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemFeatureSet.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_SubitemAttribute.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_SubitemGeometry.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemAttribute.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemGeometry.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemObjectClass.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemGroupFeatureSet.cpp(12): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemGroupFeatureSet.cpp(19): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemGroupFeatureSet.cpp(54): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+         C_ItemGroupObjectClass.cpp
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemObjectClass.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemPosition.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemForm.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_SubitemForm.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemAttribute.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_SubitemAttribute.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemFeatureSet.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemGroupObjectClass.cpp(13): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemGroupObjectClass.cpp(20): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemGroupObjectClass.cpp(59): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+         C_ItemMap.cpp
+     1>C_ItemMap.cpp(11): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+         C_ItemMatch.cpp
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemFeatureSet.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_SubitemAttribute.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_SubitemGeometry.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemAttribute.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemGeometry.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemObjectClass.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemMatch.cpp(12): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+         C_ItemObjectClass.cpp
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemObjectClass.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemObjectClass.cpp(13): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+         C_ItemPosition.cpp
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemPosition.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_ItemPosition.cpp(13): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+         C_MainCtrl.cpp
+         C_ManagerDisplay.cpp
+         正在生成代码...
+         正在编译...
+         C_ManagerSTObject.cpp
+         C_ManagerSTObjectRelation.cpp
+         C_OperatorSTObject.cpp
+         C_SubitemAttribute.cpp
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_SubitemAttribute.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_SubitemAttribute.cpp(12): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_SubitemAttribute.cpp(26): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+         C_SubitemForm.cpp
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_SubitemForm.h(10): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_SubitemForm.cpp(14): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+         C_SubitemGeometry.cpp
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_SubitemGeometry.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>C_SubitemGeometry.cpp(14): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+         C_ViewerWidget3D.cpp
+     1>D:\OneGIS.ModelingTool\VBF\Source\VBF_CORE4.0\VBF_Interface\VBF_Common/VBF_Utils/VBF_StringUtils.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+         C_ViewWidgetRelationCreateManual.cpp
+         C_MainUI.cpp
+     1>D:\OneGIS.ModelingTool\VBF\Source\VBF_CORE4.0\VBF_Interface\VBF_Common/VBF_Utils/VBF_StringUtils.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemFeatureSet.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemObjectClass.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+         C_MessageFrame.cpp
+         C_OperateClass.cpp
+         C_OperateObject.cpp
+         C_OperateRelation.cpp
+         C_SearchClass.cpp
+         C_SearcherObject.cpp
+         C_SearcherRelation.cpp
+         C_ViewWidgetTraits.cpp
+         C_ViewObjectClass.cpp
+         C_ViewObject.cpp
+         C_ViewRelation.cpp
+         正在生成代码...
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\c_mainui.cpp(151): warning C4715: “C_MainUI::getViewWidget”: 不是所有的控件路径都返回值
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\c_mainui.cpp(162): warning C4715: “C_MainUI::getWnd”: 不是所有的控件路径都返回值
+         正在编译...
+         C_ViewWidgetClass.cpp
+         C_ViewWidgetObject.cpp
+         C_ViewWidgetRelation.cpp
+         C_ViewWidgetTimeAxis.cpp
+         C_WidgetObjectAttribute.cpp
+         C_WidgetObjectBasicInfo.cpp
+         C_WidgetObjectBehavior.cpp
+         C_WidgetObjectClassAttribute.cpp
+         C_WidgetObjectClassBasicInfo.cpp
+         C_WidgetObjectClassBehavior.cpp
+         C_WidgetObjectClassCompose.cpp
+         C_WidgetObjectClassForm.cpp
+         C_WidgetObjectClassReference.cpp
+         C_WidgetObjectCompose.cpp
+         C_WidgetObjectForm.cpp
+         C_WidgetObjectPosition.cpp
+         C_WidgetObjectReference.cpp
+         C_WidgetObjectRelation.cpp
+         C_WizardPageSelectRule.cpp
+         C_WizardPageSelectType.cpp
+         正在生成代码...
+         正在编译...
+         C_WizardPageSetParams.cpp
+         C_WizardRelationCreateBatch.cpp
+         moc_C_Broadcaster.cpp
+         moc_C_ConvertCanvas.cpp
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemFeatureSet.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemObjectClass.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+         moc_C_DialogBehaviorAdd.cpp
+         moc_C_DialogBehaviorDebug.cpp
+         moc_C_DialogBehaviorViewer.cpp
+         moc_C_DialogFilterRule.cpp
+         moc_C_DialogFormPart.cpp
+         moc_C_DialogFrameProducer.cpp
+         moc_C_DialogMergeRule.cpp
+         moc_C_DialogObjectClassCreate.cpp
+         moc_C_DialogObjectClassExport.cpp
+         moc_C_DialogObjectCreate.cpp
+         moc_C_DialogObjectExport.cpp
+         moc_C_DialogRelationClassCreate.cpp
+         moc_C_DialogRelationCreate.cpp
+         moc_C_DialogSimulationTimeSet.cpp
+         moc_C_MainUI.cpp
+         moc_C_ManagerDisplay.cpp
+         正在生成代码...
+         正在编译...
+         moc_C_OperateClass.cpp
+         moc_C_OperateObject.cpp
+         moc_C_SearcherObject.cpp
+         moc_C_ViewObject.cpp
+         moc_C_ViewObjectClass.cpp
+         moc_C_ViewWidgetRelationCreateManual.cpp
+         moc_C_ViewWidgetTimeAxis.cpp
+         moc_C_WidgetObjectAttribute.cpp
+         moc_C_WidgetObjectBasicInfo.cpp
+         moc_C_WidgetObjectBehavior.cpp
+         moc_C_WidgetObjectClassAttribute.cpp
+         moc_C_WidgetObjectClassBasicInfo.cpp
+         moc_C_WidgetObjectClassBehavior.cpp
+         moc_C_WidgetObjectClassCompose.cpp
+         moc_C_WidgetObjectClassForm.cpp
+         moc_C_WidgetObjectClassReference.cpp
+         moc_C_WidgetObjectCompose.cpp
+         moc_C_WidgetObjectForm.cpp
+         moc_C_WidgetObjectPosition.cpp
+         moc_C_WidgetObjectReference.cpp
+         正在生成代码...
+         正在编译...
+         moc_C_WidgetObjectRelation.cpp
+         moc_C_WizardPageSelectRule.cpp
+         moc_C_WizardPageSelectType.cpp
+         moc_C_WizardPageSetParams.cpp
+         moc_C_WizardRelationCreateBatch.cpp
+         moc_MainWindow.cpp
+         moc_qcustomplot.cpp
+         moc_qtpropertybrowserutils_p.cpp
+         GraphicsWindowQt.cpp
+         main.cpp
+         MainWindow.cpp
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemFeatureSet.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\C_ItemObjectClass.h(9): warning C4482: 使用了非标准扩展: 限定名中使用了枚举“E_ItemType”
+         qcustomplot.cpp
+     1>d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2239): warning C4996: 'std::_Copy_impl': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
+                 d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2224) : 参见“std::_Copy_impl”的声明
+                 qcustomplot.cpp(20982): 参见对正在编译的函数 模板 实例化“_OutIt std::copy<const QCPGraphData*,QCPGraphData*>(_InIt,_InIt,_OutIt)”的引用
+                 with
+                 [
+                     _OutIt=QCPGraphData *,
+                     _InIt=const QCPGraphData *
+                 ]
+     1>d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2239): warning C4996: 'std::_Copy_impl': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
+                 d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2224) : 参见“std::_Copy_impl”的声明
+                 qcustomplot.cpp(21429): 参见对正在编译的函数 模板 实例化“_OutIt std::copy<const QPointF*,QPointF*>(_InIt,_InIt,_OutIt)”的引用
+                 with
+                 [
+                     _OutIt=QPointF *,
+                     _InIt=const QPointF *
+                 ]
+     1>d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2239): warning C4996: 'std::_Copy_impl': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
+                 d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2224) : 参见“std::_Copy_impl”的声明
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(2722): 参见对正在编译的函数 模板 实例化“_OutIt std::copy<const QCPCurveData*,QCPCurveData*>(_InIt,_InIt,_OutIt)”的引用
+                 with
+                 [
+                     _OutIt=QCPCurveData *,
+                     _InIt=const QCPCurveData *
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(2705): 编译类 模板 成员函数“void QCPDataContainer<DataType>::add(const QVector<T> &,bool)”时
+                 with
+                 [
+                     DataType=QCPCurveData,
+                     T=QCPCurveData
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(5373): 参见对正在编译的类 模板 实例化“QCPDataContainer<DataType>”的引用
+                 with
+                 [
+                     DataType=QCPCurveData
+                 ]
+     1>d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2239): warning C4996: 'std::_Copy_impl': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
+                 d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2224) : 参见“std::_Copy_impl”的声明
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(2722): 参见对正在编译的函数 模板 实例化“_OutIt std::copy<const QCPBarsData*,QCPBarsData*>(_InIt,_InIt,_OutIt)”的引用
+                 with
+                 [
+                     _OutIt=QCPBarsData *,
+                     _InIt=const QCPBarsData *
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(2705): 编译类 模板 成员函数“void QCPDataContainer<DataType>::add(const QVector<T> &,bool)”时
+                 with
+                 [
+                     DataType=QCPBarsData,
+                     T=QCPBarsData
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(5556): 参见对正在编译的类 模板 实例化“QCPDataContainer<DataType>”的引用
+                 with
+                 [
+                     DataType=QCPBarsData
+                 ]
+     1>d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2239): warning C4996: 'std::_Copy_impl': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
+                 d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2224) : 参见“std::_Copy_impl”的声明
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(2722): 参见对正在编译的函数 模板 实例化“_OutIt std::copy<const QCPStatisticalBoxData*,QCPStatisticalBoxData*>(_InIt,_InIt,_OutIt)”的引用
+                 with
+                 [
+                     _OutIt=QCPStatisticalBoxData *,
+                     _InIt=const QCPStatisticalBoxData *
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(2705): 编译类 模板 成员函数“void QCPDataContainer<DataType>::add(const QVector<T> &,bool)”时
+                 with
+                 [
+                     DataType=QCPStatisticalBoxData,
+                     T=QCPStatisticalBoxData
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(5673): 参见对正在编译的类 模板 实例化“QCPDataContainer<DataType>”的引用
+                 with
+                 [
+                     DataType=QCPStatisticalBoxData
+                 ]
+     1>d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2239): warning C4996: 'std::_Copy_impl': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
+                 d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2224) : 参见“std::_Copy_impl”的声明
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(2722): 参见对正在编译的函数 模板 实例化“_OutIt std::copy<const QCPFinancialData*,QCPFinancialData*>(_InIt,_InIt,_OutIt)”的引用
+                 with
+                 [
+                     _OutIt=QCPFinancialData *,
+                     _InIt=const QCPFinancialData *
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(2705): 编译类 模板 成员函数“void QCPDataContainer<DataType>::add(const QVector<T> &,bool)”时
+                 with
+                 [
+                     DataType=QCPFinancialData,
+                     T=QCPFinancialData
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(5947): 参见对正在编译的类 模板 实例化“QCPDataContainer<DataType>”的引用
+                 with
+                 [
+                     DataType=QCPFinancialData
+                 ]
+     1>d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2515): warning C4996: 'std::_Copy_backward': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
+                 d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2500) : 参见“std::_Copy_backward”的声明
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(3200): 参见对正在编译的函数 模板 实例化“_BidIt2 std::copy_backward<QCPGraphData*,QCPGraphData*>(_BidIt1,_BidIt1,_BidIt2)”的引用
+                 with
+                 [
+                     _BidIt2=QCPGraphData *,
+                     _BidIt1=QCPGraphData *
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(3190): 编译类 模板 成员函数“void QCPDataContainer<DataType>::preallocateGrow(int)”时
+                 with
+                 [
+                     DataType=QCPGraphData
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(4104): 编译类 模板 成员函数“QCPAbstractPlottable1D<DataType>::QCPAbstractPlottable1D(QCPAxis *,QCPAxis *)”时
+                 with
+                 [
+                     DataType=QCPGraphData
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(5164): 参见对正在编译的类 模板 实例化“QCPAbstractPlottable1D<DataType>”的引用
+                 with
+                 [
+                     DataType=QCPGraphData
+                 ]
+     1>d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2515): warning C4996: 'std::_Copy_backward': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
+                 d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2500) : 参见“std::_Copy_backward”的声明
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(3200): 参见对正在编译的函数 模板 实例化“_BidIt2 std::copy_backward<QCPCurveData*,QCPCurveData*>(_BidIt1,_BidIt1,_BidIt2)”的引用
+                 with
+                 [
+                     _BidIt2=QCPCurveData *,
+                     _BidIt1=QCPCurveData *
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(3190): 编译类 模板 成员函数“void QCPDataContainer<DataType>::preallocateGrow(int)”时
+                 with
+                 [
+                     DataType=QCPCurveData
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(4104): 编译类 模板 成员函数“QCPAbstractPlottable1D<DataType>::QCPAbstractPlottable1D(QCPAxis *,QCPAxis *)”时
+                 with
+                 [
+                     DataType=QCPCurveData
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(5304): 参见对正在编译的类 模板 实例化“QCPAbstractPlottable1D<DataType>”的引用
+                 with
+                 [
+                     DataType=QCPCurveData
+                 ]
+     1>d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2515): warning C4996: 'std::_Copy_backward': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
+                 d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2500) : 参见“std::_Copy_backward”的声明
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(3200): 参见对正在编译的函数 模板 实例化“_BidIt2 std::copy_backward<QCPBarsData*,QCPBarsData*>(_BidIt1,_BidIt1,_BidIt2)”的引用
+                 with
+                 [
+                     _BidIt2=QCPBarsData *,
+                     _BidIt1=QCPBarsData *
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(3190): 编译类 模板 成员函数“void QCPDataContainer<DataType>::preallocateGrow(int)”时
+                 with
+                 [
+                     DataType=QCPBarsData
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(4104): 编译类 模板 成员函数“QCPAbstractPlottable1D<DataType>::QCPAbstractPlottable1D(QCPAxis *,QCPAxis *)”时
+                 with
+                 [
+                     DataType=QCPBarsData
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(5483): 参见对正在编译的类 模板 实例化“QCPAbstractPlottable1D<DataType>”的引用
+                 with
+                 [
+                     DataType=QCPBarsData
+                 ]
+     1>d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2515): warning C4996: 'std::_Copy_backward': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
+                 d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2500) : 参见“std::_Copy_backward”的声明
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(3200): 参见对正在编译的函数 模板 实例化“_BidIt2 std::copy_backward<QCPStatisticalBoxData*,QCPStatisticalBoxData*>(_BidIt1,_BidIt1,_BidIt2)”的引用
+                 with
+                 [
+                     _BidIt2=QCPStatisticalBoxData *,
+                     _BidIt1=QCPStatisticalBoxData *
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(3190): 编译类 模板 成员函数“void QCPDataContainer<DataType>::preallocateGrow(int)”时
+                 with
+                 [
+                     DataType=QCPStatisticalBoxData
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(4104): 编译类 模板 成员函数“QCPAbstractPlottable1D<DataType>::QCPAbstractPlottable1D(QCPAxis *,QCPAxis *)”时
+                 with
+                 [
+                     DataType=QCPStatisticalBoxData
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(5614): 参见对正在编译的类 模板 实例化“QCPAbstractPlottable1D<DataType>”的引用
+                 with
+                 [
+                     DataType=QCPStatisticalBoxData
+                 ]
+     1>d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2515): warning C4996: 'std::_Copy_backward': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct. To disable this warning, use -D_SCL_SECURE_NO_WARNINGS. See documentation on how to use Visual C++ 'Checked Iterators'
+                 d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\include\xutility(2500) : 参见“std::_Copy_backward”的声明
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(3200): 参见对正在编译的函数 模板 实例化“_BidIt2 std::copy_backward<QCPFinancialData*,QCPFinancialData*>(_BidIt1,_BidIt1,_BidIt2)”的引用
+                 with
+                 [
+                     _BidIt2=QCPFinancialData *,
+                     _BidIt1=QCPFinancialData *
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(3190): 编译类 模板 成员函数“void QCPDataContainer<DataType>::preallocateGrow(int)”时
+                 with
+                 [
+                     DataType=QCPFinancialData
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(4104): 编译类 模板 成员函数“QCPAbstractPlottable1D<DataType>::QCPAbstractPlottable1D(QCPAxis *,QCPAxis *)”时
+                 with
+                 [
+                     DataType=QCPFinancialData
+                 ]
+                 d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\qcustomplot.h(5859): 参见对正在编译的类 模板 实例化“QCPAbstractPlottable1D<DataType>”的引用
+                 with
+                 [
+                     DataType=QCPFinancialData
+                 ]
+         qtbuttonpropertybrowser.cpp
+         qteditorfactory.cpp
+         qtgroupboxpropertybrowser.cpp
+         qtpropertybrowser.cpp
+         qtpropertybrowserutils.cpp
+         qtpropertymanager.cpp
+         qttreepropertybrowser.cpp
+         qtvariantproperty.cpp
+         正在生成代码...
+         正在编译...
+         VBF_FunctionRegister.cpp
+         VBF_GlobalGIS_Plot.cpp
+         VBF_GlobalGIS_Script.cpp
+         VBF_LoadThread.cpp
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\VBF_LoadThread.h(16): warning C4103: “d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\vbf_loadthread.h”: 包括标题后更改了对齐方式，可能是由于缺少 #pragma pack(pop)
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\VBF_LoadThread.h(86): warning C4103: “d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\vbf_loadthread.h”: 包括标题后更改了对齐方式，可能是由于缺少 #pragma pack(pop)
+         VBF_UpdateOperation.cpp
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\VBF_LoadThread.h(16): warning C4103: “d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\vbf_loadthread.h”: 包括标题后更改了对齐方式，可能是由于缺少 #pragma pack(pop)
+     1>d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\VBF_LoadThread.h(86): warning C4103: “d:\onegis.modelingtool\vbf\source\vbf_app\modelingtool\vbf_loadthread.h”: 包括标题后更改了对齐方式，可能是由于缺少 #pragma pack(pop)
+         正在生成代码...
+         所有输出均为最新。
+         d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I.\GeneratedFiles /ID:\Qt\4.8.6\include /I.\GeneratedFiles\Debug /ID:\Qt\4.8.6\include\QtCore /ID:\Qt\4.8.6\include\QtGui /ID:\Qt\4.8.6\include\QtXml /ID:\Qt\4.8.6\include\QtOpenGL /ID:\Qt\4.8.6\include\QtNetwork /I.\ /I.\Include /I..\..\..\3rdParty\3rdParty_vs2010_x86\include /I..\..\VBF_CORE4.0\VBF_Interface /I..\..\VBF_CORE4.0\VBF_Public /I..\..\VBF_CORE4.0\VBF_Plot\QWT_Plot3D\include /I..\..\VBF_CORE4.0\VBF_Interface\VBF_2DCom /I..\..\VBF_CORE4.0\VBF_Interface\VBF_2DCom\OneGIS_2DMapCore /I..\..\VBF_CORE4.0\VBF_Interface\VBF_2DCom\OneGIS_2DMapGui /Zi /nologo /W1 /WX- /Od /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D VBF_OS_WINDOWS /D __QT4_USE_UNICODE /D QT_CORE_LIB /D QT_GUI_LIB /D QT_XML_LIB /D QT_OPENGL_LIB /D QT4_FOUND /D WINDOW_USING_QT /D "CMAKE_INTDIR=\"Debug\"" /D NOMINMAX /D _USE_MATH_DEFINES /D "CORE_EXPORT=__declspec(dllimport)" /D "GUI_EXPORT=__declspec(dllimport)" /Gm- /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t- /Zc:forScope /GR /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt GeneratedFiles\qrc_ModelingTool.cpp
+         qrc_ModelingTool.cpp
+       ResourceCompile:
+         所有输出均为最新。
+       ManifestResourceCompile:
+         所有输出均为最新。
+       Link:
+         d:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"..\..\..\..\Output\bin\Debug\\ModelingToold.exe" /INCREMENTAL /NOLOGO /LIBPATH:D:\Qt\4.8.6\lib /LIBPATH:..\..\..\3rdParty\3rdParty_vs2010_x86\lib /LIBPATH:..\..\..\..\Output\lib\Debug qtmaind.lib QtCored4.lib QtGuid4.lib QtXmld4.lib QtNetworkd4.lib QtOpenGLd4.lib opengl32.lib glu32.lib geosd.lib cal3dd.lib VBF_Particled.lib VBF_JBPointLibd.lib VBF_Cald.lib VBF_3DRasterDBd.lib QWT_Plot3Dd.lib VBF_3DManipulatord.lib VBF_EffectAuxd.lib VBF_STObjectd.lib VBF_AuxThematicMapd.lib VBF_ImgUtild.lib jpeg.lib libpng16.lib VBF_MapAuxd.lib VBF_EarthUtild.lib VBF_Simd.lib VBF_Annotationd.lib VBF_Featuresd.lib VBF_Symbologyd.lib VBF_3DMapd.lib VBF_Viewerd.lib VBF_Terraind.lib VBF_Draggerd.lib VBF_Shadowd.lib geos.lib VBF_HUDAuxd.lib VBF_GLAuxd.lib VBF_Manipulatord.lib VBF_Textd.lib VBF_FXd.lib VBF_SGDBd.lib VBF_SGUtild.lib VBF_Utilsd.lib VBF_XMLd.lib VBF_SceneGraphd.lib VBF_Mathd.lib VBF_Based.lib VBF_Threadd.lib zlib.lib libcurl_imp.lib VBF_Triangulationd.lib onegis_2dmapcored.lib onegis_2dmapguid.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /ManifestFile:"Debug\ModelingToold.exe.intermediate.manifest" /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /DEBUG /PDB:"D:\OneGIS.ModelingTool\Output\bin\Debug\ModelingToold.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"..\..\..\..\Output\bin\Debug\ModelingToold.lib" /MACHINE:X86 Debug\ModelingTool.res
+         Debug\ModelingToold.exe.embed.manifest.res
+         Debug\AC_FilterSTObject.obj
+         Debug\AC_ItemGraphic.obj
+         Debug\C_2DCoordinateWidget.obj
+         Debug\C_2DWnd.obj
+         Debug\C_3DCoordinateWidget.obj
+         Debug\C_3DWnd.obj
+         Debug\C_AccessFileSTObject.obj
+         Debug\C_Broadcaster.obj
+         Debug\C_ConvertCanvas.obj
+         Debug\C_ConvertWnd.obj
+         Debug\C_DialogBehaviorAdd.obj
+         Debug\C_DialogBehaviorDebug.obj
+         Debug\C_DialogFormPart.obj
+         Debug\C_DialogFrameProducer.obj
+         Debug\C_DialogObjectClassCreate.obj
+         Debug\C_DialogObjectClassExport.obj
+         Debug\C_DialogObjectCreate.obj
+         Debug\C_DialogObjectExport.obj
+         Debug\C_DialogRelationClassCreate.obj
+         Debug\C_DialogRelationCreate.obj
+         Debug\C_DialogSimulationTimeSet.obj
+         Debug\C_DialogBehaviorViewer.obj
+         Debug\C_DialogFilterRule.obj
+         Debug\C_DialogMergeRule.obj
+         Debug\C_EngineDisplay2D.obj
+         Debug\C_EngineDisplay3D.obj
+         Debug\C_GlobalGIS.obj
+         Debug\C_ItemAttribute.obj
+         Debug\C_ItemConnection.obj
+         Debug\C_ItemFeatureSet.obj
+         Debug\C_ItemForm.obj
+         Debug\C_ItemGeometry.obj
+         Debug\C_ItemGroupFeatureSet.obj
+         Debug\C_ItemGroupObjectClass.obj
+         Debug\C_ItemMap.obj
+         Debug\C_ItemMatch.obj
+         Debug\C_ItemObjectClass.obj
+         Debug\C_ItemPosition.obj
+         Debug\C_MainCtrl.obj
+         Debug\C_ManagerDisplay.obj
+         Debug\C_ManagerSTObject.obj
+         Debug\C_ManagerSTObjectRelation.obj
+         Debug\C_OperatorSTObject.obj
+         Debug\C_SubitemAttribute.obj
+         Debug\C_SubitemForm.obj
+         Debug\C_SubitemGeometry.obj
+         Debug\C_ViewerWidget3D.obj
+         Debug\C_ViewWidgetRelationCreateManual.obj
+         Debug\C_MainUI.obj
+         Debug\C_MessageFrame.obj
+         Debug\C_OperateClass.obj
+         Debug\C_OperateObject.obj
+         Debug\C_OperateRelation.obj
+         Debug\C_SearchClass.obj
+         Debug\C_SearcherObject.obj
+         Debug\C_SearcherRelation.obj
+         Debug\C_ViewWidgetTraits.obj
+         Debug\C_ViewObjectClass.obj
+         Debug\C_ViewObject.obj
+         Debug\C_ViewRelation.obj
+         Debug\C_ViewWidgetClass.obj
+         Debug\C_ViewWidgetObject.obj
+         Debug\C_ViewWidgetRelation.obj
+         Debug\C_ViewWidgetTimeAxis.obj
+         Debug\C_WidgetObjectAttribute.obj
+         Debug\C_WidgetObjectBasicInfo.obj
+         Debug\C_WidgetObjectBehavior.obj
+         Debug\C_WidgetObjectClassAttribute.obj
+         Debug\C_WidgetObjectClassBasicInfo.obj
+         Debug\C_WidgetObjectClassBehavior.obj
+         Debug\C_WidgetObjectClassCompose.obj
+         Debug\C_WidgetObjectClassForm.obj
+         Debug\C_WidgetObjectClassReference.obj
+         Debug\C_WidgetObjectCompose.obj
+         Debug\C_WidgetObjectForm.obj
+         Debug\C_WidgetObjectPosition.obj
+         Debug\C_WidgetObjectReference.obj
+         Debug\C_WidgetObjectRelation.obj
+         Debug\C_WizardPageSelectRule.obj
+         Debug\C_WizardPageSelectType.obj
+         Debug\C_WizardPageSetParams.obj
+         Debug\C_WizardRelationCreateBatch.obj
+         Debug\moc_C_Broadcaster.obj
+         Debug\moc_C_ConvertCanvas.obj
+         Debug\moc_C_DialogBehaviorAdd.obj
+         Debug\moc_C_DialogBehaviorDebug.obj
+         Debug\moc_C_DialogBehaviorViewer.obj
+         Debug\moc_C_DialogFilterRule.obj
+         Debug\moc_C_DialogFormPart.obj
+         Debug\moc_C_DialogFrameProducer.obj
+         Debug\moc_C_DialogMergeRule.obj
+         Debug\moc_C_DialogObjectClassCreate.obj
+         Debug\moc_C_DialogObjectClassExport.obj
+         Debug\moc_C_DialogObjectCreate.obj
+         Debug\moc_C_DialogObjectExport.obj
+         Debug\moc_C_DialogRelationClassCreate.obj
+         Debug\moc_C_DialogRelationCreate.obj
+         Debug\moc_C_DialogSimulationTimeSet.obj
+         Debug\moc_C_MainUI.obj
+         Debug\moc_C_ManagerDisplay.obj
+         Debug\moc_C_OperateClass.obj
+         Debug\moc_C_OperateObject.obj
+         Debug\moc_C_SearcherObject.obj
+         Debug\moc_C_ViewObject.obj
+         Debug\moc_C_ViewObjectClass.obj
+         Debug\moc_C_ViewWidgetRelationCreateManual.obj
+         Debug\moc_C_ViewWidgetTimeAxis.obj
+         Debug\moc_C_WidgetObjectAttribute.obj
+         Debug\moc_C_WidgetObjectBasicInfo.obj
+         Debug\moc_C_WidgetObjectBehavior.obj
+         Debug\moc_C_WidgetObjectClassAttribute.obj
+         Debug\moc_C_WidgetObjectClassBasicInfo.obj
+         Debug\moc_C_WidgetObjectClassBehavior.obj
+         Debug\moc_C_WidgetObjectClassCompose.obj
+         Debug\moc_C_WidgetObjectClassForm.obj
+         Debug\moc_C_WidgetObjectClassReference.obj
+         Debug\moc_C_WidgetObjectCompose.obj
+         Debug\moc_C_WidgetObjectForm.obj
+         Debug\moc_C_WidgetObjectPosition.obj
+         Debug\moc_C_WidgetObjectReference.obj
+         Debug\moc_C_WidgetObjectRelation.obj
+         Debug\moc_C_WizardPageSelectRule.obj
+         Debug\moc_C_WizardPageSelectType.obj
+         Debug\moc_C_WizardPageSetParams.obj
+         Debug\moc_C_WizardRelationCreateBatch.obj
+         Debug\moc_MainWindow.obj
+         Debug\moc_qcustomplot.obj
+         Debug\moc_qtpropertybrowserutils_p.obj
+         Debug\qrc_ModelingTool.obj
+         Debug\GraphicsWindowQt.obj
+         Debug\main.obj
+         Debug\MainWindow.obj
+         Debug\qcustomplot.obj
+         Debug\qtbuttonpropertybrowser.obj
+         Debug\qteditorfactory.obj
+         Debug\qtgroupboxpropertybrowser.obj
+         Debug\qtpropertybrowser.obj
+         Debug\qtpropertybrowserutils.obj
+         Debug\qtpropertymanager.obj
+         Debug\qttreepropertybrowser.obj
+         Debug\qtvariantproperty.obj
+         Debug\VBF_FunctionRegister.obj
+         Debug\VBF_GlobalGIS_Plot.obj
+         Debug\VBF_GlobalGIS_Script.obj
+         Debug\VBF_LoadThread.obj
+         Debug\VBF_UpdateOperation.obj
+            正在创建库 ..\..\..\..\Output\bin\Debug\ModelingToold.lib 和对象 ..\..\..\..\Output\bin\Debug\ModelingToold.exp
+       Manifest:
+         C:\Program Files (x86)\Microsoft SDKs\Windows\v7.0A\bin\mt.exe /nologo /verbose /out:"Debug\ModelingToold.exe.embed.manifest" /manifest Debug\ModelingToold.exe.intermediate.manifest
+         所有输出均为最新。
+       LinkEmbedManifest:
+         所有输出均为最新。
+         ModelingTool.vcxproj -> D:\OneGIS.ModelingTool\VBF\Source\VBF_App\ModelingTool\..\..\..\..\Output\bin\Debug\ModelingToold.exe
+       FinalizeBuildStatus:
+         正在删除文件“Debug\ModelingTool.unsuccessfulbuild”。
+         正在对“Debug\ModelingTool.lastbuildstate”执行 Touch 任务。
+     1>已完成生成项目“D:\OneGIS.ModelingTool\VBF\Source\VBF_App\ModelingTool\ModelingTool.vcxproj”(build 个目标)的操作。
+
+生成成功。
+
+已用时间 00:06:58.47

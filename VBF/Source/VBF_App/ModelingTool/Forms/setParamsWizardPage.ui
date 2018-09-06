@@ -1,0 +1,292 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SetParamsWizardPage</class>
+ <widget class="QWizardPage" name="SetParamsWizardPage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>537</width>
+    <height>425</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>WizardPage</string>
+  </property>
+  <property name="title">
+   <string>第三步：参数设置</string>
+  </property>
+  <property name="subTitle">
+   <string>您即将构建如下列表中的关系，请对关系的参数进行修改，并对关系的强度进行设置。</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_5">
+   <item row="0" column="0">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="title">
+      <string>参数设置</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_4">
+      <item row="0" column="0">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="label">
+            <property name="text">
+             <string>参数列表：</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>288</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QTableWidget" name="tableWidget">
+          <row>
+           <property name="text">
+            <string>1</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>2</string>
+           </property>
+          </row>
+          <row>
+           <property name="text">
+            <string>3</string>
+           </property>
+          </row>
+          <column>
+           <property name="text">
+            <string>起始对象</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>终止对象</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>关系强度</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>参数1</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>参数2</string>
+           </property>
+          </column>
+          <column>
+           <property name="text">
+            <string>参数3</string>
+           </property>
+          </column>
+          <item row="0" column="0">
+           <property name="text">
+            <string>直95001</string>
+           </property>
+          </item>
+          <item row="0" column="1">
+           <property name="text">
+            <string>直95002</string>
+           </property>
+          </item>
+          <item row="0" column="2">
+           <property name="text">
+            <string>0.87</string>
+           </property>
+          </item>
+          <item row="0" column="3">
+           <property name="text">
+            <string>980.09</string>
+           </property>
+          </item>
+          <item row="0" column="4">
+           <property name="text">
+            <string>764.97</string>
+           </property>
+          </item>
+          <item row="0" column="5">
+           <property name="text">
+            <string>65.99</string>
+           </property>
+          </item>
+          <item row="1" column="0">
+           <property name="text">
+            <string>直95002</string>
+           </property>
+          </item>
+          <item row="1" column="1">
+           <property name="text">
+            <string>直95003</string>
+           </property>
+          </item>
+          <item row="1" column="2">
+           <property name="text">
+            <string>0.76</string>
+           </property>
+          </item>
+          <item row="1" column="3">
+           <property name="text">
+            <string>875.00</string>
+           </property>
+          </item>
+          <item row="1" column="4">
+           <property name="text">
+            <string>23.87</string>
+           </property>
+          </item>
+          <item row="1" column="5">
+           <property name="text">
+            <string>46.87</string>
+           </property>
+          </item>
+          <item row="2" column="0">
+           <property name="text">
+            <string>直95003</string>
+           </property>
+          </item>
+          <item row="2" column="1">
+           <property name="text">
+            <string>直95001</string>
+           </property>
+          </item>
+          <item row="2" column="2">
+           <property name="text">
+            <string>0.34</string>
+           </property>
+          </item>
+          <item row="2" column="3">
+           <property name="text">
+            <string>198.99</string>
+           </property>
+          </item>
+          <item row="2" column="4">
+           <property name="text">
+            <string>24.87</string>
+           </property>
+          </item>
+          <item row="2" column="5">
+           <property name="text">
+            <string>98.09</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+        <item>
+         <widget class="Line" name="line">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QGroupBox" name="groupBox_2">
+          <property name="title">
+           <string>设置强度计算模型</string>
+          </property>
+          <property name="checkable">
+           <bool>true</bool>
+          </property>
+          <layout class="QGridLayout" name="gridLayout_3">
+           <item row="0" column="0">
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout">
+               <item>
+                <widget class="QLabel" name="label_2">
+                 <property name="text">
+                  <string>模型选择：</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QComboBox" name="comboBox">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>模型一</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>模型二</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>模型三</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="QWidget" name="widget_mathmode" native="true">
+               <layout class="QGridLayout" name="gridLayout_2">
+                <item row="0" column="0">
+                 <layout class="QGridLayout" name="gridLayout">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_3">
+                    <property name="text">
+                     <string>模型参数一：</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="0" column="1">
+                   <widget class="QLineEdit" name="lineEdit"/>
+                  </item>
+                  <item row="1" column="0">
+                   <widget class="QLabel" name="label_4">
+                    <property name="text">
+                     <string>模型参数二：</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item row="1" column="1">
+                   <widget class="QLineEdit" name="lineEdit_2"/>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,0 +1,101 @@
+#ifndef _OPENTHREADS_READWRITEMUTEX_
+#define _OPENTHREADS_READWRITEMUTEX_
+
+#include <OpenThreads/Thread>
+#include <OpenThreads/ReentrantMutex>
+
+namespace OpenThreads {
+
+class ReadWriteMutex
+{
+    public:
+    
+        ReadWriteMutex():
+            _readCount(0) {}
+        
+        virtual ~ReadWriteMutex() {}
+    
+        virtual int readLock()
+        {
+            OpenThreads::ScopedLock<OpenThreads::Mutex> lock(_readCountMutex);
+            int result = 0;
+            if (_readCount==0)
+            {
+                result = _readWriteMutex.lock();
+            }
+            ++_readCount;
+            return result;
+        }
+
+
+        virtual int readUnlock()
+        {
+            OpenThreads::ScopedLock<OpenThreads::Mutex> lock(_readCountMutex);
+            int result = 0;
+            if (_readCount>0)
+            {
+                --_readCount;
+                if (_readCount==0)
+                {
+                    result = _readWriteMutex.unlock();
+                }
+            }
+            return result;
+        }
+
+        virtual int writeLock()
+        {
+            return _readWriteMutex.lock();
+        }
+
+        virtual int writeUnlock()
+        {
+            return _readWriteMutex.unlock();
+        }
+       
+    protected:
+    
+        ReadWriteMutex(const ReadWriteMutex&) {}
+        ReadWriteMutex& operator = (const ReadWriteMutex&) { return *(this); }
+
+#if 0
+        ReentrantMutex  _readWriteMutex;        
+        ReentrantMutex  _readCountMutex;
+#else
+        OpenThreads::Mutex  _readWriteMutex;        
+        OpenThreads::Mutex  _readCountMutex;
+#endif        
+        unsigned int    _readCount;
+        
+};
+
+class ScopedReadLock
+{
+    public:
+    
+        ScopedReadLock(ReadWriteMutex& mutex):_mutex(mutex) { _mutex.readLock(); }
+        ~ScopedReadLock() { _mutex.readUnlock(); }
+        
+    protected:  
+        ReadWriteMutex& _mutex;
+
+        ScopedReadLock& operator = (const ScopedReadLock&) { return *this; }
+};
+
+
+class ScopedWriteLock
+{
+    public:
+    
+        ScopedWriteLock(ReadWriteMutex& mutex):_mutex(mutex) { _mutex.writeLock(); }
+        ~ScopedWriteLock() { _mutex.writeUnlock(); }
+        
+    protected:  
+        ReadWriteMutex& _mutex;
+
+        ScopedWriteLock& operator = (const ScopedWriteLock&) { return *this; }
+};
+
+}
+
+#endif

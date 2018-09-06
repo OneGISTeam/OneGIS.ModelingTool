@@ -1,0 +1,22 @@
+#ifndef _OPENTHREADS_REENTRANTMUTEX_
+#define _OPENTHREADS_REENTRANTMUTEX_
+
+#include <OpenThreads/Thread>
+#include <OpenThreads/Mutex>
+#include <OpenThreads/ScopedLock>
+
+namespace OpenThreads 
+{
+
+	class ReentrantMutex : public OpenThreads::Mutex
+	{
+	public:
+
+		ReentrantMutex():
+		  Mutex(MUTEX_RECURSIVE) {}
+
+	};
+
+}
+
+#endif

@@ -1,0 +1,13 @@
+#ifndef FE_VOLUME_RENDER_EXPORT_H
+#define FE_VOLUME_RENDER_EXPORT_H 1
+
+#include <QtCore/qglobal.h>
+
+#if defined(VBF_EFFECT_AUX_LIBRARY)
+#  define VBF_EFFECT_AUX_EXPORT Q_DECL_EXPORT
+#else
+#  define VBF_EFFECT_AUX_EXPORT Q_DECL_IMPORT
+#endif
+
+
+#endif //FE_VOLUME_RENDER_EXPORT_H

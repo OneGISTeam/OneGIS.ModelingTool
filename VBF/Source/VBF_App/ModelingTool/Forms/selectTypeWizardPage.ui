@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>SelectTypeWizardPage</class>
+ <widget class="QWizardPage" name="SelectTypeWizardPage">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>473</width>
+    <height>380</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>380</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>WizardPage</string>
+  </property>
+  <property name="title">
+   <string>第一步：类型选择</string>
+  </property>
+  <property name="subTitle">
+   <string>选择所要构建的关系类型以及批量构建的方式，并设置本次批量构建的关联关系的生命周期。</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_6">
+   <item row="0" column="0">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QGroupBox" name="groupBox">
+       <property name="title">
+        <string>关系视图</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_5">
+        <item row="0" column="0">
+         <widget class="QTreeWidget" name="treeWidget_relation">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <attribute name="headerVisible">
+           <bool>false</bool>
+          </attribute>
+          <column>
+           <property name="text">
+            <string>1</string>
+           </property>
+          </column>
+          <item>
+           <property name="text">
+            <string>协同关系</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../ModelingTool.qrc">
+             <normaloff>:/ModelingTool/Images/network.png</normaloff>:/ModelingTool/Images/network.png</iconset>
+           </property>
+           <item>
+            <property name="text">
+             <string>直95001-&gt;直95002</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../ModelingTool.qrc">
+              <normaloff>:/ModelingTool/Images/relation.png</normaloff>:/ModelingTool/Images/relation.png</iconset>
+            </property>
+            <item>
+             <property name="text">
+              <string>起始对象：直95001</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../ModelingTool.qrc">
+               <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>终止对象：直95002</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../ModelingTool.qrc">
+               <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+             </property>
+            </item>
+           </item>
+           <item>
+            <property name="text">
+             <string>直95002-&gt;直95001</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../ModelingTool.qrc">
+              <normaloff>:/ModelingTool/Images/relation.png</normaloff>:/ModelingTool/Images/relation.png</iconset>
+            </property>
+            <item>
+             <property name="text">
+              <string>起始对象：直95002</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../ModelingTool.qrc">
+               <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>终止对象：直95001</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../ModelingTool.qrc">
+               <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+             </property>
+            </item>
+           </item>
+          </item>
+          <item>
+           <property name="text">
+            <string>指挥关系</string>
+           </property>
+           <property name="icon">
+            <iconset resource="../ModelingTool.qrc">
+             <normaloff>:/ModelingTool/Images/network.png</normaloff>:/ModelingTool/Images/network.png</iconset>
+           </property>
+           <item>
+            <property name="text">
+             <string>直95003-&gt;直95001</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../ModelingTool.qrc">
+              <normaloff>:/ModelingTool/Images/relation.png</normaloff>:/ModelingTool/Images/relation.png</iconset>
+            </property>
+            <item>
+             <property name="text">
+              <string>起始对象：直95003</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../ModelingTool.qrc">
+               <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>终止对象：直95001</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../ModelingTool.qrc">
+               <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+             </property>
+            </item>
+           </item>
+           <item>
+            <property name="text">
+             <string>直95003-&gt;直95002</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../ModelingTool.qrc">
+              <normaloff>:/ModelingTool/Images/relation.png</normaloff>:/ModelingTool/Images/relation.png</iconset>
+            </property>
+            <item>
+             <property name="text">
+              <string>起始对象：直95003</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../ModelingTool.qrc">
+               <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>终止对象：直95002</string>
+             </property>
+             <property name="icon">
+              <iconset resource="../ModelingTool.qrc">
+               <normaloff>:/ModelingTool/Images/object.png</normaloff>:/ModelingTool/Images/object.png</iconset>
+             </property>
+            </item>
+           </item>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>基本信息</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="0" column="0">
+             <widget class="QLabel" name="label_3">
+              <property name="text">
+               <string>关系名称：</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QLineEdit" name="lineEdit_relationName"/>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="label_4">
+              <property name="text">
+               <string>关系标识：</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QLineEdit" name="lineEdit_relationID"/>
+            </item>
+            <item row="2" column="0" colspan="2">
+             <widget class="Line" name="line">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>起始时间：</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QDateTimeEdit" name="dateTimeEdit_begin"/>
+            </item>
+            <item row="4" column="0">
+             <widget class="QLabel" name="label_2">
+              <property name="text">
+               <string>终止时间：</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1">
+             <widget class="QDateTimeEdit" name="dateTimeEdit_end"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_3">
+         <property name="title">
+          <string>构建类型</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0">
+             <widget class="QRadioButton" name="radioButton_one2many">
+              <property name="text">
+               <string>一对多构建方式</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <spacer name="horizontalSpacer">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="radioButton_many2one">
+              <property name="text">
+               <string>多对一构建方式</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <spacer name="horizontalSpacer_2">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="2" column="0">
+             <widget class="QRadioButton" name="radioButton_many2many">
+              <property name="text">
+               <string>多对多构建方式</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="../ModelingTool.qrc"/>
+ </resources>
+ <connections/>
+</ui>

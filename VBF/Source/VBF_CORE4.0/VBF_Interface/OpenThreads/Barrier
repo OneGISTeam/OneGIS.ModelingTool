@@ -1,0 +1,79 @@
+#ifndef _OPENTHREADS_BARRIER_
+#define _OPENTHREADS_BARRIER_
+
+#include <OpenThreads/Exports>
+
+namespace OpenThreads {
+
+/**
+线程栅栏类：对于线程同步颇为重要的阻塞器。构造函数可以设置一个整数值(栅栏的"强度")。
+每个执行了block()函数的线程都将被阻塞；当被阻塞在栅栏处的线程达到指定的数目时，
+栅栏将被冲开，所有的线程将被释放。重要的是，这些线程是几乎同时释放的，也就保证了线程执行的同步性。
+!!!是必须阻塞指定个数的线程之后，所有的线程才会同时被释放。
+*/
+
+class OPENTHREAD_EXPORT_DIRECTIVE Barrier 
+{
+
+public:
+
+    /**
+     *  Constructor
+     */
+    Barrier(int numThreads=0);
+
+    /**
+     *  Destructor
+     */
+    virtual ~Barrier();
+
+    /**
+     *  Reset the barrier to it's original state.
+     */
+    virtual void reset();
+
+    /**
+     *  Block until numThreads threads have entered the barrier.
+     */
+    virtual void block(unsigned int numThreads=0);
+
+    /**
+     *  Release the barrier, now.
+     */
+    virtual void release();
+
+    /**
+     *  Return the number of threads currently blocked in the barrier,
+     *  Return -1 if error.
+     */ 
+    virtual int numThreadsCurrentlyBlocked();
+
+
+    void invalidate();
+    
+private:
+
+    /**
+     *  Private copy constructor, to prevent tampering.
+     */
+    Barrier(const Barrier &/*b*/) ;
+
+    /**
+     *  Private copy assignment, to prevent tampering.
+     */
+    Barrier &operator=(const Barrier &/*b*/);
+
+    /**
+     *  Implementation-specific private data.
+     */
+    void *_prvData;
+
+
+    bool _valid;
+
+};
+
+}
+
+#endif // !_OPENTHREADS_BARRIER_
+

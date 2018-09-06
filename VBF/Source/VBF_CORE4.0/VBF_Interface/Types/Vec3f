@@ -1,0 +1,207 @@
+#ifndef OSG_VEC3F
+#define OSG_VEC3F 1
+
+#include <Types/Vec2f>
+
+#include <VBF_Common/VBF_Math/VBF_Math.h>
+
+namespace osg {
+
+/** General purpose float triple for use as vertices, vectors and normals.
+  * Provides general math operations from addition through to cross products.
+  * No support yet added for float * Vec3f - is it necessary?
+  * Need to define a non-member non-friend operator*  etc.
+  * Vec3f * float is okay
+*/
+class Vec3f
+{
+    public:
+        typedef float value_type;    // 数据类型为float
+        enum { num_components = 3 }; // 3个分量
+        
+        value_type _v[3];
+
+        // 构造函数，设置所有的分量为0
+        Vec3f() { _v[0]=0.0f; _v[1]=0.0f; _v[2]=0.0f;}
+        Vec3f(value_type x,value_type y,value_type z) { _v[0]=x; _v[1]=y; _v[2]=z; }
+        Vec3f(const Vec2f& v2,value_type zz)
+        {
+            _v[0] = v2[0];
+            _v[1] = v2[1];
+            _v[2] = zz;
+        }
+
+
+        inline bool operator == (const Vec3f& v) const { return _v[0]==v._v[0] && _v[1]==v._v[1] && _v[2]==v._v[2]; }
+        
+        inline bool operator != (const Vec3f& v) const { return _v[0]!=v._v[0] || _v[1]!=v._v[1] || _v[2]!=v._v[2]; }
+
+        inline bool operator <  (const Vec3f& v) const
+        {
+            if (_v[0]<v._v[0]) return true;
+            else if (_v[0]>v._v[0]) return false;
+            else if (_v[1]<v._v[1]) return true;
+            else if (_v[1]>v._v[1]) return false;
+            else return (_v[2]<v._v[2]);
+        }
+
+		// 获取向量的起始地址指针，在传递给OpenGL时非常有用
+        inline value_type* ptr() { return _v; } 
+        inline const value_type* ptr() const { return _v; }
+
+        inline void set( value_type x, value_type y, value_type z)
+        {
+            _v[0]=x; _v[1]=y; _v[2]=z;
+        }
+
+        inline void set( const Vec3f& rhs)
+        {
+            _v[0]=rhs._v[0]; _v[1]=rhs._v[1]; _v[2]=rhs._v[2];
+        }
+
+        inline value_type& operator [] (int i) { return _v[i]; }
+        inline value_type operator [] (int i) const { return _v[i]; }
+
+        inline value_type& x() { return _v[0]; }
+        inline value_type& y() { return _v[1]; }
+        inline value_type& z() { return _v[2]; }
+
+        inline value_type x() const { return _v[0]; }
+        inline value_type y() const { return _v[1]; }
+        inline value_type z() const { return _v[2]; }
+
+        inline bool valid() const { return !isNaN(); } // 是否有效，所有值不是NaN则有效
+
+		// 是否无效值，只要有一的为NaN则返回true
+        inline bool isNaN() const { return osg::isNaN(_v[0]) || osg::isNaN(_v[1]) || osg::isNaN(_v[2]); }
+
+		// 执行两个向量的点乘
+        inline value_type operator * (const Vec3f& rhs) const
+        {
+            return _v[0]*rhs._v[0]+_v[1]*rhs._v[1]+_v[2]*rhs._v[2];
+        }
+
+        // 执行两个向量的叉乘
+        inline const Vec3f operator ^ (const Vec3f& rhs) const
+        {
+            return Vec3f(_v[1]*rhs._v[2]-_v[2]*rhs._v[1],
+                         _v[2]*rhs._v[0]-_v[0]*rhs._v[2] ,
+                         _v[0]*rhs._v[1]-_v[1]*rhs._v[0]);
+        }
+
+        // 与标量的数乘
+        inline const Vec3f operator * (value_type rhs) const
+        {
+            return Vec3f(_v[0]*rhs, _v[1]*rhs, _v[2]*rhs);
+        }
+
+        /** Unary multiply by scalar. */
+        inline Vec3f& operator *= (value_type rhs)
+        {
+            _v[0]*=rhs;
+            _v[1]*=rhs;
+            _v[2]*=rhs;
+            return *this;
+        }
+
+        /** Divide by scalar. */
+        inline const Vec3f operator / (value_type rhs) const
+        {
+            return Vec3f(_v[0]/rhs, _v[1]/rhs, _v[2]/rhs);
+        }
+
+        /** Unary divide by scalar. */
+        inline Vec3f& operator /= (value_type rhs)
+        {
+            _v[0]/=rhs;
+            _v[1]/=rhs;
+            _v[2]/=rhs;
+            return *this;
+        }
+
+        /** Binary vector add. */
+        inline const Vec3f operator + (const Vec3f& rhs) const
+        {
+            return Vec3f(_v[0]+rhs._v[0], _v[1]+rhs._v[1], _v[2]+rhs._v[2]);
+        }
+
+        /** Unary vector add. Slightly more efficient because no temporary
+          * intermediate object.
+        */
+        inline Vec3f& operator += (const Vec3f& rhs)
+        {
+            _v[0] += rhs._v[0];
+            _v[1] += rhs._v[1];
+            _v[2] += rhs._v[2];
+            return *this;
+        }
+
+        /** Binary vector subtract. */
+        inline const Vec3f operator - (const Vec3f& rhs) const
+        {
+            return Vec3f(_v[0]-rhs._v[0], _v[1]-rhs._v[1], _v[2]-rhs._v[2]);
+        }
+
+        /** Unary vector subtract. */
+        inline Vec3f& operator -= (const Vec3f& rhs)
+        {
+            _v[0]-=rhs._v[0];
+            _v[1]-=rhs._v[1];
+            _v[2]-=rhs._v[2];
+            return *this;
+        }
+
+        /** Negation operator. Returns the negative of the Vec3f. */
+        inline const Vec3f operator - () const
+        {
+            return Vec3f (-_v[0], -_v[1], -_v[2]);
+        }
+
+        // 计算向量的模
+        inline value_type length() const
+        {
+            return sqrtf( _v[0]*_v[0] + _v[1]*_v[1] + _v[2]*_v[2] );
+        }
+
+ 		// 计算向量模的平方
+        inline value_type length2() const
+        {
+            return _v[0]*_v[0] + _v[1]*_v[1] + _v[2]*_v[2];
+        }
+
+  		// 向量归一化，返回值表示归一化前的向量长度
+        inline value_type normalize()
+        {
+            value_type norm = Vec3f::length();
+            if (norm>0.0)
+            {
+                value_type inv = 1.0f/norm;
+                _v[0] *= inv;
+                _v[1] *= inv;
+                _v[2] *= inv;
+            }                
+            return( norm );
+        }
+
+};    // end of class Vec3f
+
+/** multiply by vector components. */
+inline Vec3f componentMultiply(const Vec3f& lhs, const Vec3f& rhs)
+{
+    return Vec3f(lhs[0]*rhs[0], lhs[1]*rhs[1], lhs[2]*rhs[2]);
+}
+
+/** divide rhs components by rhs vector components. */
+inline Vec3f componentDivide(const Vec3f& lhs, const Vec3f& rhs)
+{
+    return Vec3f(lhs[0]/rhs[0], lhs[1]/rhs[1], lhs[2]/rhs[2]);
+}
+
+const Vec3f X_AXIS(1.0,0.0,0.0);
+const Vec3f Y_AXIS(0.0,1.0,0.0);
+const Vec3f Z_AXIS(0.0,0.0,1.0);
+
+}    // end of namespace osg
+
+#endif
+

@@ -1,0 +1,16 @@
+//*******************************************************************
+// FileName：  VBF_STObject
+// Function：  多粒度时空对象定义
+// Author:     
+// Date:       2017-10-21
+//*******************************************************************
+
+#ifndef __VBF_ST_OBJECT__
+#define __VBF_ST_OBJECT__
+
+#include <VBF_Common/VBF_STObject/VBF_STObject.h>
+#include <VBF_Common/VBF_STObject/VBF_STObjectTemplate.h>
+#include <VBF_Common/VBF_STObject/VBF_STObjectDoc.h>
+#include <VBF_Common/VBF_STObject/VBF_STObjectGroup.h>
+
+#endif

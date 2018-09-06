@@ -1,0 +1,145 @@
+#ifndef VBF_OBSERVER_PTR_H
+#define VBF_OBSERVER_PTR_H
+
+#include <VBF_Base/VBF_Notify.h>
+#include <VBF_Base/ref_ptr>
+#include <VBF_Base/DeleteObserver.h>
+
+#include <OpenThreads/ScopedLock>
+#include <OpenThreads/Mutex>
+
+
+
+/** 弱智能指针。没有引用计数功能，不参与对象的生存期管理，当对象在其它地方被销毁后，通过observer_ptr获得的对象地址将为空。
+  * 如果对象销毁了它返回的是空！引用的对象在使用时可能已经在别的地方销毁了。
+  * 如果在使用过程中，对象在别的线程被销毁了怎么办？用ref_ptr和observer_ptr的结合，即lock函数。
+
+  * To use the observer_ptr<> robustly in multi-threaded applications it is recommend to access the pointer via
+  * the lock() method that passes back a ref_ptr<> that safely takes a reference to the object to prevent deletion
+  * during usage of the object. In certain conditions it may be safe to use the pointer directly without using lock(),
+  * which will confer a perfomance advantage, the conditions are:
+  *   1) The data structure is only accessed/deleted in single threaded/serial way.
+  *   2) The data strucutre is guarenteed by high level management of data strucutures and threads which avoid
+  *      possible situations where the observer_ptr<>'s object may be deleted by one thread whilst being accessed
+  *      by another.
+  * If you are in any doubt about whether it is safe to access the object safe then use the
+  * ref_ptr<> observer_ptr<>.lock() combination. */
+
+
+
+
+template<class T>
+class observer_ptr
+{
+public:
+    typedef T element_type;
+    observer_ptr() : _reference(0), _ptr(0) {}
+
+    /** 从智能指针创建observer_ptr。 */
+    observer_ptr(const ref_ptr<T>& rp)
+    {
+        _reference = rp.valid() ? rp->getOrCreateObserverSet() : 0;
+        _ptr = (_reference.valid() && _reference->getObserverdObject()!=0) ? rp.get() : 0;
+    }
+
+    /** 从原始指针创建 observer_ptr，For compatibility;the result might not be lockable.*/
+    observer_ptr(T* rp)
+    {
+        _reference = rp ? rp->getOrCreateObserverSet() : 0;
+        _ptr = (_reference.valid() && _reference->getObserverdObject()!=0) ? rp : 0;
+    }
+
+    observer_ptr(const observer_ptr& wp) :
+        _reference(wp._reference),
+        _ptr(wp._ptr)
+    {
+    }
+
+    ~observer_ptr()
+    {
+    }
+
+    observer_ptr& operator = (const observer_ptr& wp)
+    {
+        if (&wp==this) return *this;
+
+        _reference = wp._reference;
+        _ptr = wp._ptr;
+        return *this;
+    }
+
+    observer_ptr& operator = (const ref_ptr<T>& rp)
+    {
+        _reference = rp.valid() ? rp->getOrCreateObserverSet() : 0;
+        _ptr = (_reference.valid() && _reference->getObserverdObject()!=0) ? rp.get() : 0;
+        return *this;
+    }
+
+    observer_ptr& operator = (T* rp)
+    {
+        _reference = rp ? rp->getOrCreateObserverSet() : 0;
+        _ptr = (_reference.valid() && _reference->getObserverdObject()!=0) ? rp : 0;
+        return *this;
+    }
+
+    /** 把弱指针observer_ptr赋给强指针ref_ptr。当对象没有被销毁并引用计数>0时，返回的强指针有效。
+     *  该函数用于多线程，防止在使用过程中，对象在别的线程被销毁了。
+     */
+    bool lock(ref_ptr<T>& rptr) const
+    {
+        if (!_reference)
+        {
+            rptr = 0;
+            return false;
+        }
+
+        CVBF_Referenced* obj = _reference->addRefLock();
+        if (!obj)
+        {
+            rptr = 0;
+            return false;
+        }
+
+        rptr = _ptr;
+        obj->unref_nodelete();
+        return rptr.valid();
+    }
+
+    /** 比较操作。这些操作一直是有效的，即使对象已经被删除。*/
+    bool operator == (const observer_ptr& wp) const { return _reference == wp._reference; }
+    bool operator != (const observer_ptr& wp) const { return _reference != wp._reference; }
+    bool operator < (const observer_ptr& wp) const { return _reference < wp._reference; }
+    bool operator > (const observer_ptr& wp) const { return _reference > wp._reference; }
+
+    // Non-strict interface, for compatibility comparison operator for const T*.
+    inline bool operator == (const T* ptr) const { return _ptr == ptr; }
+    inline bool operator != (const T* ptr) const { return _ptr != ptr; }
+    inline bool operator < (const T* ptr) const { return _ptr < ptr; }
+    inline bool operator > (const T* ptr) const { return _ptr > ptr; }
+
+
+
+    // Convenience methods for operating on object, however, access is not automatically threadsafe.
+    // To make thread safe, one should either ensure at a high level
+    // that the object will not be deleted while operating on it, or
+    // by using the observer_ptr<>::lock() to get a ref_ptr<> that
+    // ensures the objects stay alive throughout all access to it.
+
+    // Throw an error if _reference is null?
+    inline T& operator*() const { return *_ptr; }
+    inline T* operator->() const { return _ptr; }
+
+    // get the raw C pointer
+    inline T* get() const { return (_reference.valid() && _reference->getObserverdObject()!=0) ? _ptr : 0; }
+
+    inline bool operator!() const   { return get() == 0; }
+    inline bool valid() const       { return get() != 0; }
+
+protected:
+
+    ref_ptr<ObserverSet>   _reference;
+    T*                          _ptr;
+};
+
+
+#endif
