@@ -1,0 +1,46 @@
+/* -*-c++-*- IfcPlusPlus - www.ifcplusplus.com - Copyright (C) 2011 Fabian Gerold
+*
+* This library is open source and may be redistributed and/or modified under  
+* the terms of the OpenSceneGraph Public License (OSGPL) version 0.0 or 
+* (at your option) any later version.  The full license is in LICENSE file
+* included with this distribution, and on the openscenegraph.org website.
+* 
+* This library is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+* OpenSceneGraph Public License for more details.
+*/
+
+#pragma once
+#include <vector>
+#include <map>
+#include <sstream>
+#include <string>
+#include "model/shared_ptr.h"
+#include "model/IfcPPObject.h"
+#include "model/IfcPPGlobal.h"
+
+// TYPE IfcAirTerminalTypeEnum = ENUMERATION OF	(DIFFUSER	,GRILLE	,LOUVRE	,REGISTER	,USERDEFINED	,NOTDEFINED);
+class IFCPP_EXPORT IfcAirTerminalTypeEnum : virtual public IfcPPObject
+{
+public:
+	enum IfcAirTerminalTypeEnumEnum
+	{
+		ENUM_DIFFUSER,
+		ENUM_GRILLE,
+		ENUM_LOUVRE,
+		ENUM_REGISTER,
+		ENUM_USERDEFINED,
+		ENUM_NOTDEFINED
+	};
+
+	IfcAirTerminalTypeEnum();
+	IfcAirTerminalTypeEnum( IfcAirTerminalTypeEnumEnum e ) { m_enum = e; }
+	~IfcAirTerminalTypeEnum();
+	virtual const char* className() const { return "IfcAirTerminalTypeEnum"; }
+	virtual shared_ptr<IfcPPObject> getDeepCopy( IfcPPCopyOptions& options );
+	virtual void getStepParameter( std::stringstream& stream, bool is_select_type = false ) const;
+	static shared_ptr<IfcAirTerminalTypeEnum> createObjectFromSTEP( const std::wstring& arg );
+	IfcAirTerminalTypeEnumEnum m_enum;
+};
+
