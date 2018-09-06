@@ -1,0 +1,35 @@
+#ifndef OSGANIMATION_SKELETON
+#define OSGANIMATION_SKELETON 1
+
+#include <VBF_Engine/VBF_Animation/Export>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGNodeGroupTransformMatrix.h>
+
+namespace osgAnimation 
+{
+	// นว๗ภ 
+    class OSGANIMATION_EXPORT Skeleton : public osg::MatrixTransform
+    {
+    public:
+        META_Node(osgAnimation, Skeleton);
+
+        class OSGANIMATION_EXPORT UpdateSkeleton : public osg::NodeCallback
+        {
+        public:
+            META_Object(osgAnimation, UpdateSkeleton);
+            UpdateSkeleton();
+            UpdateSkeleton(const UpdateSkeleton&, const osg::CopyOp& copyop = osg::CopyOp::SHALLOW_COPY);
+            virtual void operator()(osg::IVBF_SGNode* node, osg::NodeVisitor* nv);
+            bool needToValidate() const;
+        protected:
+            bool _needValidate;
+        };
+
+        Skeleton();
+        Skeleton(const Skeleton&, const osg::CopyOp&);
+        void setDefaultUpdateCallback();
+
+    };
+
+}
+
+#endif

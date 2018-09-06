@@ -1,0 +1,247 @@
+#ifndef OSG_CULLSETTINGS
+#define OSG_CULLSETTINGS 1
+
+#include <iosfwd>
+#include <Types/VBF_Matrix.h>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNode.h>
+#include <VBF_Base/VBF_ArgumentParser.h>
+#include <VBF_Base/VBF_ApplicationUsage.h>
+
+
+namespace osg {
+
+// 场景裁减的设置选项
+class OSG_EXPORT CullSettings
+{
+    public:
+        CullSettings();
+        CullSettings(::ArgumentParser& arguments);
+        CullSettings(const CullSettings& cs);
+        virtual ~CullSettings();
+        
+        CullSettings& operator = (const CullSettings& settings);
+
+
+        virtual void setDefaults();
+
+        
+        enum VariablesMask
+        {
+            COMPUTE_NEAR_FAR_MODE                   = (0x1 << 0),
+            CULLING_MODE                            = (0x1 << 1),
+            LOD_SCALE                               = (0x1 << 2),
+            SMALL_FEATURE_CULLING_PIXEL_SIZE        = (0x1 << 3),
+            CLAMP_PROJECTION_MATRIX_CALLBACK        = (0x1 << 4),
+            NEAR_FAR_RATIO                          = (0x1 << 5),
+            IMPOSTOR_ACTIVE                         = (0x1 << 6),
+            DEPTH_SORT_IMPOSTOR_SPRITES             = (0x1 << 7),
+            IMPOSTOR_PIXEL_ERROR_THRESHOLD          = (0x1 << 8),
+            NUM_FRAMES_TO_KEEP_IMPOSTORS_SPRITES    = (0x1 << 9),
+            CULL_MASK                               = (0x1 << 10),
+            CULL_MASK_LEFT                          = (0x1 << 11),
+            CULL_MASK_RIGHT                         = (0x1 << 12),
+            CLEAR_COLOR                             = (0x1 << 13),
+            CLEAR_MASK                              = (0x1 << 14),
+            LIGHTING_MODE                           = (0x1 << 15),
+            LIGHT                                   = (0x1 << 16),
+            DRAW_BUFFER                             = (0x1 << 17),
+            READ_BUFFER                             = (0x1 << 18),
+
+            NO_VARIABLES                            = 0x00000000,
+            ALL_VARIABLES                           = 0x7FFFFFFF
+        };
+
+        typedef int InheritanceMask;
+
+        /** Set/Get the inheritance mask used in inheritCullSettings to control which variables get overwritten by the passed in CullSettings object.*/
+        void setInheritanceMask(InheritanceMask mask) { _inheritanceMask = mask; }
+        InheritanceMask getInheritanceMask() const { return _inheritanceMask; }
+        
+        /** Set the local cull settings values from specified CullSettings object.*/
+        void setCullSettings(const CullSettings& settings);
+
+        /** Inherit the local cull settings variable from specified CullSettings object, according to the inheritance mask.*/
+        virtual void inheritCullSettings(const CullSettings& settings) { inheritCullSettings(settings, _inheritanceMask); }
+        virtual void inheritCullSettings(const CullSettings& settings, unsigned int inheritanceMask);
+
+        /** read the environmental variables/commandline arguments.*/
+        void readEnvironmentalVariables();
+        void readCommandLine(::ArgumentParser& arguments);
+
+
+        enum InheritanceMaskActionOnAttributeSetting
+        {
+            DISABLE_ASSOCIATED_INHERITANCE_MASK_BIT,
+            DO_NOT_MODIFY_INHERITANCE_MASK
+        };
+        
+        void setInheritanceMaskActionOnAttributeSetting(InheritanceMaskActionOnAttributeSetting action) { _inheritanceMaskActionOnAttributeSetting = action; }
+        InheritanceMaskActionOnAttributeSetting getInheritanceMaskActionOnAttributeSetting() const { return _inheritanceMaskActionOnAttributeSetting; }
+
+        /** Apply the action, specified by the InheritanceMaskActionOnAttributeSetting, to apply to the inheritance bit mask.
+          * This method is called by CullSettings::set*() parameter methods to ensure that CullSettings inheritance mechanisms doesn't overwrite the local parameter settings.*/
+        inline void applyMaskAction(unsigned int maskBit)
+        {
+            if (_inheritanceMaskActionOnAttributeSetting==DISABLE_ASSOCIATED_INHERITANCE_MASK_BIT)
+            {
+                _inheritanceMask = _inheritanceMask & (~maskBit);
+            }
+        }
+
+
+        /** Switch the creation of Impostors on or off.
+          * Setting active to false forces the CullVisitor to use the Impostor
+          * LOD children for rendering. Setting active to true forces the
+          * CullVisitor to create the appropriate pre-rendering stages which
+          * render to the ImpostorSprite's texture.*/
+        void setImpostorsActive(bool active) { _impostorActive = active; applyMaskAction(IMPOSTOR_ACTIVE); }
+        bool getImpostorsActive() const { return _impostorActive; }
+
+        /** Set the impostor error threshold.
+          * Used in calculation of whether impostors remain valid.*/
+        void setImpostorPixelErrorThreshold(float numPixels) { _impostorPixelErrorThreshold=numPixels;  applyMaskAction(IMPOSTOR_PIXEL_ERROR_THRESHOLD); }
+        float getImpostorPixelErrorThreshold() const { return _impostorPixelErrorThreshold; }
+
+        /** Set whether ImpostorSprite's should be placed in a depth sorted bin for rendering.*/
+        void setDepthSortImpostorSprites(bool doDepthSort) { _depthSortImpostorSprites = doDepthSort; applyMaskAction(DEPTH_SORT_IMPOSTOR_SPRITES); }
+
+        /** Get whether ImpostorSprite's are depth sorted bin for rendering.*/
+        bool getDepthSortImpostorSprites() const { return _depthSortImpostorSprites; }
+
+        /** Set the number of frames that an ImpostorSprite is kept whilst not being beyond,
+          * before being recycled.*/
+        void setNumberOfFrameToKeepImpostorSprites(int numFrames) { _numFramesToKeepImpostorSprites = numFrames; applyMaskAction(NUM_FRAMES_TO_KEEP_IMPOSTORS_SPRITES); }
+
+        /** Get the number of frames that an ImpostorSprite is kept whilst not being beyond,
+          * before being recycled.*/
+        int getNumberOfFrameToKeepImpostorSprites() const { return _numFramesToKeepImpostorSprites; }
+
+        enum ComputeNearFarMode
+        {
+            DO_NOT_COMPUTE_NEAR_FAR = 0,                // 不计算远近裁剪面
+            COMPUTE_NEAR_FAR_USING_BOUNDING_VOLUMES,    // 使用包围体计算远近裁剪面
+            COMPUTE_NEAR_FAR_USING_PRIMITIVES           // 使用图元计算远近裁剪面
+        };
+
+        void setComputeNearFarMode(ComputeNearFarMode cnfm) { _computeNearFar=cnfm; applyMaskAction(COMPUTE_NEAR_FAR_MODE); } 
+        ComputeNearFarMode getComputeNearFarMode() const { return _computeNearFar;} 
+
+        void setNearFarRatio(double ratio) { _nearFarRatio = ratio; applyMaskAction(NEAR_FAR_RATIO); }
+        double getNearFarRatio() const { return _nearFarRatio; }
+
+
+		/*
+		背面裁剪：多边形复杂度最多将降低1/2，这种筛选方式已经由OpenGL实现了（GL_CULLFACE），可以使用渲染属性CullFace开启。
+		视锥体裁剪：将每个物体的包围盒与视锥进行比较，并剔除视锥之外的物体，有时可以将场景的多边形复杂度降低为原来的1/4。
+		剪切平面：OpenGL中已经使用glClipPlane实现了这种场景筛选的功能，以使用渲染属性ClipPlane来设置相应的参数。
+		细节裁剪:场景中某些物体对于观察者而言十分微小，将其剔除。判断是否足够微细的阈值由setSmallFeatureCullingPixelSize设定。
+		        注意可能会剔除一些必要的信息（如用户在屏幕上绘制的一些点），此时可以强制设置几何体对象的包围盒大小（Drawable::setInitialBound）。
+		遮挡裁剪：虽然需要用户手动去设置诸多的几何信息，出色地实现了并继续完善本影遮挡筛选（即完全遮挡）的算法。
+				 在osgoccluder例子中，详细体现了其中有关ConvexPlanarOccluder和OccluderNode的用法。
+				 比较复杂，如果用在整个场景中反而会增大计算的开销，因此往往作为一个预处理步骤出现！！！
+		聚集裁剪：类似于背面筛选的场景筛选方法，但是它可以将多个对象组合起来并进行统一的背面筛选，目前可以使用筛选回调ClusterCullingCallback
+				来实现节点的聚集筛选（对节点使用IVBF_SGNode::setCullCallback），这在地球地理信息的裁减时尤为适用。
+		*/
+
+        enum CullingModeValues
+        {
+            NO_CULLING                  = 0x0,                          // 不进行场景裁剪
+            VIEW_FRUSTUM_SIDES_CULLING  = 0x1,							// 视锥体侧面裁剪					
+            NEAR_PLANE_CULLING          = 0x2,							// 近平面裁剪
+            FAR_PLANE_CULLING           = 0x4,							// 原平面裁剪
+            VIEW_FRUSTUM_CULLING        = VIEW_FRUSTUM_SIDES_CULLING|	// 视锥体裁剪
+                                          NEAR_PLANE_CULLING|
+                                          FAR_PLANE_CULLING,
+            SMALL_FEATURE_CULLING       = 0x8,							// 细节裁剪
+            SHADOW_OCCLUSION_CULLING    = 0x10,							// 遮挡裁剪
+            CLUSTER_CULLING             = 0x20,							// 聚集裁剪
+            DEFAULT_CULLING             = VIEW_FRUSTUM_SIDES_CULLING|   // 缺省方式：后两项需要编写额外的代码以实现功能
+                                          SMALL_FEATURE_CULLING|
+                                          SHADOW_OCCLUSION_CULLING|
+                                          CLUSTER_CULLING,
+            ENABLE_ALL_CULLING          = VIEW_FRUSTUM_CULLING|			// 开启全部筛选方式
+                                          SMALL_FEATURE_CULLING|
+                                          SHADOW_OCCLUSION_CULLING|
+                                          CLUSTER_CULLING
+        };
+        
+
+        /** 设置/获取裁剪模式用于CullVisitor 
+			添加一种模式 setCullingMode(getCullingMode() & ……);去掉一种模式 setCullingMode(getCullingMode() & ~……);
+		*/
+        typedef int CullingMode;
+        void setCullingMode(CullingMode mode) { _cullingMode = mode; applyMaskAction(CULLING_MODE); }
+        CullingMode getCullingMode() const { return _cullingMode; }
+
+
+        void setCullMask(osg::IVBF_SGNode::NodeMask nm) { _cullMask = nm; applyMaskAction(CULL_MASK); }
+        osg::IVBF_SGNode::NodeMask getCullMask() const { return _cullMask; }
+
+        void setCullMaskLeft(osg::IVBF_SGNode::NodeMask nm) { _cullMaskLeft = nm; applyMaskAction(CULL_MASK_LEFT); }
+        osg::IVBF_SGNode::NodeMask getCullMaskLeft() const { return _cullMaskLeft; }
+
+        void setCullMaskRight(osg::IVBF_SGNode::NodeMask nm) { _cullMaskRight = nm; applyMaskAction(CULL_MASK_RIGHT); }
+        osg::IVBF_SGNode::NodeMask getCullMaskRight() const { return _cullMaskRight; }
+
+        /** Set the LOD bias for the CullVisitor to use.*/
+        void setLODScale(float scale) { _LODScale = scale; applyMaskAction(LOD_SCALE); }
+        
+        /** Get the LOD bias.*/
+        float getLODScale() const { return _LODScale; }
+
+        /** Set the Small Feature Culling Pixel Size.*/
+        void setSmallFeatureCullingPixelSize(float value) { _smallFeatureCullingPixelSize=value; applyMaskAction(SMALL_FEATURE_CULLING_PIXEL_SIZE); }
+
+        /** Get the Small Feature Culling Pixel Size.*/
+        float getSmallFeatureCullingPixelSize() const { return _smallFeatureCullingPixelSize; }
+
+
+
+        /** Callback for overriding the CullVisitor's default clamping of the projection matrix to computed near and far values.
+          * Note, both Matrixf and Matrixd versions of clampProjectionMatrixImplementation must be implemented as the CullVisitor
+          * can target either Matrix data type, configured at compile time.*/
+        struct ClampProjectionMatrixCallback : public ::CVBF_Referenced
+        {
+            virtual bool clampProjectionMatrixImplementation(osg::Matrixf& projection, double& znear, double& zfar) const = 0;
+            virtual bool clampProjectionMatrixImplementation(osg::Matrixd& projection, double& znear, double& zfar) const = 0;
+        };
+        
+        /** set the ClampProjectionMatrixCallback.*/
+        void setClampProjectionMatrixCallback(ClampProjectionMatrixCallback* cpmc) { _clampProjectionMatrixCallback = cpmc; applyMaskAction(CLAMP_PROJECTION_MATRIX_CALLBACK); }
+        /** get the non const ClampProjectionMatrixCallback.*/
+        ClampProjectionMatrixCallback* getClampProjectionMatrixCallback() { return _clampProjectionMatrixCallback.get(); }
+        /** get the const ClampProjectionMatrixCallback.*/
+        const ClampProjectionMatrixCallback* getClampProjectionMatrixCallback() const { return _clampProjectionMatrixCallback.get(); }
+
+
+        /** Write out internal settings of CullSettings. */
+        void write(std::ostream& out);
+
+        ref_ptr<ClampProjectionMatrixCallback>      _clampProjectionMatrixCallback;
+    protected:
+
+        InheritanceMask                             _inheritanceMask;
+        InheritanceMaskActionOnAttributeSetting     _inheritanceMaskActionOnAttributeSetting;
+
+        ComputeNearFarMode                          _computeNearFar;
+        CullingMode                                 _cullingMode;
+        float                                       _LODScale;
+        float                                       _smallFeatureCullingPixelSize;
+
+        double                                      _nearFarRatio;
+        bool                                        _impostorActive;
+        bool                                        _depthSortImpostorSprites;
+        float                                       _impostorPixelErrorThreshold;
+        int                                         _numFramesToKeepImpostorSprites;    
+
+        IVBF_SGNode::NodeMask                              _cullMask;
+        IVBF_SGNode::NodeMask                              _cullMaskLeft;
+        IVBF_SGNode::NodeMask                              _cullMaskRight;
+ 
+
+};
+
+
+}
+
+#endif

@@ -1,0 +1,93 @@
+#ifndef OSG_COPYOP
+#define OSG_COPYOP 1
+
+#include <VBF_Engine/VBF_SceneGraph/Export>
+#include <VBF_Base/VBF_Referenced.h>
+
+namespace osg {
+
+
+class CVBF_Object;
+
+//#define VBF_USED_TYPEID_
+
+#ifdef VBF_USED_TYPEID_
+#else 
+class Image;
+class Texture;
+class StateSet;
+class StateAttribute;
+class StateAttributeCallback;
+class Uniform;
+class IVBF_SGNode;
+class Drawable;
+class Array;
+class PrimitiveSet;
+class Shape;
+class NodeCallback;
+#endif
+
+
+
+
+// 拷贝操作：在拷贝构造函数或clone操作时控制深拷贝或浅拷贝
+// 深拷贝是指源对象和拷贝对象互相独立，改变一个对象不会影响另一个对象
+// 浅拷贝使指源对象和拷贝对象共用一份实体，仅仅是引用的变量不同（名称不同），改变一个对象会影响另一个对象
+class OSG_EXPORT CopyOp
+{
+    public:
+    
+        enum Options
+        {
+            SHALLOW_COPY                = 0,
+            DEEP_COPY_OBJECTS           = 1<<0,
+            DEEP_COPY_NODES             = 1<<1,
+            DEEP_COPY_DRAWABLES         = 1<<2,
+            DEEP_COPY_STATESETS         = 1<<3,
+            DEEP_COPY_STATEATTRIBUTES   = 1<<4,
+            DEEP_COPY_TEXTURES          = 1<<5,
+            DEEP_COPY_IMAGES            = 1<<6,
+            DEEP_COPY_ARRAYS            = 1<<7,
+            DEEP_COPY_PRIMITIVES        = 1<<8,
+            DEEP_COPY_SHAPES            = 1<<9,
+            DEEP_COPY_UNIFORMS          = 1<<10,
+            DEEP_COPY_CALLBACKS         = 1<<11,
+            DEEP_COPY_USERDATA          = 1<<12,
+            DEEP_COPY_ALL               = 0x7FFFFFFF
+        };
+
+        typedef unsigned int CopyFlags;
+// IE可能错误
+        inline CopyOp(CopyFlags flags=SHALLOW_COPY):_flags(flags) {}
+        virtual ~CopyOp() {}
+
+        void setCopyFlags(CopyFlags flags) { _flags = flags; }
+        CopyFlags getCopyFlags() const { return _flags; }
+
+        virtual CVBF_Referenced*     operator() (const ::CVBF_Referenced* ref) const;
+        virtual CVBF_Object*    operator() (const CVBF_Object* obj) const;
+
+#ifdef VBF_USED_TYPEID_
+#else 
+		virtual IVBF_SGNode*    operator() (const IVBF_SGNode* node) const;
+        virtual Drawable*       operator() (const Drawable* drawable) const;
+        virtual StateSet*       operator() (const StateSet* stateset) const;
+        virtual StateAttribute* operator() (const StateAttribute* attr) const;
+        virtual Texture*        operator() (const Texture* text) const;
+        virtual Image*          operator() (const Image* image) const;
+        virtual Array*          operator() (const Array* array) const;
+        virtual PrimitiveSet*   operator() (const PrimitiveSet* primitives) const;
+        virtual Shape*          operator() (const Shape* shape) const;
+        virtual Uniform*        operator() (const Uniform* shape) const;
+        virtual NodeCallback*   operator() (const NodeCallback* nodecallback) const;
+        virtual StateAttributeCallback* operator() (const StateAttributeCallback* stateattributecallback) const;
+#endif
+
+    protected:
+    
+        CopyFlags _flags;
+};
+
+}
+
+#endif

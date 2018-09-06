@@ -1,0 +1,33 @@
+#ifndef OSGWIDGET_TYPES
+#define OSGWIDGET_TYPES
+
+#include <numeric>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGDrawableGeometry.h>
+
+namespace osgWidget {
+
+typedef osg::Vec2Array TexCoordArray;
+typedef osg::Vec3Array PointArray;
+typedef osg::Vec4Array ColorArray;
+
+typedef TexCoordArray::value_type TexCoord;
+typedef PointArray::value_type    Point;
+typedef ColorArray::value_type    Color;
+
+typedef TexCoord::value_type texcoord_type;
+typedef Point::value_type    point_type;
+typedef Color::value_type    color_type;
+
+typedef osg::Vec2 XYCoord;
+typedef osg::Vec4 Quad;
+
+typedef osg::Matrix::value_type matrix_type;
+
+// This is multiplied by a normalized Z value [0.0f, -1.0f] to create a RenderBin number
+// to set the state of the Window/Widget with. Perhaps at some later time this should
+// be configurable.
+const int OSGWIDGET_RENDERBIN_MOD = 5000;
+
+}
+
+#endif

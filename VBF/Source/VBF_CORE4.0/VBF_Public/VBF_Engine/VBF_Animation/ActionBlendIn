@@ -1,0 +1,30 @@
+#ifndef OSGANIMATION_ACTION_BLENDIN_H
+#define OSGANIMATION_ACTION_BLENDIN_H
+
+#include <VBF_Engine/VBF_Animation/Action>
+#include <VBF_Engine/VBF_Animation/Export>
+
+
+namespace osgAnimation {
+
+
+    /// blend in from 0 to weight in duration
+    class OSGANIMATION_EXPORT ActionBlendIn : public Action
+    {
+    public:
+        META_Action(osgAnimation, ActionBlendIn);
+        ActionBlendIn();
+        ActionBlendIn(const ActionBlendIn& a, const osg::CopyOp& c);
+        ActionBlendIn(Animation* animation, double duration, double weight);
+        double getWeight() const { return _weight;}
+        Animation* getAnimation() { return _animation.get(); }
+        void computeWeight(unsigned int frame);
+
+    protected:
+        double _weight;
+        ref_ptr<Animation> _animation;
+    };
+
+}
+
+#endif

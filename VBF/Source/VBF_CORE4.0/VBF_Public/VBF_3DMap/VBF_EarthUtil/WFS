@@ -1,0 +1,113 @@
+#ifndef OSGEARTHUTIL_WFS_H
+#define OSGEARTHUTIL_WFS_H 1
+
+#include <VBF_3DMap/VBF_EarthUtil/Common>
+#include <VBF_3DMap/VBF_Terrain/GeoData.h>
+#include <VBF_3DMap/VBF_Terrain/URI.h>
+#include <VBF_Base/VBF_Referenced.h>
+#include <VBF_Base/ref_ptr>
+
+#include <VBF_Engine/VBF_SGDB/ReaderWriter>
+#include <VBF_Engine/VBF_SceneGraph/Version>
+#if OSG_MIN_VERSION_REQUIRED(2,9,5)
+#include <VBF_Engine/VBF_SGDB/Options>
+#endif
+
+
+#include <string>
+#include <vector>
+
+namespace osgEarth { namespace Util
+{
+    class OSGEARTHUTIL_EXPORT WFSFeatureType : public ::CVBF_Referenced
+    {
+    public:
+        WFSFeatureType();
+        virtual ~WFSFeatureType() { }
+
+        const std::string& getName() const { return m_sName;}
+        void setName(const std::string& name) { m_sName = name;}
+
+        const std::string& getTitle() const { return _title;}
+        void setTitle(const std::string& title) { _title = title;}
+
+        const std::string& getSRS() const { return _srs;}
+        void  setSRS(const std::string& srs) { _srs = srs; }
+
+        const std::string& getAbstract() const { return _abstract;}
+        void setAbstract(const std::string& abstract) { _abstract = abstract; }
+
+        const CVBF_GeoExtent& getExtent() const { return _extent;}
+        void setExtent(const CVBF_GeoExtent& extent) { _extent = extent;}
+
+        int getMaxLevel() const { return _maxLevel;}
+        void setMaxLevel( int maxLevel ) { _maxLevel = maxLevel; }
+
+        int getFirstLevel() const { return _firstLevel;}
+        void setFirstLevel( int firstLevel ) { _firstLevel = firstLevel; }
+
+        bool getTiled() const { return _tiled;}
+        void setTiled(bool tiled) { _tiled = tiled;}
+        
+    private:
+        std::string m_sName;
+        std::string _title;
+        std::string _srs;
+        std::string _abstract;
+        CVBF_GeoExtent   _extent;
+        bool        _tiled;
+        int         _maxLevel;
+        int         _firstLevel;
+    };
+
+    typedef std::vector< ref_ptr< WFSFeatureType > > FeatureTypeList;
+
+    
+    class OSGEARTHUTIL_EXPORT WFSCapabilities : public ::CVBF_Referenced
+    {
+    public:
+        WFSCapabilities();
+        virtual ~WFSCapabilities() { }
+
+        // 设置/获取版本号
+        const std::string& getVersion() const {return _version;}
+        void setVersion(const std::string& version) {_version = version;}        
+
+        const std::string& getName() const { return m_sName; }
+        void setName(const std::string& name) { m_sName = name; }
+
+        const std::string& getTitle() const { return _title;}
+        void setTitle(const std::string& title) { _title = title;}
+
+        const std::string& getAbstract() const { return _abstract; }
+        void setAbstract( const std::string& abstract) { _abstract = abstract; }
+
+        WFSFeatureType* getFeatureTypeByName(const std::string& name);
+
+        FeatureTypeList& getFeatureTypes() { return _featureTypes; }
+
+                
+    protected:
+        FeatureTypeList _featureTypes;
+
+        std::string _version;
+        std::string m_sName;
+        std::string _title;
+        std::string _abstract;
+    };
+
+    class OSGEARTHUTIL_EXPORT WFSCapabilitiesReader
+    {
+    public:
+        static WFSCapabilities* read( const URI& uri, const osgDB::Options* options );
+        static WFSCapabilities* read( std::istream &in );
+    private:
+        WFSCapabilitiesReader(){}
+        WFSCapabilitiesReader(const WFSCapabilitiesReader &cr){}
+
+        virtual ~WFSCapabilitiesReader() { }
+    };
+
+} } // namespace osgEarth::Util
+
+#endif //OSGEARTHUTIL_WFS_H

@@ -1,0 +1,136 @@
+#ifndef OSGANIMATION_KEYFRAME_H
+#define OSGANIMATION_KEYFRAME_H
+
+#include <string>
+#include <VBF_Base/VBF_Referenced.h>
+#include <VBF_Engine/VBF_Animation/Vec3Packed>
+#include <VBF_Engine/VBF_Animation/CubicBezier>
+#include <Types/VBF_Quat.h>
+#include <Types/Vec4>
+#include <Types/Vec3>
+#include <Types/Vec2>
+#include <Types/VBF_Matrixf.h>
+
+namespace osgAnimation 
+{
+	// 关键帧：是场景动画处理的重要概念。通常是角色或者物体运动变化中的关键动作所处的那一帧，
+	//        关键帧之间的帧可以通过计算自动生成，称为过渡帧或中间帧
+	//        计算中间帧的过程通常叫做插值（Interpolate），保存了关键帧和计算中间帧的插值器的工具称为采样器（Sampler）
+    class Keyframe 
+    {
+    public:
+		// 设置/获取关键帧的时刻
+        double getTime() const { return _time; }
+        void setTime(double time) { _time = time; }
+              
+    protected:
+        double _time;
+
+    };
+
+	// 关键帧的类型多种多样，如每个时间点的位移、旋转角度、缩放倍数、透明度、色彩等，甚至用户定义的数据，
+	// 都可以记录为关键帧的内容，因此，采用模板定义
+
+    template <class T>
+    class TemplateKeyframe : public Keyframe
+    {
+    protected:
+        T _value;
+    public:
+        TemplateKeyframe () {}
+        ~TemplateKeyframe () {}
+
+        TemplateKeyframe (double time, const T& value) 
+        { 
+            _time = time;
+            _value = value;
+        }
+
+		// 设置/获取关键帧的数据值
+        void setValue(const T& value) { _value = value;}
+        const T& getValue() const { return _value;}
+    };
+
+	// 关键帧容器：负责记录所有用户设置的关键帧的容器
+    class KeyframeContainer : public ::CVBF_Referenced
+    {
+    public:
+        KeyframeContainer() {}
+        virtual unsigned int size() const = 0; // 容器中保存的关键帧的数量
+    protected:
+        ~KeyframeContainer() {}
+        std::string m_sName;
+    };
+
+	// 关键帧容器：容器中的关键帧必须是同一种类型
+
+    template <class T>
+    class TemplateKeyframeContainer : public std::vector<TemplateKeyframe<T> >, public KeyframeContainer
+    {
+    public:
+        //    const char* getKeyframeType() { return #T ;}
+        TemplateKeyframeContainer() {}
+        typedef TemplateKeyframe<T> KeyType;
+
+        virtual unsigned int size() const { return (unsigned int)std::vector<TemplateKeyframe<T> >::size(); }
+
+    };
+
+    template <>
+    class TemplateKeyframeContainer<Vec3Packed> : public std::vector<TemplateKeyframe<Vec3Packed> >, public KeyframeContainer
+    {
+    public:
+        typedef TemplateKeyframe<Vec3Packed> KeyType;
+
+        TemplateKeyframeContainer() {}
+        const char* getKeyframeType() { return "Vec3Packed" ;}
+        void init(const osg::Vec3f& min, const osg::Vec3f& scale) { _min = min; _scale = scale; }
+
+        osg::Vec3f _min;
+        osg::Vec3f _scale;
+    };
+
+	// 定义各种类型的关键帧模板，CubicBezier为三次贝塞尔曲线数据类型
+
+    typedef TemplateKeyframe<float> FloatKeyframe;
+    typedef TemplateKeyframeContainer<float> FloatKeyframeContainer;
+    
+    typedef TemplateKeyframe<double> DoubleKeyframe;
+    typedef TemplateKeyframeContainer<double> DoubleKeyframeContainer;    
+
+    typedef TemplateKeyframe<osg::Vec2> Vec2Keyframe;
+    typedef TemplateKeyframeContainer<osg::Vec2> Vec2KeyframeContainer;
+
+    typedef TemplateKeyframe<osg::Vec3> Vec3Keyframe;
+    typedef TemplateKeyframeContainer<osg::Vec3> Vec3KeyframeContainer;
+
+    typedef TemplateKeyframe<osg::Vec4> Vec4Keyframe;
+    typedef TemplateKeyframeContainer<osg::Vec4> Vec4KeyframeContainer;
+
+    typedef TemplateKeyframe<osg::Quat> QuatKeyframe;
+    typedef TemplateKeyframeContainer<osg::Quat> QuatKeyframeContainer;
+
+    typedef TemplateKeyframe<osg::Matrixf> MatrixKeyframe;
+    typedef TemplateKeyframeContainer<osg::Matrixf> MatrixKeyframeContainer;
+
+    typedef TemplateKeyframe<Vec3Packed> Vec3PackedKeyframe;
+    typedef TemplateKeyframeContainer<Vec3Packed> Vec3PackedKeyframeContainer;
+
+    typedef TemplateKeyframe<FloatCubicBezier> FloatCubicBezierKeyframe;
+    typedef TemplateKeyframeContainer<FloatCubicBezier> FloatCubicBezierKeyframeContainer;
+    
+    typedef TemplateKeyframe<DoubleCubicBezier> DoubleCubicBezierKeyframe;
+    typedef TemplateKeyframeContainer<DoubleCubicBezier> DoubleCubicBezierKeyframeContainer;
+    
+    typedef TemplateKeyframe<Vec2CubicBezier> Vec2CubicBezierKeyframe;
+    typedef TemplateKeyframeContainer<Vec2CubicBezier> Vec2CubicBezierKeyframeContainer;
+    
+    typedef TemplateKeyframe<Vec3CubicBezier> Vec3CubicBezierKeyframe;
+    typedef TemplateKeyframeContainer<Vec3CubicBezier> Vec3CubicBezierKeyframeContainer;
+    
+    typedef TemplateKeyframe<Vec4CubicBezier> Vec4CubicBezierKeyframe;
+    typedef TemplateKeyframeContainer<Vec4CubicBezier> Vec4CubicBezierKeyframeContainer;
+
+}
+
+#endif

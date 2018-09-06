@@ -1,0 +1,32 @@
+#ifdef wuyuguo
+
+#ifndef OSGEARTHSYMBOLOGY_SYMBOL_DISPLAY_FUNCTOR_H
+#define OSGEARTHSYMBOLOGY_SYMBOL_DISPLAY_FUNCTOR_H 1
+
+#include <VBF_3DMap/VBF_Symbology/Common>
+#include <VBF_3DMap/VBF_Symbology/VBF_Symbol.h>
+#include <VBF_Base/VBF_Referenced.h>
+
+namespace osgEarth { namespace Symbology
+{
+
+    /**
+     * Interface for an object that Display a symbol
+     */
+    class OSGEARTHSYMBOLOGY_EXPORT SymbolDisplayFunctor : public osg::CVBF_Object
+    {
+    public:
+        META_Object(VBF_Symbology,SymbolDisplayFunctor);
+
+        SymbolDisplayFunctor(const SymbolDisplayFunctor&, const osg::CopyOp&) {}
+        SymbolDisplayFunctor() {}
+
+        virtual osg::IVBF_SGNode* apply(const Symbol& ) { return 0;}
+
+    };
+
+} } // namespace osgEarth::Symbology
+
+#endif
+
+#endif

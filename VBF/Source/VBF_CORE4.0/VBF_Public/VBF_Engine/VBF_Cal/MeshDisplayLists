@@ -1,0 +1,54 @@
+#ifndef __OSGCAL__MESH_DISPLAY_LISTS_H__
+#define __OSGCAL__MESH_DISPLAY_LISTS_H__
+
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGDrawable.h>
+
+#include <VBF_Engine/VBF_Cal/Export>
+#include <VBF_Engine/VBF_Cal/MeshData>
+
+namespace osgCal
+{
+
+    /**
+     * Mesh geometry display lists. Display lists are created
+     * one per \c CoreMesh, not per \c Model's \c Mesh
+     */
+    struct OSGCAL_EXPORT MeshDisplayLists : public CVBF_Referenced
+    {
+        public:
+            typedef osg::buffered_value< GLuint > GLObjectList;
+
+            /**
+             * Hardware mesh display lists, once compiled for
+             * one model they are shared for all core model
+             * instances.
+             */
+            mutable GLObjectList        lists;
+            mutable OpenThreads::Mutex  mutex;
+
+            /**
+             * Destroys display lists.
+             */
+            ~MeshDisplayLists();
+
+            /**
+             * Check that display lists are compiled for all
+             * contexts and free mesh data that is needed only
+             * for display lists (normals, tangents, texture
+             * coordinates).
+             *
+             * Use
+             * osg::DisplaySettings::instance()->setMaxNumberOfGraphicsContexts(N)
+             * to set number of contexts you need (default
+             * value is 32, so no mesh data or textures are
+             * freed by default).
+             */
+            void checkAllDisplayListsCompiled( MeshData* data ) const;
+
+            virtual void releaseGLObjects( osg::State* state = 0 ) const;
+
+    };
+
+}; // namespace osgCal
+
+#endif

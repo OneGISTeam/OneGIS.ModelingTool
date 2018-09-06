@@ -1,0 +1,317 @@
+#ifndef OSG_IMAGE
+#define OSG_IMAGE 1
+
+
+#include <VBF_Engine/VBF_SceneGraph/VBF_BufferObject.h>
+#include <Types/Vec2>
+#include <Types/Vec3>
+#include <Types/Vec4>
+#include <VBF_Base/VBF_FrameStamp.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_StateAttribute.h>
+#include <VBF_Engine/VBF_SceneGraph/StateAttributeCallback>
+
+#include <VBF_Engine/VBF_SceneGraph/VBF_GLColor.h>
+
+namespace osg {
+
+
+
+class NodeVisitor;
+
+// 图像：存储纹理数据
+class OSG_EXPORT Image : public BufferData
+{
+
+    public :
+        Image();
+        Image(const Image& image,const CopyOp& copyop=CopyOp::SHALLOW_COPY);
+
+        virtual CVBF_Object* cloneType() const { return new Image(); }
+        virtual CVBF_Object* clone(const CopyOp& copyop) const { return new Image(*this,copyop); }
+        virtual bool isSameKindAs(const CVBF_Object* obj) const { return dynamic_cast<const Image*>(obj)!=0; }
+        virtual const char* libraryName() const { return "osg"; }
+        virtual const char* className() const { return "Image"; }
+
+
+
+
+		// 获取数据和大小
+        virtual const GLvoid*   getDataPointer() const { return data(); }
+        virtual unsigned int    getTotalDataSize() const { return getTotalSizeInBytesIncludingMipmaps(); }
+
+
+		// 图像比较 Return -1 if *this < *rhs, 0 if *this==*rhs, 1 if *this>*rhs.
+        virtual int compare(const Image& rhs) const;
+
+		// 设置/获取文件名
+        void setFileName(const std::string& fileName);
+        inline const std::string& getFileName() const { return _fileName; }
+        
+        enum WriteHint 
+		{
+            NO_PREFERENCE,  // 无倾向
+            STORE_INLINE,	// 联机存储
+            EXTERNAL_FILE   // 外部文件
+        };
+        
+		// 设置存储的选项
+        void setWriteHint(WriteHint writeHint) { _writeHint = writeHint; }
+        WriteHint getWriteHint() const { return _writeHint; }
+        
+        enum AllocationMode 
+		{
+            NO_DELETE,
+            USE_NEW_DELETE,
+            USE_MALLOC_FREE
+        };
+        
+  		// 设置/获取删除（释放）数据使用的方法
+        void setAllocationMode(AllocationMode mode) { _allocationMode = mode; }
+        AllocationMode getAllocationMode() const { return _allocationMode; }
+
+
+ 		// 分配给定大小和类型的像素块
+        virtual void allocateImage(int s,int t,int r, GLenum pixelFormat,GLenum type, int packing=1);
+        
+        // 设置图像的尺寸、格式和数据
+        virtual void setImage(int s,int t,int r, GLint internalTextureformat, GLenum pixelFormat,
+			                    GLenum type, unsigned char* data, AllocationMode mode, int packing=1);
+            
+		// 从当前桢缓存读取给定位置和大小的像素数据，使用glReadPixels。需要则分配内存，尽可能重用existing pixel coords
+         virtual void readPixels(int x,int y,int width,int height, GLenum pixelFormat,GLenum type);
+            
+		// 从当前绑定的纹理读取数据，如果有压缩则处理，需要则分配内存，尽可能重用existing pixel coords
+        virtual void readImageFromCurrentTexture(unsigned int contextID, bool copyMipMapsIfAvailable, GLenum type = GL_UNSIGNED_BYTE);
+
+		// 缩放图像到指定大小
+        void scaleImage(int s,int t,int r) { scaleImage(s,t,r, getDataType()); }
+
+ 		// 缩放图像到指定大小并转换到指定的数据类型
+        virtual void scaleImage(int s,int t,int r, GLenum newDataType);
+       
+		// 把原图像中拷贝到本图像的特定位置，典型的应用是创建3D图像，并从多个2D图像中拷贝数据 
+        virtual void copySubImage(int s_offset, int t_offset, int r_offset, const osg::Image* source);
+
+
+        enum Origin // 图像原点
+        {
+            BOTTOM_LEFT, // 左下
+            TOP_LEFT     // 左上
+        };
+        
+		// 设置/获取图像原点模式，默认值是BOTTOM_LEFT，与OpenGL一致
+        void setOrigin(Origin origin) { _origin = origin; }
+        Origin getOrigin() const { return _origin; }
+        
+
+        inline int s() const { return _s; } // 宽度
+        inline int t() const { return _t; } // 高度
+        inline int r() const { return _r; } // 深度
+        
+		// 设置/获取内部纹理格式
+        void setInternalTextureFormat(GLint internalFormat);
+        inline GLint getInternalTextureFormat() const { return _internalTextureFormat; }
+        
+        void setPixelFormat(GLenum pixelFormat);
+        inline GLenum getPixelFormat() const { return _pixelFormat; }
+        
+		// 设置数据类型
+        void setDataType(GLenum dataType);
+        inline GLenum getDataType() const { return _dataType; }        
+        
+        void setPacking(unsigned int packing) { _packing = packing; }
+        inline unsigned int getPacking() const { return _packing; }
+
+   		// 是否为OpenGL压缩格式
+        bool isCompressed() const;
+
+ 		// 设置/获取方向比（像素宽度/像素高度）
+        inline void setPixelAspectRatio(float pixelAspectRatio) { _pixelAspectRatio = pixelAspectRatio; }
+        inline float getPixelAspectRatio() const { return _pixelAspectRatio; }
+        
+		//  获取每个像素的bits
+        inline unsigned int getPixelSizeInBits() const { return computePixelSizeInBits(_pixelFormat,_dataType); }
+
+        /** Return the number of bytes each row of pixels occupies once it has been packed. */
+        inline unsigned int getRowSizeInBytes() const { return computeRowWidthInBytes(_s,_pixelFormat,_dataType,_packing); }
+
+        /** Return the number of bytes each image (_s*_t) of pixels occupies. */
+        inline unsigned int getImageSizeInBytes() const { return getRowSizeInBytes()*_t; }
+        
+        /** Return the number of bytes the whole row/image/volume of pixels occupies. */
+        inline unsigned int getTotalSizeInBytes() const { return getImageSizeInBytes()*_r; }
+
+        /** Return the number of bytes the whole row/image/volume of pixels occupies, including all mip maps if included. */
+        unsigned int getTotalSizeInBytesIncludingMipmaps() const;
+
+        /** Return true if the Image represent a valid and usable imagery.*/
+        bool valid() const { return _s!=0 && _t!=0 && _r!=0 && _data!=0 && _dataType!=0; }
+
+		// 原始图像数据
+        inline unsigned char* data() { return _data; }
+        inline const unsigned char* data() const { return _data; }
+
+
+        inline unsigned char* data(int column, int row=0,int image=0)
+        {
+            if (!_data) return NULL;
+            return _data+(column*getPixelSizeInBits())/8+row*getRowSizeInBytes()+image*getImageSizeInBytes();
+        }
+        
+        inline const unsigned char* data(int column, int row=0,int image=0) const
+        {
+            if (!_data) return NULL;
+            return _data+(column*getPixelSizeInBits())/8+row*getRowSizeInBytes()+image*getImageSizeInBytes();
+        }
+
+ 		// 给定纹理坐标的颜色值
+        Vec4 getColor(unsigned int s,unsigned t=0,unsigned r=0) const;
+        Vec4 getColor(const Vec2& texcoord) const { return getColor(Vec3(texcoord.x(),texcoord.y(),0.0f)); }
+        Vec4 getColor(const Vec3& texcoord) const;
+
+
+ 		// 水平翻转图像
+        void flipHorizontal();        
+        // 垂直翻转图像
+        void flipVertical();
+
+
+        /** Ensure image dimensions are a power of two.
+          * Mipmapped textures require the image dimensions to be
+          * power of two and are within the maxiumum texture size for
+          * the host machine.
+        */
+        void ensureValidSizeForTexturing(GLint maxTextureSize);
+
+        static bool isPackedType(GLenum type);
+        static GLenum computePixelFormat(GLenum pixelFormat);
+        static GLenum computeFormatDataType(GLenum pixelFormat);
+        static unsigned int computeNumComponents(GLenum pixelFormat);
+        static unsigned int computePixelSizeInBits(GLenum pixelFormat,GLenum type);
+        static unsigned int computeRowWidthInBytes(int width,GLenum pixelFormat,GLenum type,int packing);
+        static int computeNearestPowerOfTwo(int s,float bias=0.5f);
+        static int computeNumberOfMipmapLevels(int s,int t = 1, int r = 1);
+
+        /** Precomputed mipmaps stuff. */
+        typedef std::vector< unsigned int > MipmapDataType;
+
+        inline bool isMipmap() const {return !_mipmapData.empty();};
+
+        unsigned int getNumMipmapLevels() const
+        {
+            return static_cast<unsigned int>(_mipmapData.size())+1;
+        };
+
+        /** Send offsets into data. It is assumed that first mipmap offset (index 0) is 0.*/
+        inline void setMipmapLevels(const MipmapDataType& mipmapDataVector) { _mipmapData = mipmapDataVector; }
+        
+        inline const MipmapDataType& getMipmapLevels() const { return _mipmapData; }
+
+        inline unsigned int getMipmapOffset(unsigned int mipmapLevel) const
+        {
+            if(mipmapLevel == 0)
+                return 0;
+            else if (mipmapLevel < getNumMipmapLevels())
+               return _mipmapData[mipmapLevel-1];
+            return 0;
+        };
+        
+        inline unsigned char* getMipmapData(unsigned int mipmapLevel)
+        {
+           return _data+getMipmapOffset(mipmapLevel);
+        }
+
+        inline const unsigned char* getMipmapData(unsigned int mipmapLevel) const
+        {
+           return _data+getMipmapOffset(mipmapLevel);
+        }
+
+        /*inline const unsigned char* getMipmapData(unsigned int row, unsigned int column, unsigned int mipmapLevel) const
+        {
+           if (!_data) return NULL;
+           return getMipmapData(mipmapLevel) + (column*getPixelSizeInBits())/8+row*getRowSizeInBytes();
+        }*/
+
+        /** Return true if this image is translucent - i.e. it has alpha values that are less 1.0 (when normalized). */
+        virtual bool isImageTranslucent() const;
+
+        /** Set the optional PixelBufferObject used to map the image memory efficiently to graphics memory. */ 
+        void setPixelBufferObject(PixelBufferObject* buffer) { setBufferObject(buffer); }
+
+        /** Get the PixelBufferObject.*/
+        PixelBufferObject* getPixelBufferObject() { return dynamic_cast<PixelBufferObject*>(_bufferObject.get()); }
+
+        /** Get the const PixelBufferObject.*/
+        const PixelBufferObject* getPixelBufferObject() const { return dynamic_cast<const PixelBufferObject*>(_bufferObject.get()); }
+
+        /** return whether the update(NodeVisitor* nv) should be required on each frame to enable proper working of osg::Image.*/
+        virtual bool requiresUpdateCall() const { return false; }
+
+        /** update method for osg::Image subclasses that update themselves during the update traversal.*/
+        virtual void update(NodeVisitor* /*nv*/) {}
+
+        /** convience update callback class that can be attached to StateAttribute (such as Textures) to ensure
+          * that the Image::update(NodeVisitor*) method is called during the update traversal.  This callback
+          * is automatically attached when Image::requiresUpdateCall() is true (it's false by default.)
+          */
+        struct OSG_EXPORT UpdateCallback : public osg::StateAttributeCallback
+        {
+            virtual void operator () (osg::StateAttribute* attr, osg::NodeVisitor* nv);
+        };
+
+        /** method for hinting whether to enable or disable focus to images acting as front ends to interactive surfaces such as a vnc or browser window.  Return true if handled. */
+        virtual bool sendFocusHint(bool /*focus*/) { return false; }
+
+        /** method for sending pointer events to images that are acting as front ends to interactive surfaces such as a vnc or browser window.  Return true if handled. */
+        virtual bool sendPointerEvent(int /*x*/, int /*y*/, int /*buttonMask*/) { return false; }
+
+        /** method for sending key events to images that are acting as front ends to interactive surfaces such as a vnc or browser window.  Return true if handled.*/
+        virtual bool sendKeyEvent(int /*key*/, bool /*keyDown*/) { return false; }
+
+        /** method for passing frame information to the custom Image classes, to be called only when objects associated with imagery are not culled.*/
+        virtual void setFrameLastRendered(const ::CVBF_FrameStamp* /*frameStamp*/) {}
+        virtual bool IsDynamic() { return m_bDynamic; }
+        virtual void SetDynamic(bool bDynamic) { m_bDynamic = bDynamic; }
+    protected :
+
+        virtual ~Image();
+
+        Image& operator = (const Image&) { return *this; }
+
+        std::string _fileName;
+        WriteHint   _writeHint;
+
+
+        Origin _origin;                  // 原点模式
+        int _s, _t, _r;                  // 长宽深
+    
+		GLint _internalTextureFormat;
+        GLenum _pixelFormat;
+        GLenum _dataType;
+        unsigned int _packing;
+        float _pixelAspectRatio;
+
+        AllocationMode _allocationMode;
+        unsigned char* _data;
+        
+        void deallocateData();
+        
+        void setData(unsigned char* data,AllocationMode allocationMode);
+
+        MipmapDataType _mipmapData;
+        
+        ref_ptr<PixelBufferObject> _bufferObject;
+        bool m_bDynamic;
+
+};
+
+class IVBF_SGNodeGeometry;
+
+// 便捷的方法，从图像创建场景图节点
+extern OSG_EXPORT IVBF_SGNodeGeometry* createGeodeForImage(Image* image);
+// 便捷的方法，从图像创建场景图节点，使用给定的宽度和高度值缩放影像
+extern OSG_EXPORT IVBF_SGNodeGeometry* createGeodeForImage(Image* image,float s,float t);
+
+}
+
+#endif // __SG_IMAGE_H

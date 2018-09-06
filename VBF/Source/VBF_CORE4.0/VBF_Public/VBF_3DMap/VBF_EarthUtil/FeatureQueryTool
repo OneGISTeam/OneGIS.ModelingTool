@@ -1,0 +1,126 @@
+#ifndef OSGEARTHUTIL_FEATURE_QUERY_TOOL_H
+#define OSGEARTHUTIL_FEATURE_QUERY_TOOL_H 1
+
+#include <VBF_3DMap/VBF_EarthUtil/Common>
+#include <VBF_3DMap/VBF_Terrain/VBF_MapNode.h>
+#include <VBF_3DMap/VBF_Terrain/MapNodeObserver.h>
+#include <VBF_3DMap/VBF_Terrain/GeoData.h>
+#include <VBF_3DMap/VBF_Features/Feature.h>
+#include <VBF_3DMap/VBF_Features/VBF_SourceFeature.h>
+#include <VBF_3DMap/VBF_Features/FeatureSourceIndexNode.h>
+#include <VBF_3DMap/VBF_EarthUtil/Controls>
+#include <VBF_Display/VBF_Manipulator/VBF_GUIEventHandler.h>
+#include <VBF_Engine/VBF_SceneGraph/VBF_CameraSlave.h>
+
+namespace osgEarth { namespace Util
+{
+    using namespace osgEarth;
+    using namespace osgEarth::Features;
+
+
+    class OSGEARTHUTIL_EXPORT FeatureQueryTool : public osgGA::GUIEventHandler, public MapNodeObserver
+    {
+    public:
+        // 查询回调，用于用户处理选中之后的行为
+        struct Callback : public ::CVBF_Referenced
+        {
+            struct EventArgs 
+            {
+                const osgGA::GUIEventAdapter*  _ea;
+                ::IVBF_GUIActionAdapter*       _aa;
+                osg::Vec3d                     _worldPoint;
+            };
+
+            // 选中一个有效的feature时调用
+            virtual void onHit( FeatureSourceIndexNode* index, FeatureID fid, const EventArgs& args ) { }
+            // 没有选中时调用
+            virtual void onMiss( const EventArgs& args ) { }
+            virtual void Clear() { }
+        };
+
+
+        // 输入判断，接口，用于自定义的输入测试
+        class InputPredicate : public ::CVBF_Referenced
+        {
+        public:
+            // return true to active a query under the mouse cursor.
+            virtual bool accept( const osgGA::GUIEventAdapter& ea ) =0;
+        };
+
+    public:
+
+        FeatureQueryTool( CVBFO_SGNodeMap*  mapNode, Callback* callbackToAdd =0L );
+        virtual ~FeatureQueryTool() { }
+
+        void addCallback(Callback* callback); // 添加查询回调，用于自定义查询后的行为
+
+        // 设置自定义的输入测试，默认是左键单击（left-click）
+        void setInputPredicate( InputPredicate* value ) { _inputPredicate = value; }
+
+
+    public: // GUIEventHandler
+        virtual bool handle( const osgGA::GUIEventAdapter& ea, ::IVBF_GUIActionAdapter& aa );
+
+    public: // MapNodeObserver
+        virtual void setMapNode( CVBFO_SGNodeMap* mapNode );
+        virtual CVBFO_SGNodeMap* GetMapNode() { return _mapNode.get(); }
+
+
+    protected:
+        observer_ptr<CVBFO_SGNodeMap> _mapNode;
+        bool                       _mouseDown;
+        float                      _mouseDownX, _mouseDownY;
+
+        ref_ptr<InputPredicate> _inputPredicate;
+
+        typedef std::vector< observer_ptr<Callback> > Callbacks;
+        Callbacks _callbacks;
+    };
+
+
+    // 查询回调，高亮显示选中的feature
+    class OSGEARTHUTIL_EXPORT FeatureHighlightCallback : public FeatureQueryTool::Callback
+    {
+    public:
+        virtual void onHit( FeatureSourceIndexNode* index, FeatureID fid, const EventArgs& args );
+        virtual void onMiss( const EventArgs& args );
+
+    protected:
+        virtual void Clear();
+
+        struct Selection
+        {
+            observer_ptr<FeatureSourceIndexNode> _index;
+            observer_ptr<osg::IVBF_SGNodeGroup>  _group;
+            FeatureID                            _fid;
+            bool operator < ( const Selection& rhs ) const { return _fid < rhs._fid; }
+        };
+        typedef std::set<Selection> SelectionSet;
+        SelectionSet _selections;
+
+        virtual ~FeatureHighlightCallback() { }
+    };
+
+
+
+    // 查询回调，显示选中的feature的属性
+    class OSGEARTHUTIL_EXPORT FeatureReadoutCallback : public FeatureQueryTool::Callback
+    {
+    public:
+        FeatureReadoutCallback( Controls::Container* container );
+
+    public:
+        virtual void onHit( FeatureSourceIndexNode* index, FeatureID fid, const EventArgs& args );
+        virtual void onMiss( const EventArgs& args );
+
+    protected:
+        virtual void Clear();
+        Controls::Grid* _grid;
+
+        virtual ~FeatureReadoutCallback() { }
+    };
+
+
+} } // namespace VBF_EarthUtil
+
+#endif // OSGEARTHUTIL_FEATURE_QUERY_TOOL_H

@@ -1,0 +1,67 @@
+#ifndef VBF_SGDB_FILECACHE
+#define VBF_SGDB_FILECACHE 1
+
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeImpl.h>
+
+#include <VBF_Engine/VBF_SGDB/ReaderWriter>
+#include <VBF_Engine/VBF_SGDB/DatabaseRevisions>
+
+#include <set>
+
+namespace osgDB {
+
+class VBF_SGDB_EXPORT FileCache : public ::CVBF_Referenced
+{
+public: 
+	FileCache(const std::string& path);
+
+	// 获取文件缓存路径
+	const std::string& getFileCachePath() const { return _fileCachePath; }
+
+	// 文件是否适合写入缓存
+	virtual bool isFileAppropriateForFileCache(const std::string& originalFileName) const;
+
+	// 创建缓存文件名（仅仅是名字）
+	virtual std::string createCacheFileName(const std::string& originalFileName) const;
+
+	// 是否已经在缓存中
+	virtual bool existsInCache(const std::string& originalFileName) const;
+
+	virtual ReaderWriter::ReadResult readImage(const std::string& originalFileName, const osgDB::Options* options) const;
+	virtual ReaderWriter::WriteResult writeImage(const osg::Image& image, const std::string& originalFileName, const osgDB::Options* options) const;
+
+	virtual ReaderWriter::ReadResult readObject(const std::string& originalFileName, const osgDB::Options* options) const;
+	virtual ReaderWriter::WriteResult writeObject(const osg::CVBF_Object& object, const std::string& originalFileName, const osgDB::Options* options) const;
+
+	virtual ReaderWriter::ReadResult readHeightField(const std::string& originalFileName, const osgDB::Options* options) const;
+	virtual ReaderWriter::WriteResult writeHeightField(const osg::HeightField& hf, const std::string& originalFileName, const osgDB::Options* options) const;
+
+	virtual ReaderWriter::ReadResult readNode(const std::string& originalFileName, const osgDB::Options* options, bool buildKdTreeIfRequired=true) const;
+	virtual ReaderWriter::WriteResult writeNode(const osg::IVBF_SGNode& node, const std::string& originalFileName, const osgDB::Options* options) const;
+
+	virtual ReaderWriter::ReadResult readShader(const std::string& originalFileName, const osgDB::Options* options) const;
+	virtual ReaderWriter::WriteResult writeShader(const osg::Shader& shader, const std::string& originalFileName, const osgDB::Options* options) const;
+
+	bool loadDatabaseRevisionsForFile(const std::string& originanlFileName);
+
+	typedef std::list< ref_ptr<DatabaseRevisions> > DatabaseRevisionsList;
+	DatabaseRevisionsList& getDatabaseRevisionsList() { return _databaseRevisionsList; }
+
+	bool isCachedFileBlackListed(const std::string& originalFileName) const;
+
+protected:
+
+	virtual ~FileCache();
+
+	std::string _fileCachePath;
+
+	DatabaseRevisionsList _databaseRevisionsList;
+
+	FileList* readFileList(const std::string& originalFileName) const;
+	bool removeFileFromBlackListed(const std::string& originalFileName) const;
+
+};
+
+}
+
+#endif

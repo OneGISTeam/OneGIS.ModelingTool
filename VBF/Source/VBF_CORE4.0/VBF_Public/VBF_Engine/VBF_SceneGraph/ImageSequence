@@ -1,0 +1,134 @@
+#ifndef OSG_IMAGESEQUENCE
+#define OSG_IMAGESEQUENCE 1
+
+//#include <OpenThreads/Mutex>
+#include <VBF_Engine/VBF_SceneGraph/ImageStream>
+
+#include <list>
+#include <set>
+
+namespace osg {
+
+// 图像序列，如录像，电影 
+class OSG_EXPORT ImageSequence : public ImageStream
+{
+    public:
+        ImageSequence();
+        ImageSequence(const ImageSequence& ImageSequence, const CopyOp& copyop=CopyOp::SHALLOW_COPY);
+
+        virtual CVBF_Object* cloneType() const { return new ImageSequence(); }
+        virtual CVBF_Object* clone(const CopyOp& copyop) const { return new ImageSequence(*this,copyop); }
+        virtual bool isSameKindAs(const CVBF_Object* obj) const { return dynamic_cast<const ImageSequence*>(obj)!=0; }
+        virtual const char* libraryName() const { return "osg"; }
+        virtual const char* className() const { return "ImageSequence"; }
+
+        /** Return -1 if *this < *rhs, 0 if *this==*rhs, 1 if *this>*rhs. */
+        virtual int compare(const Image& rhs) const;
+
+        virtual void setReferenceTime(double t) { _referenceTime = t; }
+        virtual double getReferenceTime() const { return _referenceTime; }
+                
+        virtual void setTimeMultiplier(double tm) { _timeMultiplier = tm; }
+        virtual double getTimeMultiplier() const { return _timeMultiplier; }
+
+        typedef std::vector< ref_ptr<osg::Image> >   Images;
+        typedef std::vector< std::string >                FileNames;
+        
+        virtual void seek(double time);
+
+        virtual void play();
+
+        virtual void pause();
+
+        virtual void rewind();
+        
+        enum Mode
+        {
+            PRE_LOAD_ALL_IMAGES,
+            PAGE_AND_RETAIN_IMAGES,
+            PAGE_AND_DISCARD_USED_IMAGES
+        };
+        
+        void setMode(Mode mode);
+        Mode getMode() const { return _mode; }
+
+        void setLength(double length);
+        virtual double getLength() const { return _length; }
+        
+
+        void addImageFile(const std::string& fileName);
+        
+        void setImageFile(unsigned int pos, const std::string& fileName);
+        std::string getImageFile(unsigned int pos) const;
+        
+        unsigned int getNumImageFiles() const { return _fileNames.size(); }
+
+        FileNames& getFileNames() { return _fileNames; }
+        const FileNames& getFileNames() const { return _fileNames; }
+
+        void addImage(osg::Image* image);
+        
+        void setImage(int s,int t,int r,
+                      GLint internalTextureformat,
+                      GLenum pixelFormat,GLenum type,
+                      unsigned char* data,
+                      AllocationMode mode,
+                      int packing=1) { Image::setImage(s,t,r,internalTextureformat, pixelFormat, type, data, mode, packing); }
+
+        void setImage(unsigned int pos, osg::Image* image);
+        Image* getImage(unsigned int pos);
+        const Image* getImage(unsigned int pos) const;
+        
+        unsigned int getNumImages() const { return _images.size(); }
+
+        Images& getImages() { return _images; }
+        const Images& getImages() const { return _images; }
+
+        /** ImageSequence requires a call to update(NodeVisitor*) during the update traversal so return true.*/
+        virtual bool requiresUpdateCall() const { return true; }
+
+        /** update method for osg::Image subclasses that update themselves during the update traversal.*/
+        virtual void update(NodeVisitor* nv);
+
+    protected:
+
+        virtual ~ImageSequence() {}// IE可能错误
+        
+        virtual void applyLoopingMode();
+
+        void setImageToChild(const osg::Image* image);
+        
+        void computeTimePerImage();
+
+        int imageIndex(double time);
+
+
+        double                          _referenceTime;
+        double                          _timeMultiplier;
+
+        Mode                            _mode;
+        double                          _length;
+
+        double                          _timePerImage;
+
+        mutable OpenThreads::Mutex      _mutex;
+        FileNames                       _fileNames;
+
+        Images                          _images;
+        
+        typedef std::set< std::string > FilesRequested;
+        FilesRequested                  _filesRequested;
+        
+        int                             _previousAppliedImageIndex;
+                
+        
+        bool                            _seekTimeSet;
+        double                          _seekTime;
+        
+        
+
+};
+
+} // namespace
+
+#endif

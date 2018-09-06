@@ -1,0 +1,594 @@
+#ifndef VBF_SGDB_REGISTRY
+#define VBF_SGDB_REGISTRY 1
+
+#include <OpenThreads/ReentrantMutex>
+
+#include <VBF_Base/ref_ptr>
+#include <VBF_Base/VBF_ArgumentParser.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_ShapeKdTree.h>
+
+#include <VBF_Common/VBF_Utils/VBF_DynamicLibrary.h>
+#include <VBF_Engine/VBF_SGDB/ReaderWriter>
+#include <VBF_Engine/VBF_SGDB/Options>
+#include <VBF_Engine/VBF_SGDB/DotOsgWrapper>
+#include <VBF_Engine/VBF_SGDB/ObjectWrapper>
+#include <VBF_Engine/VBF_SGDB/FileCache>
+#include <VBF_Engine/VBF_SGDB/SharedStateManager>
+#include <VBF_Engine/VBF_SGDB/ImageProcessor>
+#include <VBF_Engine/VBF_SGDB/DatabasePager>
+#include <Types/VBF_PublicTypes.h>
+#include <VBF_Engine/VBF_SGDB/Archive>
+
+#include <vector>
+#include <map>
+#include <string>
+
+extern "C"
+{
+    typedef void (* CPluginFunction) (void);
+}
+
+namespace osgDB {
+
+// 用于自定义的运行时继承关系检查
+struct basic_type_wrapper 
+{
+    virtual ~basic_type_wrapper() {}
+    virtual bool matches(const osg::CVBF_Object *proto) const = 0;
+};
+
+//  模板类：检测给定的对象类和编译时定义的T类之间的继承性，和readObjectOfType()结合使用，
+//         用于指定（specify）一个抽象类为reference类型
+
+template<class T>
+struct type_wrapper: basic_type_wrapper 
+{
+    bool matches(const osg::CVBF_Object *proto) const
+    {
+        return dynamic_cast<const T*>(proto) != 0;
+    }
+};
+
+
+// 注册器：是一个单实例类，用于实时加载数据读写器并读取数据
+  
+class VBF_SGDB_EXPORT Registry : public ::CVBF_Referenced
+{
+    public:
+        
+        static Registry* instance(bool erase = false);
+
+        // 读取命令行参数
+        void readCommandLine(::ArgumentParser& commandLine);
+
+ 		// 注册一个文件扩展名的别名，例如映射.tif到tiff装载器，addExtAlias("tif","tiff")
+		// 使用libdb_tiff插件库读取.tif文件
+        void addFileExtensionAlias(const std::string mapExt, const std::string toExt);
+
+        /// 读取文件扩展名别名映射配置文件，ASCII格式，每行包含一次调用addFileExtensionAlias的参数
+        //  注释采用'#'开头
+        bool readPluginAliasConfigurationFile( const std::string& file );
+
+		// 注册一个模拟类型的文件扩展名映射，当获取HTTP数据时，可以用它来决定使用哪种数据读写器
+        void addMimeTypeExtensionMapping(const std::string fromMimeType, const std::string toExt);
+
+		// 添加/移除数据读写器
+        void addReaderWriter(ReaderWriter* rw);
+        void removeReaderWriter(ReaderWriter* rw);
+
+		// 添加/移除图像处理器
+        void addImageProcessor(ImageProcessor* ip);
+        void removeImageProcessor(ImageProcessor* ip);
+
+// 考虑是否需要？
+		// 设置/获取分页数据库
+		void setDatabasePager(osgDB::DatabasePager* dbp);
+		osgDB::DatabasePager* getDatabasePager();
+
+ 		// 根据文件名创建平台相关的库名
+        std::string createLibraryNameForFile(const std::string& fileName);
+
+   		// 根据文件扩展名创建平台相关的库名
+        std::string createLibraryNameForExtension(const std::string& ext);
+
+ 		// 根据nodekit库名创建平台相关的库名
+        std::string createLibraryNameForNodeKit(const std::string& name);
+
+
+        enum LoadStatus 
+		{
+            NOT_LOADED = 0,    // 没加载成功
+            PREVIOUSLY_LOADED, // 以前已经加载
+            LOADED             // 加载成功
+        };
+
+
+		// 在OSG_LIBRARY_PATH中查找库并加载
+        LoadStatus loadLibrary(const std::string& fileName);
+        
+        // 关闭库
+        bool closeLibrary(const std::string& fileName);
+        
+        // 关闭所有的库
+        void closeAllLibraries();
+
+        typedef std::vector< ref_ptr<ReaderWriter> > ReaderWriterList;
+
+  		// 根据扩展名获取数据读写器
+        ReaderWriter* getReaderWriterForExtension(const std::string& ext);
+
+  		// 根据模拟类型的扩展名获取数据读写器
+        ReaderWriter* getReaderWriterForMimeType(const std::string& mimeType);
+        
+ 		// 获取数据读写器列表
+        ReaderWriterList& getReaderWriterList() { return _rwList; }
+        const ReaderWriterList& getReaderWriterList() const { return _rwList; }
+ 
+
+        typedef std::vector< ref_ptr<ImageProcessor> > ImageProcessorList; // 图像处理器列表
+
+		// 获取图像处理器
+        ImageProcessor* getImageProcessor();
+
+		// 根据扩展名获取图像处理器
+        ImageProcessor* getImageProcessorForExtension(const std::string& ext);
+
+		// 获取所有图像处理器的列表
+        ImageProcessorList& getImageProcessorList() { return _ipList; }
+        const ImageProcessorList& getImageProcessorList() const { return _ipList; }
+
+
+
+
+        typedef class osgDB::FindFileCallback     FindFileCallback;     // 实现文件查找功能的回调（外部实现的文件查找）
+        typedef class osgDB::ReadFileCallback     ReadFileCallback;     // 实现文件读取功能的回调（外部实现的文件读取）
+        typedef class osgDB::WriteFileCallback    WriteFileCallback;    // 实现文件写入功能的回调（外部实现的文件写入）
+   
+
+		// 设置/获取 "实现文件查找功能" 的回调，替换内部的文件查找功能实现
+        void setFindFileCallback( FindFileCallback* cb) { _findFileCallback = cb; }
+        FindFileCallback* getFindFileCallback() { return _findFileCallback.get(); }
+        const FindFileCallback* getFindFileCallback() const { return _findFileCallback.get(); }
+
+		// 查找数据文件
+ 		std::string findDataFile(const std::string& filename, EVBF_CASESENSITIVITY caseSensitivity=VBF_CASE_SENSITIVE);
+        std::string findDataFile(const std::string& fileName, const Options* options, EVBF_CASESENSITIVITY caseSensitivity=VBF_CASE_SENSITIVE);
+        std::string findDataFileImplementation(const std::string& fileName, const Options* options, EVBF_CASESENSITIVITY caseSensitivity);
+
+		// 查找库文件
+		std::string findLibraryFile(const std::string& fileName, EVBF_CASESENSITIVITY caseSensitivity=VBF_CASE_SENSITIVE);
+		std::string findLibraryFile(const std::string& fileName, const Options* options, EVBF_CASESENSITIVITY caseSensitivity=VBF_CASE_SENSITIVE);
+        std::string findLibraryFileImplementation(const std::string& fileName, const Options* options, EVBF_CASESENSITIVITY caseSensitivity);
+
+
+		// 设置/获取 "实现文件读取功能" 的回调，替换内部的文件读取功能实现
+        void setReadFileCallback( ReadFileCallback* cb) { _readFileCallback = cb; }
+        ReadFileCallback* getReadFileCallback() { return _readFileCallback.get(); }
+        const ReadFileCallback* getReadFileCallback() const { return _readFileCallback.get(); }
+
+
+		// 打开文件
+        ReaderWriter::ReadResult openArchive(const std::string& fileName,ReaderWriter::ArchiveStatus status, unsigned int indexBlockSizeHint, const Options* options);
+        ReaderWriter::ReadResult openArchiveImplementation(const std::string& fileName, ReaderWriter::ArchiveStatus status, unsigned int indexBlockSizeHint, const Options* options);
+
+		// 读取各种类型的数据（对象、图像、DEM、节点、着色器）
+        ReaderWriter::ReadResult readObject(const std::string& fileName,const Options* options, bool buildKdTreeIfRequired=true);
+        ReaderWriter::ReadResult readObjectImplementation(const std::string& fileName,const Options* options);
+
+        ReaderWriter::ReadResult readImage(const std::string& fileName,const Options* options);
+        ReaderWriter::ReadResult readImageImplementation(const std::string& fileName,const Options* options);
+
+        ReaderWriter::ReadResult readHeightField(const std::string& fileName,const Options* options);
+        ReaderWriter::ReadResult readHeightFieldImplementation(const std::string& fileName,const Options* options);
+
+        bool readNodeUseThread(const std::string& fileName, osg::IVBF_SGNode* parent, const Options* options);
+        ReaderWriter::ReadResult readNode(const std::string& fileName,const Options* options, bool buildKdTreeIfRequired=true);
+        ReaderWriter::ReadResult readNodeImplementation(const std::string& fileName,const Options* options);
+
+        ReaderWriter::ReadResult readShader(const std::string& fileName,const Options* options);
+        ReaderWriter::ReadResult readShaderImplementation(const std::string& fileName,const Options* options);
+
+
+
+
+		// 设置/获取 "实现文件写入功能" 的回调，替换内部的文件写入功能实现
+        void setWriteFileCallback( WriteFileCallback* cb) { _writeFileCallback = cb; }
+        WriteFileCallback* getWriteFileCallback() { return _writeFileCallback.get(); }
+        const WriteFileCallback* getWriteFileCallback() const { return _writeFileCallback.get(); }
+
+
+        ReaderWriter::WriteResult writeObject(const osg::CVBF_Object& obj, const std::string& fileName,const Options* options);
+        ReaderWriter::WriteResult writeObjectImplementation(const osg::CVBF_Object& obj, const std::string& fileName,const Options* options);
+
+        ReaderWriter::WriteResult writeImage(const osg::Image& obj, const std::string& fileName,const Options* options);
+        ReaderWriter::WriteResult writeImageImplementation(const osg::Image& obj, const std::string& fileName,const Options* options);
+
+        ReaderWriter::WriteResult writeHeightField(const osg::HeightField& obj, const std::string& fileName,const Options* options);
+        ReaderWriter::WriteResult writeHeightFieldImplementation(const osg::HeightField& obj, const std::string& fileName,const Options* options);
+
+        ReaderWriter::WriteResult writeNode(const osg::IVBF_SGNode& node, const std::string& fileName,const Options* options);
+        ReaderWriter::WriteResult writeNodeImplementation(const osg::IVBF_SGNode& node, const std::string& fileName,const Options* options);
+        
+        ReaderWriter::WriteResult writeShader(const osg::Shader& obj, const std::string& fileName,const Options* options);
+        ReaderWriter::WriteResult writeShaderImplementation(const osg::Shader& obj, const std::string& fileName,const Options* options);
+        
+		      
+		typedef class osgDB::FileLocationCallback FileLocationCallback; // 
+       
+		// 设置/获取用于"通知DatabasePager文件是在本地还是在远程文件系统"的回调函数
+		void setFileLocationCallback( FileLocationCallback* cb) { _fileLocationCallback = cb; }
+        FileLocationCallback* getFileLocationCallback() const { return _fileLocationCallback.get(); }
+
+
+
+		// 给节点创建KD树（如果需要）
+        inline void _buildKdTreeIfRequired(ReaderWriter::ReadResult& result, const Options* options);
+
+
+ 		// 设置/获取是否为加载的模型建立KD树
+        void setBuildKdTreesHint(Options::EVBF_BuildKdTreesHint hint) { _buildKdTreesHint = hint; }
+        Options::EVBF_BuildKdTreesHint getBuildKdTreesHint() const { return _buildKdTreesHint; }
+
+  		// 设置/获取 KD树生成器 用于为加载的模型建立KD树
+        void setKdTreeBuilder(osg::KdTreeBuilder* builder) { _kdTreeBuilder = builder; }
+        osg::KdTreeBuilder* getKdTreeBuilder() { return _kdTreeBuilder.get(); }
+
+
+		// 设置/获取文件缓存，用于管理从网络下载后缓存到本地的文件
+        void setFileCache(FileCache* fileCache) { _fileCache = fileCache; }
+        FileCache* getFileCache() { return _fileCache.get(); }
+        const FileCache* getFileCache() const { return _fileCache.get(); }
+
+
+		// 设置/获取口令表（password map），用于插件从有安全保护的地方访问文件
+        void setAuthenticationMap(AuthenticationMap* authenticationMap) { _authenticationMap = authenticationMap; }
+        AuthenticationMap* getAuthenticationMap() { return _authenticationMap.get(); }
+        const AuthenticationMap* getAuthenticationMap() const { return _authenticationMap.get(); }
+
+		// 设置/获取是否从图像创建节点
+        void setCreateNodeFromImage(bool flag) { _createNodeFromImage = flag; }
+        bool getCreateNodeFromImage() const { return _createNodeFromImage; }
+        
+
+		// 
+        void setOptions(Options* opt) { _options = opt; }
+        Options* getOptions() { return _options.get(); }
+        const Options*  getOptions() const { return _options.get(); }
+
+		// 初始化数据和库路径，默认由构造函数调用，因此只有打算强制重读系统环境变量时才需要
+        void initFilePathLists() { initDataFilePathList(); initLibraryFilePathList(); }
+        
+ 		// 初始化数据路径（读OSG_FILE_PATH环境变量）
+        void initDataFilePathList();
+
+ 		// 设置数据文件路径，用于查找数据文件
+        void setDataFilePathList(const FilePathList& filepath);
+
+        // 设置数据文件路径。使用单个字符串，字符串用';' (Windows) 或':' (其他所有操作系统)分隔
+        void setDataFilePathList(const std::string& paths);
+
+		// 获取数据文件路径
+        FilePathList& getDataFilePathList() { return _dataFilePath; }
+        const FilePathList& getDataFilePathList() const { return _dataFilePath; }
+
+		// 初始化库文件路径（读OSG_LIBRARY_PATH环境变量和适当的（appropriate）系统环境变量）
+        void initLibraryFilePathList();
+
+        // 设置库文件路径（使用路径列表）用于查找库文件
+		void setLibraryFilePathList(const FilePathList& filepath) { _libraryFilePath = filepath; }
+
+        // 设置库文件路径，用于查找库文件。使用单个字符串，字符串用';' (Windows) 或':' (其他所有操作系统)分隔
+		void setLibraryFilePathList(const std::string& paths);
+
+		// 获取库文件路径，用于查找库文件（dso/dll）
+        FilePathList& getLibraryFilePathList() { return _libraryFilePath; }
+        const FilePathList& getLibraryFilePathList() const { return _libraryFilePath; }
+
+        /** For 缓存中的每个对象的引用计数都大于1(在应用程序的其他地方被引用)  
+          * set the time stamp for that object in the cache to specified time.
+
+          * This would typically be called once per frame by applications which are doing database paging,
+          * and need to prune objects that are no longer required.
+          * The time used is taken from the FrameStamp::getReferenceTime().*/
+        void updateTimeStampOfObjectsInCacheWithExternalReferences(const ::CVBF_FrameStamp& frameStamp);
+
+        /** Removed object in the cache which have a time stamp at or before the specified expiry time.
+          * This would typically be called once per frame by applications which are doing database paging,
+          * and need to prune objects that are no longer required, and called after the a called
+          * after the call to updateTimeStampOfObjectsInCacheWithExternalReferences(frameStamp).*/
+        void removeExpiredObjectsInCache(const ::CVBF_FrameStamp& frameStamp);
+
+        /** set hint to viewer code calling removeExpiredObjectsInCache to specify how long it should give before expiring objects in Registry cache,*/
+		// 设置/获取终结（逾期）延迟
+        void setExpiryDelay(double expiryDelay) { _expiryDelay = expiryDelay; }
+        double getExpiryDelay() const { return _expiryDelay; }
+
+
+        /** Remove all objects in the cache regardless of having external references or expiry times.*/ 
+        void clearObjectCache();
+
+        /** Add a filename,object,timestamp triple to the Registry::ObjectCache.*/
+        void addEntryToObjectCache(const std::string& filename, osg::CVBF_Object* object, double timestamp = 0.0);
+
+        /** Get an Object from the object cache*/
+        osg::CVBF_Object* getFromObjectCache(const std::string& fileName);
+        
+        /** Get an ref_ptr<CVBF_Object> from the object cache*/
+        ref_ptr<osg::CVBF_Object> getRefFromObjectCache(const std::string& fileName);
+
+        /** Add archive to archive cache so that future calls reference this archive.*/
+        void addToArchiveCache(const std::string& fileName, osgDB::Archive* archive);
+
+        /** Remove Archive from cache.*/
+        void removeFromArchiveCache(const std::string& fileName);
+        
+        /** Get an Archive from the archive cache.*/
+        osgDB::Archive* getFromArchiveCache(const std::string& fileName);
+
+        /** Get an ref_ptr<Archive> from the archive cache.*/
+        ref_ptr<osgDB::Archive> getRefFromArchiveCache(const std::string& fileName);
+        
+        /** Remove all archives from the archive cache.*/
+        void clearArchiveCache();
+        
+         /** If State is non-zero, this function releases OpenGL objects for
+           * the specified graphics context. Otherwise, releases OpenGL objexts
+           * for all graphics contexts. */
+        void releaseGLObjects(osg::State* state=0);
+
+        /** get the attached library with specified name.*/
+        VBF_DynamicLibrary*  getLibrary(const std::string& fileName);
+
+
+		// 设置/获取共享状态管理器（SharedStateManager）
+        void setSharedStateManager(SharedStateManager* SharedStateManager) { _sharedStateManager = SharedStateManager; }
+        SharedStateManager* getOrCreateSharedStateManager();
+        SharedStateManager* getSharedStateManager() { return _sharedStateManager.get(); }
+
+		// 添加一个存档文件（Archive）扩展
+        void addArchiveExtension(const std::string ext);
+        
+        /** registers a protocol */
+        void registerProtocol(const std::string& protocol);
+        
+        /** returns true, if named protocol is registered */
+        bool isProtocolRegistered(const std::string& protocol);
+
+		// 获取ObjectWrapperManager（用于存储所有的ObjectWrappers）
+        ObjectWrapperManager* getObjectWrapperManager() { return _objectWrapperManager.get(); }
+
+		// 获取DeprecatedDotOsgWrapperManager（用于存储所有的DeprecatedDotOsgWrapper）
+        DeprecatedDotOsgWrapperManager* getDeprecatedDotOsgObjectWrapperManager() { return _deprecatedDotOsgWrapperManager.get(); }
+
+        typedef std::vector< std::string> ArchiveExtensionList;
+        const ArchiveExtensionList& getArchiveExtensions() const { return _archiveExtList; }
+
+    protected:
+
+        virtual ~Registry();
+
+		
+		observer_ptr<osgDB::DatabasePager>								m_opDatabasePager;
+
+        typedef std::vector< ref_ptr<VBF_DynamicLibrary> >             DynamicLibraryList;
+        typedef std::map< std::string, std::string>                     ExtensionAliasMap;
+        typedef std::map< std::string, std::string>                     MimeTypeExtensionMap;
+        
+        typedef std::pair<ref_ptr<osg::CVBF_Object>, double >           ObjectTimeStampPair;
+        typedef std::map<std::string, ObjectTimeStampPair >             ObjectCache;
+        typedef std::map<std::string, ref_ptr<osgDB::Archive> >    ArchiveCache;
+        
+        typedef std::set<std::string>                                   RegisteredProtocolsSet;
+
+        Registry(); // Singlon模式，禁止构造
+
+        /** get the attached library with specified name.*/
+        DynamicLibraryList::iterator getLibraryItr(const std::string& fileName);
+
+        Options::EVBF_BuildKdTreesHint     _buildKdTreesHint;
+        ref_ptr<osg::KdTreeBuilder>            _kdTreeBuilder;
+        
+        ref_ptr<FileCache>                     _fileCache;
+        
+        ref_ptr<AuthenticationMap>             _authenticationMap;
+        
+        bool                                        _createNodeFromImage;
+        
+        RegisteredProtocolsSet                      _registeredProtocols;
+
+    public:
+        /** Functor used in internal implementations.*/
+        struct ReadFunctor
+        {
+            ReadFunctor(const std::string& filename, const Options* options):
+                _filename(filename),
+                _options(options) {}
+
+            virtual ~ReadFunctor() {}
+            virtual ReaderWriter::ReadResult doRead(ReaderWriter* rw) const = 0;
+            virtual bool isValid(ReaderWriter::ReadResult& readResult) const = 0;
+            virtual bool isValid(osg::CVBF_Object* object) const = 0;
+
+            std::string _filename;
+            const Options* _options;
+        };
+
+   protected:
+   
+        void destruct();
+   
+        // forward declare helper classes
+        struct ReadObjectFunctor;
+        struct ReadImageFunctor;
+        struct ReadHeightFieldFunctor;
+        struct ReadNodeFunctor;
+        struct ReadArchiveFunctor;
+        struct ReadShaderFunctor;
+        
+        // make helper classes friends to get round VS6.0 "issues"
+        friend struct ReadFunctor;
+        friend struct ReadObjectFunctor;
+        friend struct ReadImageFunctor;
+        friend struct ReadHeightFieldFunctor;
+        friend struct ReadNodeFunctor;
+        friend struct ReadArchiveFunctor;
+        friend struct ReadShaderFunctor;
+
+        ReaderWriter::ReadResult read(const ReadFunctor& readFunctor);
+        ReaderWriter::ReadResult readImplementation(const ReadFunctor& readFunctor,Options::EVBF_CacheHintOptions cacheHint);
+
+
+        // forward declare helper class
+        class AvailableReaderWriterIterator;
+        friend class AvailableReaderWriterIterator;
+        class AvailableArchiveIterator;
+        friend class AvailableArchiveIterator;
+
+
+        ref_ptr<FindFileCallback>      _findFileCallback;
+        ref_ptr<ReadFileCallback>      _readFileCallback;
+        ref_ptr<WriteFileCallback>     _writeFileCallback;
+        ref_ptr<FileLocationCallback>  _fileLocationCallback;
+
+        OpenThreads::ReentrantMutex _pluginMutex;
+        ReaderWriterList            _rwList;
+        ImageProcessorList          _ipList;
+        DynamicLibraryList          _dlList;
+
+        OpenThreads::ReentrantMutex _archiveCacheMutex;
+        ArchiveCache                _archiveCache;
+
+        bool _openingLibrary;
+    
+        // map to alias to extensions to plugins.
+        ExtensionAliasMap  _extAliasMap;
+
+        // maps mime-types to extensions.
+        MimeTypeExtensionMap _mimeTypeExtMap;
+
+        // Utility: Removes whitespace from both ends of a string.
+        static std::string trim( const std::string& str );
+        
+        // options to pass to reader writers.
+        ref_ptr<Options>     _options;
+        
+        FilePathList                            _dataFilePath;
+        FilePathList                            _libraryFilePath;
+
+        double                                  _expiryDelay;
+        ObjectCache                             _objectCache;
+        OpenThreads::Mutex                      _objectCacheMutex;
+        
+
+        ArchiveExtensionList                    _archiveExtList;
+
+        ref_ptr<SharedStateManager>        _sharedStateManager;
+
+        ref_ptr<ObjectWrapperManager>      _objectWrapperManager;
+        ref_ptr<DeprecatedDotOsgWrapperManager> _deprecatedDotOsgWrapperManager;
+};
+
+/** read the command line arguments.*/
+inline void readCommandLine(::ArgumentParser& parser)
+{
+    Registry::instance()->readCommandLine(parser);
+}
+
+
+// 自动注册/注销数据读写器的代理类
+template<class T>
+class RegisterReaderWriterProxy
+{
+    public:
+        RegisterReaderWriterProxy()
+        {
+			Registry* pRegistry = Registry::instance();
+            if (pRegistry)
+			{
+				_rw = new T;
+				pRegistry->addReaderWriter(_rw.get());
+			}
+        }
+
+        ~RegisterReaderWriterProxy()
+        {
+			Registry* pRegistry = Registry::instance();
+           
+			if (pRegistry) pRegistry->removeReaderWriter(_rw.get());
+        }
+        
+        T* get() { return _rw.get(); }
+        
+    protected:
+        ref_ptr<T> _rw; // 数据读写器
+};
+
+
+/** Proxy class for automatic registration of reader/writers with the Registry.*/
+template<class T>
+class RegisterImageProcessorProxy
+{
+    public:
+        RegisterImageProcessorProxy()
+        {
+            if (Registry::instance())
+            {
+                _rw = new T;
+                Registry::instance()->addImageProcessor(_rw.get());
+            }
+        }
+
+        ~RegisterImageProcessorProxy()
+        {
+            if (Registry::instance())
+            {
+                Registry::instance()->removeImageProcessor(_rw.get());
+            }
+        }
+
+        T* get() { return _rw.get(); }
+
+    protected:
+        ref_ptr<T> _rw;
+};
+
+struct PluginFunctionProxy
+{
+    PluginFunctionProxy(CPluginFunction function) { (function)(); }
+};
+
+#define USE_OSGPLUGIN(ext) \
+    extern "C" void VBF_SGDB_##ext(void); \
+    static osgDB::PluginFunctionProxy proxy_##ext(VBF_SGDB_##ext);
+
+#define USE_DOTOSGWRAPPER(classname) \
+    extern "C" void dotosgwrapper_##classname(void); \
+    static osgDB::PluginFunctionProxy proxy_dotosgwrapper_##classname(dotosgwrapper_##classname);
+
+#define USE_DOTOSGWRAPPER_LIBRARY(libname) \
+    extern "C" void dotosgwrapper_library_##libname(void); \
+    static osgDB::PluginFunctionProxy proxy_dotosgwrapper_library_##libname(dotosgwrapper_library_##libname);
+
+#define USE_SERIALIZER_WRAPPER(classname) \
+    extern "C" void wrapper_serializer_##classname(void); \
+    static osgDB::PluginFunctionProxy proxy_serializer_##classname(wrapper_serializer_##classname);
+
+#define USE_SERIALIZER_WRAPPER_LIBRARY(libname) \
+    extern "C" void wrapper_serializer_library_##libname(void); \
+    static osgDB::PluginFunctionProxy proxy_serializer_library_##libname(wrapper_serializer_library_##libname);
+
+#define USE_COMPRESSOR_WRAPPER(classname) \
+    extern "C" void wrapper_serializer_##classname(void); \
+    static osgDB::PluginFunctionProxy proxy_compressor_##classname(wrapper_compressor_##classname);
+
+#define REGISTER_OSGPLUGIN(ext, classname) \
+    extern "C" void VBF_SGDB_##ext(void) {} \
+    static osgDB::RegisterReaderWriterProxy<classname> g_proxy_##classname;
+
+#define REGISTER_OSGIMAGEPROCESSOR(ext, classname) \
+    extern "C" void VBF_SGDB_##ext(void) {} \
+    static osgDB::RegisterImageProcessorProxy<classname> g_proxy_##classname;
+
+}
+
+#endif

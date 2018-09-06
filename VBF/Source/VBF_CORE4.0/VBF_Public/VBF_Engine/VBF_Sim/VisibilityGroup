@@ -1,0 +1,56 @@
+#ifndef OSGSIM_VISIBILITYGROUP
+#define OSGSIM_VISIBILITYGROUP 1
+
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGroupImpl.h>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGroup.h>
+#include <VBF_Engine/VBF_SceneGraph/VBF_SGNVisitOp.h>
+
+#include <VBF_Engine/VBF_Sim/Export>
+
+namespace osgSim {
+
+// 在一个Visibility的盒子中，判断盒子中的物体是否与一条线段相交（视点沿视线方向并给定线段长度），
+// 如果相交，将显示此物体（遍历时会遍历到），否则是隐藏的
+class OSGSIM_EXPORT VisibilityGroup : public osg::IVBF_SGNodeGroupImpl<osg::IVBF_SGNodeGroup>
+{		
+   typedef osg::IVBF_SGNodeGroupImpl<osg::IVBF_SGNodeGroup> BaseClass;
+
+   public :    
+        VisibilityGroup();
+        VisibilityGroup(const VisibilityGroup&,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY);
+
+        META_Node(osgSim, VisibilityGroup);
+
+        virtual void traverse(osg::NodeVisitor& nv);
+
+        /** Set the subgraph that is intersected for the visibility determination.*/
+        void setVisibilityVolume(osg::IVBF_SGNode* node) { _visibilityVolume = node; }
+        osg::IVBF_SGNode* getVisibilityVolume() { return _visibilityVolume.get(); }
+        const osg::IVBF_SGNode* getVisibilityVolume() const { return _visibilityVolume.get(); }
+
+        /** Set the traversal mask for the intersection testing.*/
+        void setVolumeIntersectionMask(osg::IVBF_SGNode::NodeMask mask) { _volumeIntersectionMask = mask; }
+
+        /** Get the traversal mask for the intersection testing.*/
+        osg::IVBF_SGNode::NodeMask getVolumeIntersectionMask() const { return _volumeIntersectionMask; }
+
+        /** Set the length of the intersection segment.
+         * The segments extends this many database units from the camera eye-point along the look vector.
+         * If this is left at zero then the diameter of the bounding sphere of the visibility volume is used.*/
+        void setSegmentLength(float length) { _segmentLength = length; }
+
+        /** Get the length of the intersection segment.*/
+        float getSegmentLength() const { return _segmentLength; }
+ 
+    protected :
+
+        virtual ~VisibilityGroup() {}
+
+        ref_ptr<osg::IVBF_SGNode> _visibilityVolume;
+        osg::IVBF_SGNode::NodeMask _volumeIntersectionMask;
+        float _segmentLength;
+
+};
+
+}
+#endif

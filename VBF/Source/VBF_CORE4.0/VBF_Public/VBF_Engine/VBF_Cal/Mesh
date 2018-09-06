@@ -1,0 +1,68 @@
+#ifndef __OSGCAL__MESH_H__
+#define __OSGCAL__MESH_H__
+
+#include <VBF_Engine/VBF_SceneGraph/Version>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGDrawableGeometry.h>
+#include <VBF_Engine/VBF_SceneGraph/PrimitiveSet>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_StateAttrFog.h>
+#include <VBF_Engine/VBF_SGUtil/GLObjectsVisitor>
+
+#include <VBF_Engine/VBF_Cal/Export>
+#include <VBF_Engine/VBF_Cal/DepthMesh>
+#include <VBF_Engine/VBF_Cal/Model>
+
+namespace osgCal
+{
+    class ModelData;
+    
+    /**
+     * \c osg::Drawable used to render \c Mesh.
+     */
+    class OSGCAL_EXPORT Mesh : public osg::Geometry
+    {
+        public:
+           
+            Mesh( ModelData*      modelData,
+                  const CoreMesh* mesh );
+
+            virtual void update() = 0;
+
+            osg::BoundingBox computeBound() const { return boundingBox; }
+
+            const CoreMesh* getCoreMesh() const { return mesh.get(); }
+
+            /**
+             * Return depth submesh for this mesh, can be NULL (for non-opaque meshes).
+             */
+            DepthMesh* getDepthMesh() { return depthMesh.get(); }
+
+            /**
+             * We don't support osgUtil::TransformAttributeFunctor
+             * since for ridig meshes we share the same vertex
+             * buffer that must not be transformed for each model.
+             */
+            virtual bool supports( const AttributeFunctor& ) { return false; }
+
+            /**
+             * For compiling all statesets when Model accepts osgUtil::GLObjectsVisitor.
+             * Don't used by software meshes, used by depth and hardware ones.
+             */
+            virtual void accept( osgUtil::GLObjectsVisitor* ) {}
+
+            void changeParameters( const MeshParameters* );
+
+      protected:
+
+            ref_ptr< ModelData >             modelData;
+            ref_ptr< const CoreMesh >        mesh;
+            osg::BoundingBox                      boundingBox;
+            bool                                  deformed;
+
+            ref_ptr< DepthMesh >             depthMesh;
+
+            virtual void onParametersChanged( const MeshParameters* previousParameters );
+    };
+
+}; //namespace osgCal
+
+#endif

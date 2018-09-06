@@ -1,0 +1,139 @@
+#ifndef OSGEARTHUTIL_TERRAINPROFILE
+#define OSGEARTHUTIL_TERRAINPROFILE
+
+#include <VBF_3DMap/VBF_EarthUtil/Common>
+#include <VBF_3DMap/VBF_Terrain/VBF_Terrain.h>
+#include <VBF_Engine/VBF_Sim/ElevationSlice>
+
+class CVBFO_SGNodeMap;
+    
+namespace osgEarth { namespace Util {
+
+    // 地形剖面信息
+    class OSGEARTHUTIL_EXPORT TerrainProfile
+    {
+    public:
+        TerrainProfile();
+        TerrainProfile(const TerrainProfile& profile);
+        virtual ~TerrainProfile() { }
+
+        /**
+         * Gets the distance at the given index
+         * @param i
+         *        The index of the profile measurement
+         */
+        double getDistance( int i ) const;
+
+        /**
+         * Gets the total distance covered by this TerrainProfile
+         */
+        double getTotalDistance() const;
+
+        /**
+         * Gets the min and max elevations of this TerrainProfile
+         * @param min
+         *        The minimum elevation in meters of this TerrainProfile
+         * @param max
+         *        The maximum elevation in meters of this TerrainProfile
+         */
+        void getElevationRanges(double &min, double &max ) const;
+
+        /**
+         * Gets the elevation at the given index
+         * @param i
+         *        The index of the profile measurement
+         */
+        double getElevation( int i ) const;
+
+        /**
+         * Gets the number of elevation measurements in this TerrainProfile
+         */
+        unsigned int getNumElevations() const;
+        
+        /**
+         * Add an elevation measurement to this TerrainProfile
+         */
+        void addElevation( double distance, double elevation );
+
+        /**
+         * Clears all measurements from this TerrainProfile
+         */
+        void clear();
+
+
+    private:
+        double _spacing;
+        typedef std::pair<double,double> DistanceHeight;
+        typedef std::vector<DistanceHeight> DistanceHeightList;
+        DistanceHeightList   _elevations;
+    };
+
+
+    // 计算两点间的地形剖面，监视场景图中高程的变化并更新剖面
+    class OSGEARTHUTIL_EXPORT TerrainProfileCalculator : public IVBF_TerrainCallback
+    {
+    public:
+
+        // 当剖面变化时激活的回调函数
+        struct ChangedCallback : public ::CVBF_Referenced
+        {
+        public:
+            virtual void onChanged(const TerrainProfileCalculator* sender) {};
+            virtual ~ChangedCallback() { }
+        };
+
+        typedef std::list< observer_ptr<ChangedCallback> > ChangedCallbackList;
+
+        TerrainProfileCalculator(CVBFO_SGNodeMap* mapNode, const osgEarth::GeoPoint& start, const osgEarth::GeoPoint& end);
+        TerrainProfileCalculator(CVBFO_SGNodeMap* mapNode);
+        virtual ~TerrainProfileCalculator();
+    
+        // 添加/移除一个回调
+        void addChangedCallback( ChangedCallback* callback );
+        void removeChangedCallback( ChangedCallback* callback );
+
+        // 获取地形剖面
+        const TerrainProfile& getProfile() const;
+
+        // 获取地形剖面的起点
+        const GeoPoint& getStart() const;
+
+        // 获取地形剖面的末点
+        const GeoPoint& getEnd() const;
+
+        // 设置地形剖面的起始点和终止点
+        void setStartEnd(const osgEarth::GeoPoint& start, const osgEarth::GeoPoint& end);
+
+        virtual void onTileAdded(const CVBF_TileKey& tileKey, osg::IVBF_SGNode* terrain, CVBF_TerrainCallbackContext&);
+
+        // 重新计算剖面
+        void recompute();
+
+        /**
+         * Utility to directly compute a terrain profile
+         * @param mapNode
+         *        The CVBFO_SGNodeMap to compute the terrain profile one
+         * @param start
+         *        The start point of the terrain profile
+         * @param end
+         *        The end point of the terrain profile
+         * @param numSamples
+         *        The number of samples to compute
+         * @param profile
+         *        The resulting TerrainProfile
+         */
+        static void computeTerrainProfile( CVBFO_SGNodeMap* mapNode, const osgEarth::GeoPoint& start, const osgEarth::GeoPoint& end, unsigned int numSamples, TerrainProfile& profile);
+
+
+
+    private:
+        osgEarth::GeoPoint _start;
+        osgEarth::GeoPoint _end;
+        TerrainProfile _profile;
+        ref_ptr< CVBFO_SGNodeMap > _mapNode;
+        ChangedCallbackList _changedCallbacks;
+    };
+
+} } // namespace osgEarth::Util
+
+#endif // OSGEARTHUTIL_TERRAINPROFILE

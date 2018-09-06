@@ -1,0 +1,99 @@
+/* -*-c++-*- */
+/* osgEarth - Dynamic map generation toolkit for OpenSceneGraph
+ * Copyright 2008-2013 Pelican Mapping
+ * http://osgearth.org
+ *
+ * osgEarth is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ */
+#ifndef OSGEARTH_DRIVER_WCS_DRIVEROPTIONS
+#define OSGEARTH_DRIVER_WCS_DRIVEROPTIONS 1
+
+#include <VBF_3DMap/VBF_Terrain/Common.h>
+#include <VBF_3DMap/VBF_Terrain/VBF_SourceTile.h>
+#include <VBF_3DMap/VBF_Terrain/URI.h>
+
+namespace osgEarth { namespace Drivers
+{
+    using namespace osgEarth;
+
+    class WCSOptions : public CVBF_OptionsDriverSourceTile // NO EXPORT; header only
+    {
+    public: // properties
+
+        CVBF_Optional<URI>& url() { return _url; }
+        const CVBF_Optional<URI>& url() const { return _url; }
+
+        CVBF_Optional<std::string>& identifier() { return _identifier; }
+        const CVBF_Optional<std::string>& identifier() const { return _identifier; }
+
+        CVBF_Optional<std::string>& format() { return _format; }
+        const CVBF_Optional<std::string>& format() const { return _format; }
+
+        CVBF_Optional<std::string>& elevationUnit() { return _elevationUnit; }
+        const CVBF_Optional<std::string>& elevationUnit() const { return _elevationUnit; }
+
+        CVBF_Optional<std::string>& srs() { return _srs; }
+        const CVBF_Optional<std::string>& srs() const { return _srs; }
+
+        CVBF_Optional<std::string>& rangeSubset() { return _rangeSubset; }
+        const CVBF_Optional<std::string>& rangeSubset() const { return _rangeSubset; }
+
+    public:
+        WCSOptions( const CVBF_OptionsDriverSourceTile& opt =CVBF_OptionsDriverSourceTile() ) :
+          CVBF_OptionsDriverSourceTile( opt ),
+              _elevationUnit( "m" )
+          {
+              setDriver( "wcs" );
+              fromConfig( m_conf );
+          }
+
+        /** dtor */
+        virtual ~WCSOptions() { }
+
+    public:
+        CVBF_Config getConfig() const {
+            CVBF_Config conf = CVBF_OptionsDriverSourceTile::getConfig();
+            conf.updateIfSet("url", _url);
+            conf.updateIfSet("identifier", _identifier);
+            conf.updateIfSet("format", _format);
+            conf.updateIfSet("elevation_unit", _elevationUnit);
+            conf.updateIfSet("srs", _srs);
+            conf.updateIfSet("range_subset", _rangeSubset);
+            return conf;
+        }
+
+    protected:
+        void mergeConfig( const CVBF_Config& conf ) {
+            CVBF_OptionsDriverSourceTile::mergeConfig( conf );
+            fromConfig( conf );
+        }
+
+    private:
+        void fromConfig( const CVBF_Config& conf ) {
+            conf.getIfSet("url", _url);
+            conf.getIfSet("identifier", _identifier);
+            conf.getIfSet("format", _format);
+            conf.getIfSet("elevation_unit", _elevationUnit);
+            conf.getIfSet("srs", _srs);
+            conf.getIfSet("range_subset", _rangeSubset);
+        }
+
+        CVBF_Optional<URI>         _url;
+        CVBF_Optional<std::string> _identifier, _format, _elevationUnit, _srs, _rangeSubset;
+    };
+
+} } // namespace osgEarth::Drivers
+
+#endif // OSGEARTH_DRIVER_WCS_DRIVEROPTIONS
+

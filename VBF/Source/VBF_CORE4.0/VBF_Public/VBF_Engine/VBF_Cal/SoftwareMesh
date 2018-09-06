@@ -1,0 +1,27 @@
+#ifndef __OSGCAL__SOFTWAREMESH_H__
+#define __OSGCAL__SOFTWAREMESH_H__
+
+#include <VBF_Engine/VBF_Cal/Mesh>
+
+namespace osgCal {
+
+    class SoftwareMesh : public Mesh
+    {
+        public:
+
+            osg::CVBF_Object* cloneType() const;
+            osg::CVBF_Object* clone( const osg::CopyOp& ) const;
+            virtual bool isSameKindAs(const osg::CVBF_Object* obj) const { return dynamic_cast<const SoftwareMesh *>(obj)!=NULL; }
+            virtual const char* libraryName() const { return "osgCal"; }
+            virtual const char* className() const { return "SoftwareMesh"; }
+
+            SoftwareMesh( ModelData*      modelData,
+                          const CoreMesh* mesh );
+
+            virtual void update();
+
+      };
+
+};
+
+#endif

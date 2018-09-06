@@ -1,0 +1,53 @@
+#ifndef OSGEARTH_DRIVER_YAHOO_DRIVEROPTIONS
+#define OSGEARTH_DRIVER_YAHOO_DRIVEROPTIONS 1
+
+#include <VBF_3DMap/VBF_Terrain/Common.h>
+#include <VBF_3DMap/VBF_Terrain/VBF_SourceTile.h>
+
+namespace osgEarth { namespace Drivers
+{
+    using namespace osgEarth;
+
+    class YahooOptions : public CVBF_OptionsDriverSourceTile // NO EXPORT; header only
+    {
+    public:
+        CVBF_Optional<std::string>& dataset() { return _dataset; }
+        const CVBF_Optional<std::string>& dataset() const { return _dataset; }
+
+    public:
+        YahooOptions( const CVBF_OptionsDriverSourceTile& opt =CVBF_OptionsDriverSourceTile() ) : CVBF_OptionsDriverSourceTile( opt )
+        {
+            setDriver( "yahoo" );
+            fromConfig( m_conf );
+        }
+
+        virtual ~YahooOptions() { }
+
+    public:
+        CVBF_Config getConfig() const
+        {
+            CVBF_Config conf = CVBF_OptionsDriverSourceTile::getConfig();
+            conf.updateIfSet("dataset", _dataset);
+            return conf;
+        }
+
+    protected:
+        void mergeConfig( const CVBF_Config& conf )
+        {
+            CVBF_OptionsDriverSourceTile::mergeConfig( conf );            
+            fromConfig( conf );
+        }
+
+    private:
+        void fromConfig( const CVBF_Config& conf )
+        {
+            conf.getIfSet( "dataset", _dataset );
+        }
+
+        CVBF_Optional<std::string> _dataset;
+    };
+
+} } // namespace osgEarth::Drivers
+
+#endif // OSGEARTH_DRIVER_YAHOO_DRIVEROPTIONS
+

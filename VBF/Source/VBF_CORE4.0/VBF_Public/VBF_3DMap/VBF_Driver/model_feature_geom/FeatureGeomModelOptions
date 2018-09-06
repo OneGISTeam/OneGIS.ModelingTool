@@ -1,0 +1,80 @@
+/* -*-c++-*- */
+/* osgEarth - Dynamic map generation toolkit for OpenSceneGraph
+ * Copyright 2008-2013 Pelican Mapping
+ * http://osgearth.org
+ *
+ * osgEarth is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ */
+#ifndef OSGEARTH_DRIVER_FEATURE_GEOM_MODEL_OPTIONS
+#define OSGEARTH_DRIVER_FEATURE_GEOM_MODEL_OPTIONS 1
+
+#include <VBF_3DMap/VBF_Terrain/Common.h>
+#include <VBF_3DMap/VBF_Features/GeometryCompiler.h>
+#include <VBF_3DMap/VBF_Features/VBF_SourceModelFeature.h>
+
+namespace osgEarth { namespace Drivers
+{
+    using namespace osgEarth;
+    using namespace osgEarth::Features;
+
+    class FeatureGeomModelOptions : public FeatureModelSourceOptions // NO EXPORT; header only
+    {
+    public:
+        GeometryCompilerOptions& compilerOptions() { return _compilerOptions; }
+        const GeometryCompilerOptions& compilerOptions() const { return _compilerOptions; }
+
+    public:
+        FeatureGeomModelOptions( const CVBF_Options& options =CVBF_Options() ) :
+            FeatureModelSourceOptions( options )
+        {
+            setDriver( "feature_geom" );
+            fromConfig( m_conf );
+        }
+
+        virtual ~FeatureGeomModelOptions()
+        {
+        }
+
+    public:
+        CVBF_Config getConfig() const
+        {
+            CVBF_Config conf = FeatureModelSourceOptions::getConfig();
+
+            // merges the configurations together, so you can still specify 
+            // compiler options at the model level
+            CVBF_Config compilerConfig = _compilerOptions.getConfig();
+            conf.merge( compilerConfig );
+
+            return conf;
+        }
+
+    protected:
+        virtual void mergeConfig( const CVBF_Config& conf ) {
+            FeatureModelSourceOptions::mergeConfig( conf );
+            _compilerOptions.mergeConfig( conf );
+            fromConfig( conf );
+        }
+
+    private:
+        void fromConfig( const CVBF_Config& conf ) {
+            _compilerOptions.mergeConfig(conf);
+        }
+
+        GeometryCompilerOptions _compilerOptions;
+    };
+
+} } // namespace osgEarth::Drivers
+
+#endif // OSGEARTH_DRIVER_FEATURE_GEOM_MODEL_OPTIONS
+

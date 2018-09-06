@@ -1,0 +1,53 @@
+/*  -*-c++-*- 
+ *  Copyright (C) 2009 Cedric Pinson <cedric.pinson@plopbyte.net>
+ *
+ * This library is open source and may be redistributed and/or modified under  
+ * the terms of the OpenSceneGraph Public License (OSGPL) version 0.0 or 
+ * (at your option) any later version.  The full license is in LICENSE file
+ * included with this distribution, and on the openscenegraph.org website.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * OpenSceneGraph Public License for more details.
+*/
+
+#ifndef OSGANIMATION_STATSVISITOR_H
+#define OSGANIMATION_STATSVISITOR_H
+
+#include <VBF_Engine/VBF_Animation/Export>
+#include <VBF_Engine/VBF_Animation/ActionVisitor>
+#include <VBF_Base/VBF_Stats.h>
+#include <vector>
+
+namespace osgAnimation
+{
+
+    class OSGANIMATION_EXPORT StatsActionVisitor : public osgAnimation::UpdateActionVisitor
+    {
+    protected:
+        ref_ptr<CVBF_Stats> _stats;
+        std::vector<std::string> _channels;
+
+    public:
+        META_ActionVisitor(osgAnimation, StatsActionVisitor);
+
+        StatsActionVisitor();
+        StatsActionVisitor(CVBF_Stats* stats, unsigned int frame);
+        void reset();
+        const std::vector<std::string>& getChannels() const { return _channels; }
+        CVBF_Stats* getStats() { return _stats.get(); }
+        void setStats(CVBF_Stats* stats) { _stats = stats; }
+        void setFrame(unsigned int frame) { _frame = frame; }
+        void apply(Timeline& action);
+        void apply(Action& action);
+        void apply(ActionBlendIn& action);
+        void apply(ActionBlendOut& action);
+        void apply(ActionAnimation& action);
+        void apply(ActionStripAnimation& action);
+
+    };
+
+}
+
+#endif

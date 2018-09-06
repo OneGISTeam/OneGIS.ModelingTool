@@ -1,0 +1,175 @@
+/* -*-c++-*- OpenSceneGraph - Copyright (C) 1998-2006 Robert Osfield 
+ *
+ * This library is open source and may be redistributed and/or modified under  
+ * the terms of the OpenSceneGraph Public License (OSGPL) version 0.0 or 
+ * (at your option) any later version.  The full license is in LICENSE file
+ * included with this distribution, and on the openscenegraph.org website.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * OpenSceneGraph Public License for more details.
+*/
+
+#ifndef VBF_SGDB_IMAGEPAGER
+#define VBF_SGDB_IMAGEPAGER 1
+
+#include <VBF_Engine/VBF_SceneGraph/Image>
+#include <VBF_Engine/VBF_SceneGraph/VBF_SGNVisitOp.h>
+#include <VBF_Base/observer_ptr>
+#include <VBF_Engine/VBF_SceneGraph/OperationThread>
+#include <VBF_Base/VBF_FrameStamp.h>
+
+#include <OpenThreads/Mutex>
+
+#include <VBF_Engine/VBF_SGDB/ReaderWriter>
+#include <VBF_Engine/VBF_SGDB/Options>
+
+namespace osgDB
+{
+
+class VBF_SGDB_EXPORT ImagePager : public osg::NodeVisitor::ImageRequestHandler
+{
+    public:
+    
+        ImagePager();
+          
+        class VBF_SGDB_EXPORT ImageThread : public ::CVBF_Referenced, public OpenThreads::Thread
+        {
+        public:
+        
+            enum Mode
+            {
+                HANDLE_ALL_REQUESTS,
+                HANDLE_NON_HTTP,
+                HANDLE_ONLY_HTTP
+            };
+        
+            ImageThread(ImagePager* pager, Mode mode, const std::string& name);
+            
+            ImageThread(const ImageThread& dt, ImagePager* pager);
+            
+            void SetDone(bool done) { m_bDone = done; }
+            bool IsDone() const { return m_bDone; }
+
+            virtual int cancel();
+            
+            virtual void run();
+            
+        protected:
+
+            virtual ~ImageThread();
+        
+            bool            m_bDone;
+            Mode            _mode;
+            ImagePager*     _pager;
+            std::string     m_sName;
+        };
+
+
+        ImageThread* getImageThread(unsigned int i) { return _imageThreads[i].get(); }
+        
+        const ImageThread* getImageThread(unsigned int i) const { return _imageThreads[i].get(); }
+
+        unsigned int getNumImageThreads() const { return _imageThreads.size(); }
+        
+
+        void setPreLoadTime(double preLoadTime) { _preLoadTime=preLoadTime; }
+        virtual double getPreLoadTime() const { return _preLoadTime; }
+
+        virtual osg::Image* readImageFile(const std::string& fileName);
+
+        virtual void requestImageFile(const std::string& fileName,osg::CVBF_Object* attachmentPoint, int attachmentIndex, double timeToMergeBy, const ::CVBF_FrameStamp* framestamp);
+
+
+        /** Return true if there are pending updates to the scene graph that require a call to updateSceneGraph(double). */
+        virtual bool requiresUpdateSceneGraph() const;
+        
+        /** Merge the changes to the scene graph. */
+        virtual void updateSceneGraph(const ::CVBF_FrameStamp &frameStamp);
+        
+        int cancel();
+
+    protected:
+    
+        virtual ~ImagePager();
+        // forward declare  
+        struct RequestQueue;
+        
+        struct SortFileRequestFunctor;
+        friend struct SortFileRequestFunctor;
+              
+        struct ImageRequest : public ::CVBF_Referenced
+        {
+            ImageRequest():
+                CVBF_Referenced(true),
+                _timeToMergeBy(0.0),
+                _attachmentIndex(-1) {}
+            
+            double                              _timeToMergeBy;
+            std::string                         _fileName;
+            ref_ptr<Options> _loadOptions;
+            observer_ptr<osg::CVBF_Object>      _attachmentPoint;
+            int                                 _attachmentIndex;
+            ref_ptr<osg::Image>            _loadedImage;
+            RequestQueue*                       _requestQueue;
+           
+        };
+        
+        struct RequestQueue : public ::CVBF_Referenced
+        {
+            typedef std::vector< ref_ptr<ImageRequest> > RequestList;
+
+            void sort();
+                                    
+            RequestList         _requestList;
+            OpenThreads::Mutex  _requestMutex;
+        };
+
+        
+        struct ReadQueue : public RequestQueue
+        {
+            ReadQueue(ImagePager* pager, const std::string& name);
+            
+            void block() { _block->block(); }
+            
+            void release() { _block->release(); }
+            
+            void updateBlock()
+            {
+                _block->set((!_requestList.empty() || !_pager->_databasePagerThreadPaused));
+            }
+            
+            void clear();
+            
+            void add(ImageRequest* imageRequest);
+            
+            void takeFirst(ref_ptr<ImageRequest>& databaseRequest);
+            
+            ref_ptr<osg::RefBlock> _block;
+            
+            ImagePager*                 _pager;
+            std::string                 m_sName;
+        };
+        
+        OpenThreads::Mutex          _run_mutex;
+        bool                        _startThreadCalled;
+
+        bool                        m_bDone;
+        bool                        _databasePagerThreadPaused;
+        
+        ref_ptr<ReadQueue>     _readQueue;
+        
+        typedef std::vector< ref_ptr<ImageThread> > ImageThreads;
+        ImageThreads                _imageThreads;
+        
+        ref_ptr<RequestQueue>  _completedQueue;
+        
+        double                      _preLoadTime;
+};
+
+
+}
+
+#endif
+

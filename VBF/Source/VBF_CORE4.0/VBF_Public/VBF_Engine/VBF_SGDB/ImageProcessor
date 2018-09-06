@@ -1,0 +1,40 @@
+#ifndef VBF_SGDB_IMAGEPROCESSOR
+#define VBF_SGDB_IMAGEPROCESSOR 1
+
+#include <VBF_Engine/VBF_SceneGraph/VBF_Object.h>
+
+namespace osgDB {
+
+// 图像处理器，用于压缩图像和创建MipMap 
+class ImageProcessor : public osg::CVBF_Object
+{
+    public:
+
+        ImageProcessor(): osg::CVBF_Object(true) {}
+        ImageProcessor(const ImageProcessor& rw,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY):
+            osg::CVBF_Object(rw,copyop) {}
+
+        virtual ~ImageProcessor() {}
+
+        META_Object(osgDB,ImageProcessor);
+
+        enum CompressionMethod
+        {
+            USE_CPU, /// 使用CPU压缩，即使GPU压缩可用
+            USE_GPU  /// 使用GPU压缩（如果可用，如CUDA），否则用CPU
+        };
+
+        enum CompressionQuality
+        {
+            FASTEST,
+            NORMAL,
+            PRODUCTION,
+            HIGHEST
+        };
+
+        virtual void compress(osg::Image& /*image*/, osg::Texture::InternalFormatMode /*compressedFormat*/, bool /*generateMipMap*/, bool /*resizeToPowerOfTwo*/, CompressionMethod /*method*/, CompressionQuality /*quality*/) {}
+        virtual void generateMipMap(osg::Image& /*image*/, bool /*resizeToPowerOfTwo*/, CompressionMethod /*method*/) {}
+};
+
+}
+#endif

@@ -1,0 +1,106 @@
+/* -*-c++-*- OpenSceneGraph - Copyright (C) 1998-2006 Robert Osfield 
+ *
+ * This library is open source and may be redistributed and/or modified under  
+ * the terms of the OpenSceneGraph Public License (OSGPL) version 0.0 or 
+ * (at your option) any later version.  The full license is in LICENSE file
+ * included with this distribution, and on the openscenegraph.org website.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * OpenSceneGraph Public License for more details.
+*/
+
+#ifndef VBF_SGDB_CALLBACKS
+#define VBF_SGDB_CALLBACKS 1
+
+#include <VBF_Engine/VBF_SGDB/AuthenticationMap>
+#include <VBF_Engine/VBF_SGDB/ReaderWriter>
+#include <VBF_Engine/VBF_SGDB/FileCache>
+
+#include <VBF_Common/VBF_Utils/VBF_FileUtils.h>
+
+#include <deque>
+#include <list>
+#include <iosfwd>
+
+namespace osgDB {
+
+/** list of directories to search through which searching for files. */
+typedef std::deque<std::string> FilePathList;
+
+// forward decare
+class Options;
+
+class VBF_SGDB_EXPORT FindFileCallback : public virtual CVBF_Referenced
+{
+    public:
+
+        virtual std::string findDataFile(const std::string& filename, const Options* options, EVBF_CASESENSITIVITY caseSensitivity);
+
+        virtual std::string findLibraryFile(const std::string& filename, const Options* options, EVBF_CASESENSITIVITY caseSensitivity);
+
+    protected:
+        virtual ~FindFileCallback();
+};
+
+
+class VBF_SGDB_EXPORT ReadFileCallback : public virtual CVBF_Referenced
+{
+    public:
+
+        virtual ReaderWriter::ReadResult openArchive(const std::string& filename,ReaderWriter::ArchiveStatus status, unsigned int indexBlockSizeHint, const Options* useObjectCache);
+
+        virtual ReaderWriter::ReadResult readObject(const std::string& filename, const Options* options);
+
+        virtual ReaderWriter::ReadResult readImage(const std::string& filename, const Options* options);
+
+        virtual ReaderWriter::ReadResult readHeightField(const std::string& filename, const Options* options);
+
+        virtual ReaderWriter::ReadResult readNode(const std::string& filename, const Options* options);
+
+        virtual ReaderWriter::ReadResult readShader(const std::string& filename, const Options* options);
+
+    protected:
+        virtual ~ReadFileCallback();
+};
+
+class VBF_SGDB_EXPORT WriteFileCallback : public virtual CVBF_Referenced
+{
+    public:
+
+        virtual ReaderWriter::WriteResult writeObject(const osg::CVBF_Object& obj, const std::string& fileName,const Options* options);
+
+        virtual ReaderWriter::WriteResult writeImage(const osg::Image& obj, const std::string& fileName,const Options* options);
+
+        virtual ReaderWriter::WriteResult writeHeightField(const osg::HeightField& obj, const std::string& fileName,const Options* options);
+
+        virtual ReaderWriter::WriteResult writeNode(const osg::IVBF_SGNode& obj, const std::string& fileName,const Options* options);
+
+        virtual ReaderWriter::WriteResult writeShader(const osg::Shader& obj, const std::string& fileName,const Options* options);
+
+    protected:
+        virtual ~WriteFileCallback();
+};
+
+class VBF_SGDB_EXPORT FileLocationCallback : public virtual CVBF_Referenced
+{
+    public:
+
+        enum Location
+        {
+            LOCAL_FILE,
+            REMOTE_FILE
+        };
+
+        virtual Location fileLocation(const std::string& filename, const Options* options) = 0;
+
+        virtual bool useFileCache() const = 0;
+
+    protected:
+        virtual ~FileLocationCallback();
+};
+
+}
+
+#endif // VBF_SGDB_OPTIONS

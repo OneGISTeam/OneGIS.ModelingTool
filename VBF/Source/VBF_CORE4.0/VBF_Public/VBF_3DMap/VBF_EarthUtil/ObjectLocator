@@ -1,0 +1,138 @@
+#ifndef OSGEARTH_UTIL_OBJECT_LOCATOR_H
+#define OSGEARTH_UTIL_OBJECT_LOCATOR_H
+
+#include <VBF_3DMap/VBF_EarthUtil/Common>
+#include <VBF_3DMap/VBF_Terrain/VBF_Map.h>
+#include <VBF_3DMap/VBF_Terrain/Revisioning.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGNodeGroupTransformMatrix.h>
+
+namespace osgEarth { namespace Util
+{
+    using namespace osgEarth;
+
+	// 对象定位器，计算一个位置变换矩阵（从模型坐标系变换到椭球上）
+    class OSGEARTHUTIL_EXPORT ObjectLocator : public ::CVBF_Referenced, public Revisioned
+    {
+    public:
+
+         // 定位标志（表达可分离的定位成分）
+        enum Components {
+            COMP_NONE           = 0x00,
+            COMP_POSITION       = 0x01,
+            COMP_HEADING        = 0x02,
+            COMP_PITCH          = 0x04,
+            COMP_ROLL           = 0x08,
+            COMP_ORIENTATION    = COMP_HEADING | COMP_PITCH | COMP_ROLL,
+            COMP_ALL            = COMP_POSITION | COMP_ORIENTATION
+        };
+
+        enum RotationOrder // 旋转顺序（H：heading，P：pitch，R：roll）
+		{
+            HPR, // （heading，pitch，roll）
+            RPH  // （roll，pitch，heading）
+        };
+
+    public:
+
+        ObjectLocator( const CVBF_Map* map );
+
+        // 创建一个新的相对定位器，从父定位器继承mask of specified components
+        ObjectLocator(ObjectLocator* parent, unsigned int compsToInherit =COMP_ALL );
+        virtual ~ObjectLocator() { }
+
+        // 设置/获取绝对或相对的位置（取决于该定位器是否有父定位器），单位与SRS一致
+        void setPosition( const osg::Vec3d& pos );
+        const osg::Vec3d& getPosition() const { return _pos; }
+
+        // 设置/获取绝对或相对的方向（取决于该定位器是否有父定位器），单位为欧拉角角度
+        void setOrientation( const osg::Vec3d& hpr_deg );
+        const osg::Vec3d& getOrientation() const { return _hpr; }
+
+        // 设置与该定位器位置信息相关的时间戳（设置该时间不使定位器"dirty"）
+        void setTime( double t ) { _timestamp = t; }
+        double getTime() const { return _timestamp; }
+
+        // 计算heading, pitch, and roll的顺序
+        void setRotationOrder( RotationOrder value ) { _rotOrder = value; }
+        RotationOrder getRotationOrder() const { return _rotOrder; }
+
+        // 设置父定位器。如果有，继承其位置和方向（由Components决定继承哪些）；否则使用绝对的。
+        void setParentLocator( ObjectLocator* parent, unsigned int componentsToInherit =COMP_ALL );
+        ObjectLocator* getParentLocator() { return _parentLoc.get(); }
+        const ObjectLocator* getParentLocator() const { return _parentLoc.get(); }
+
+        // 设置/获取继承父定位器的哪个定位分量（位置、旋转等）
+        void setComponentsToInherit( unsigned int compMask );
+        unsigned int getComponentsToInherit() const { return _componentsToInherit; }
+
+        // 获取与定位器相关联的地图
+        const CVBF_Map* GetMap() const { return _map.get(); }
+
+        // 定位器是否包含一个有效的位置/朝向
+        bool isEmpty() const;
+
+        // 定位器是否包含有效的位置
+        bool isValid() const { return !_isEmpty && _map.valid(); }
+
+    public:
+
+        // 获取位置（与父操作器合成的），成功则返回true
+        bool getLocatorPosition( osg::Vec3d& output ) const;
+
+        // 获取位置矩阵（与父操作器合成的），成功则返回true
+        bool getPositionMatrix( osg::Matrixd& output ) const;
+
+        // 获取HPR朝向，单位度，（与父操作器合成的），成功则返回true
+        bool getLocatorOrientation( osg::Vec3d& output ) const;
+
+        // 获取计算HPR朝向的矩阵，（与父操作器合成的），成功则返回true
+        bool getOrientationMatrix( osg::Matrixd& output, unsigned inherit =COMP_ALL ) const;
+
+        // 获取计算位置和朝向的矩阵，成功则返回true
+        bool getLocatorMatrix( osg::Matrixd& output, unsigned components =COMP_ALL ) const;
+
+    public:
+        // 重载Revisioned::inSync to track with the parent locator's revision.
+        virtual bool inSyncWith( int exRev ) const;
+
+    private:
+        observer_ptr<const CVBF_Map> _map;
+        ref_ptr<ObjectLocator> _parentLoc;
+        unsigned int _componentsToInherit; // Locator::Components
+        RotationOrder _rotOrder;
+        osg::Vec3d _pos;
+        osg::Vec3d _hpr;
+        double _timestamp;
+        bool _isEmpty;
+    };
+
+
+    // 矩阵变换节点，通过定位器实现位置和方向变换
+    class OSGEARTHUTIL_EXPORT ObjectLocatorNode : public osg::MatrixTransform
+    {
+    public:
+        ObjectLocatorNode();
+        ObjectLocatorNode( ObjectLocator* locator );
+        ObjectLocatorNode( const CVBF_Map* map );
+        ObjectLocatorNode( const ObjectLocatorNode& rhs, const osg::CopyOp& =osg::CopyOp::SHALLOW_COPY );
+        META_Node(VBF_EarthUtil, ObjectLocatorNode);
+
+    public:
+        // 设置定位器，计算位置和朝向
+        void setLocator( ObjectLocator* locator );
+        ObjectLocator* getLocator() { return _locator.get(); }
+        const ObjectLocator* getLocator() const { return _locator.get(); }
+
+    public:
+        // 同步定位器的变换矩阵
+        virtual void update();
+
+        virtual void traverse(osg::NodeVisitor &nv);
+
+    private:
+        ref_ptr<ObjectLocator> _locator;
+        osgEarth::Revision _matrixRevision;
+    };
+
+} }
+#endif

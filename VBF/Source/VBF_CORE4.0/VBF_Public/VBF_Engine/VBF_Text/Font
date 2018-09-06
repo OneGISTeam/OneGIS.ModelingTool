@@ -1,0 +1,226 @@
+#ifndef OSGTEXT_FONT
+#define OSGTEXT_FONT 1
+
+#include <string>
+#include <istream>
+
+#include <VBF_Engine/VBF_SceneGraph/VBFO_StateAttrTexEnv.h>
+#include <VBF_Engine/VBF_Text/Glyph>
+#include <VBF_Engine/VBF_SGDB/Options>
+
+#include <OpenThreads/Mutex>
+
+namespace osgText {
+
+class Font;
+
+/** 从指定文件读取字体，文件名可以包含路径。
+  * 按照下列顺序查找字体文件： 
+  * - 当前路径
+  * - 在环境变量OSG_FILE_PATH或OSGFILEPATH中定义的路径
+  * - 去掉路径的文件名: 当前路径
+  * - 去掉路径的文件名: 在环境变量OSG_FILE_PATH或OSGFILEPATH中定义的路径
+  *
+  * 然后查找OS指定的路径:
+  * - 当前路径
+  * - Windows: C:/winnt/fonts
+  * - Windows: C:/windows/fonts
+  * - Windows: windows安装路径的字体路径
+  * - 其他 OS: In /usr/share/fonts/ttf
+  * - 其他 OS: In /usr/share/fonts/ttf/western
+  * - 其他 OS: In /usr/share/fonts/ttf/decoratives
+  * 如果找不到，去掉路径，重新搜索OS路径
+  */
+extern OSGTEXT_EXPORT Font* readFontFile(const std::string& filename, const osgDB::Options* userOptions = 0);
+extern OSGTEXT_EXPORT Font* readFontStream(std::istream& stream, const osgDB::Options* userOptions = 0);
+extern OSGTEXT_EXPORT ref_ptr<Font> readRefFontFile(const std::string& filename, const osgDB::Options* userOptions = 0);
+extern OSGTEXT_EXPORT ref_ptr<Font> readRefFontStream(std::istream& stream, const osgDB::Options* userOptions = 0);
+extern OSGTEXT_EXPORT std::string findFontFile(const std::string& str);
+
+/** Pure virtual base class for fonts.
+  * Concrete implementation are the DefaultFont found in src/osgText/DefaultFont.cpp
+  * and FreeTypeFont found in src/osgPlugins/freetype/FreeTypeFont.cpp*/
+
+// 字体管理
+class OSGTEXT_EXPORT Font : public osg::CVBF_Object
+{
+public:
+
+    class FontImplementation;
+
+public:
+    Font(FontImplementation* implementation=0);
+
+    virtual osg::CVBF_Object* cloneType() const { return 0; } // cloneType() not appropriate
+    virtual osg::CVBF_Object* clone(const osg::CopyOp&) const { return 0; } // clone() not appropriate
+    virtual bool isSameKindAs(const osg::CVBF_Object* obj) const { return dynamic_cast<const Font*>(obj)!=NULL; }
+    virtual const char* className() const { return "Font"; }
+    virtual const char* libraryName() const { return "osgText"; }
+
+    virtual std::string getFileName() const;
+
+    static ref_ptr<Font>& getDefaultFont();
+
+    void setTexEnv(osg::TexEnv* texenv) { if (texenv) _texenv = texenv; }
+    inline osg::TexEnv* getTexEnv() {  return _texenv.get(); }
+    inline const osg::TexEnv* getTexEnv() const {  return _texenv.get(); }
+
+    void setStateSet(osg::StateSet* stateset) { _stateset = stateset; }
+    osg::StateSet* getStateSet() { return _stateset.get(); }
+    const osg::StateSet* getStateSet() const { return _stateset.get(); }
+
+    
+    /** Get a kerning (adjustment of spacing of two adjacent character) for specified charcodes, w.r.t the current font size hint.*/
+    virtual osg::Vec2 getKerning(unsigned int leftcharcode,unsigned int rightcharcode, KerningType kerningType);
+
+    /** Get a Glyph for specified charcode, and the font size nearest to the current font size hint.*/
+    virtual Glyph* getGlyph(const FontResolution& fontSize, unsigned int charcode);
+
+
+    /** Get a Glyph3D for specified charcode.*/
+    virtual Glyph3D* getGlyph3D(unsigned int charcode);
+
+    /** Return true if this font provides vertical alignments and spacing or glyphs.*/
+    virtual bool hasVertical() const;
+
+    /** Set the margin around each glyph, 
+      * to ensure that texture filtering doesn't bleed adjacent glyph's into each other.
+      * Default margin is 1 texels.*/    
+    void setGlyphImageMargin(unsigned int margin);
+    unsigned int getGlyphImageMargin() const;
+
+    /** Set the margin ratio around each glyph, relative to the glyph's size.
+      * to ensure that texture filtering doesn't bleed adjacent glyph's into each other.
+      * Default margin is 0.05.*/    
+    void setGlyphImageMarginRatio(float margin);
+    float getGlyphImageMarginRatio() const;
+
+
+    /** Set the size of texture to create to store the glyph images when rendering.
+      * Note, this doesn't affect already created Texture Glhph's.*/
+    void setTextureSizeHint(unsigned int width,unsigned int height);
+    
+    unsigned int getTextureWidthHint() const;
+    unsigned int getTextureHeightHint() const;
+
+    /** Set the minification texture filter to use when creating the texture to store the glyph images when rendering.
+      * Note, this doesn't affect already created Texture Glhph's.*/
+    void setMinFilterHint(osg::Texture::FilterMode mode);
+    osg::Texture::FilterMode getMinFilterHint() const;
+    
+    /** Set the magnification texture filter to use when creating the texture to store the glyph images when rendering.
+      * Note, this doesn't affect already created Texture Glhph's.*/
+    void setMagFilterHint(osg::Texture::FilterMode mode);
+    osg::Texture::FilterMode getMagFilterHint() const;
+
+    unsigned int getFontDepth() const { return _depth; }
+
+    void setNumberCurveSamples(unsigned int numSamples) { _numCurveSamples = numSamples; }
+    unsigned int getNumberCurveSamples() const { return _numCurveSamples; }
+
+
+    // make Text a friend to allow it add and remove its entry in the Font's _textList.
+    friend class FontImplementation;
+
+    void setImplementation(FontImplementation* implementation);
+
+    FontImplementation* getImplementation();
+    const FontImplementation* getImplementation() const;
+
+    /** Set whether to use a mutex to ensure ref() and unref() are thread safe.*/
+    virtual void setThreadSafeRefUnref(bool threadSafe);
+
+    /** Resize any per context GLObject buffers to specified size. */
+    virtual void resizeGLObjectBuffers(unsigned int maxSize);
+
+     /** If State is non-zero, this function releases OpenGL objects for
+       * the specified graphics context. Otherwise, releases OpenGL objexts
+       * for all graphics contexts. */
+    virtual void releaseGLObjects(osg::State* state=0) const;
+
+    typedef OpenThreads::Mutex FontMutex;
+    
+    typedef std::vector< ref_ptr<GlyphTexture> >       GlyphTextureList;
+    GlyphTextureList& getGlyphTextureList() { return _glyphTextureList; }
+    
+protected:
+
+    virtual ~Font();
+
+    void addGlyph(const FontResolution& fontRes, unsigned int charcode, Glyph* glyph);
+
+    typedef std::vector< ref_ptr<osg::StateSet> >      StateSetList;
+    typedef std::map< unsigned int, ref_ptr<Glyph> >   GlyphMap;
+    typedef std::map< unsigned int, ref_ptr<Glyph3D> >  Glyph3DMap;
+
+    typedef std::map< FontResolution, GlyphMap >            FontSizeGlyphMap;
+
+    mutable OpenThreads::Mutex      _glyphMapMutex;
+
+    ref_ptr<osg::TexEnv>       _texenv;
+    ref_ptr<osg::StateSet>     _stateset;
+    FontSizeGlyphMap                _sizeGlyphMap;
+    GlyphTextureList                _glyphTextureList;
+
+
+    Glyph3DMap                      _glyph3DMap;
+
+    // current active size of font
+    FontResolution                  _fontSize;
+    unsigned int                    _margin;
+    float                           _marginRatio;
+
+    unsigned int                    _textureWidthHint;
+    unsigned int                    _textureHeightHint;   
+    osg::Texture::FilterMode        _minFilterHint;
+    osg::Texture::FilterMode        _magFilterHint;
+
+    unsigned int                    _depth;
+    unsigned int                    _numCurveSamples;
+
+    
+    ref_ptr<FontImplementation> _implementation;
+
+    
+// declare the nested classes.
+public:
+
+    class FontImplementation : public ::CVBF_Referenced
+    {
+    public:
+    
+        FontImplementation():
+            CVBF_Referenced(true),
+            _facade(0) {}
+    
+        virtual std::string getFileName() const = 0;
+
+        virtual bool supportsMultipleFontResolutions() const = 0;
+
+        /** Get a Glyph for specified charcode, and the font size nearest to the current font size hint.*/
+        virtual Glyph* getGlyph(const FontResolution& fontRes, unsigned int charcode) = 0;
+
+        /** Get a Glyph3D for specified charcode.*/
+        virtual Glyph3D* getGlyph3D(unsigned int charcode) = 0;
+
+        /** Get a kerning (adjustment of spacing of two adjacent character) for specified charcodes, w.r.t the current font size hint.*/
+        virtual osg::Vec2 getKerning(unsigned int leftcharcode,unsigned int rightcharcode, KerningType kerningType) = 0;
+
+        /** Return true if this font provides vertical alignments and spacing or glyphs.*/
+        virtual bool hasVertical() const = 0;
+
+        void addGlyph(const FontResolution& fontRes, unsigned int charcode, Glyph* glyph)
+        {
+            _facade->addGlyph(fontRes, charcode, glyph);
+        }
+
+        Font* _facade;
+    };
+
+
+
+};
+
+}
+
+#endif

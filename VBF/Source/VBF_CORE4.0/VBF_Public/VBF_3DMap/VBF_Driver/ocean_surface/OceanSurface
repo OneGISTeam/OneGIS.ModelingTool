@@ -1,0 +1,170 @@
+#ifndef OSGEARTH_DRIVER_OCEAN_SURFACE
+#define OSGEARTH_DRIVER_OCEAN_SURFACE 1
+
+#include <VBF_3DMap/VBF_Terrain/VBF_MapNode.h>
+#include <VBF_3DMap/VBF_Terrain/VBF_LayerTerrainImage.h>
+#include <VBF_3DMap/VBF_Terrain/URI.h>
+#include <VBF_3DMap/VBF_Terrain/Registry.h>
+#include <Types/VBF_Color.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGNode.h>
+#include <VBF_Engine/VBF_SceneGraph/Image>
+#include <VBF_Engine/VBF_SGDB/ReadFile>
+#include <VBF_Engine/VBF_SGDB/Options>
+
+namespace osgEarth { namespace Drivers
+{
+    using namespace osgEarth;
+
+    // 控制海洋表面节点的配置项
+    class OceanSurfaceOptions : public CVBF_Options
+    {
+    public:
+        // 假定的海平面,单位米(相对于参考椭球面/大地水准面);默认为0.
+        CVBF_Optional<float>& seaLevel() { return _seaLevel; }
+        const CVBF_Optional<float>& seaLevel() const { return _seaLevel; }
+
+        // 海洋表面达到最小透明度时的高程 (相对于海平面),当使用mask图层时，该值不可用
+        CVBF_Optional<float>& lowFeatherOffset() { return _lowFeatherOffset; }
+        const CVBF_Optional<float>& lowFeatherOffset() const { return _lowFeatherOffset; }
+
+         // 海洋表面达到全透明时的高程 (相对于海平面),当使用mask图层时，该值不可用
+        CVBF_Optional<float>& highFeatherOffset() { return _highFeatherOffset; }
+        const CVBF_Optional<float>& highFeatherOffset() const { return _highFeatherOffset; }
+
+        // 细分海洋表面的最大LOD
+        CVBF_Optional<unsigned>& maxLOD() { return _maxLOD; }
+        const CVBF_Optional<unsigned>& maxLOD() const { return _maxLOD; }
+
+        // 海洋表面的颜色（纹理映射前）
+        CVBF_Optional<VBFCOLOR>& baseColor() { return _baseColor; }
+        const CVBF_Optional<VBFCOLOR>& baseColor() const { return _baseColor; }
+
+
+        // 最大可见范围（此时开始渐显）
+        CVBF_Optional<float>& maxRange() { return _maxRange; }
+        const CVBF_Optional<float>& maxRange() const { return _maxRange; }
+
+        // 渐显结束的距离范围（从maxRange开始渐显）
+        CVBF_Optional<float>& fadeRange() { return _fadeRange; }
+        const CVBF_Optional<float>& fadeRange() const { return _fadeRange; }
+
+        // 纹理的URI，用于海洋表面的运动
+        CVBF_Optional<URI>& textureURI() { return _textureURI; }
+        const CVBF_Optional<URI>& textureURI() const { return _textureURI; }
+
+        /** Image layer configuration for an optional "ocean mask" layer.
+         *  This is an image layer that encodes areas of land versus ocean in the
+         *  alpha channel of the image. The mapping is: [0...1] => [land...ocean] */
+        CVBF_Optional<ImageLayerOptions>& maskLayer() { return _maskLayerOptions; }
+        const CVBF_Optional<ImageLayerOptions>& maskLayer() const { return _maskLayerOptions; }
+
+    public:
+        OceanSurfaceOptions( const CVBF_Config& conf =CVBF_Config() )
+            : CVBF_Options     ( conf ),
+              _seaLevel         ( 0.0f ),
+              _lowFeatherOffset ( -100.0f ),
+              _highFeatherOffset( -10.0f ),
+              _maxRange         ( 1000000.0f ),
+              _fadeRange        ( 225000.0f ),
+              _maxLOD           ( 11 ),
+              _baseColor        ( osg::Vec4(0.2, 0.3, 0.5, 0.8) )
+        {
+            mergeConfig( m_conf );
+        }
+
+        virtual ~OceanSurfaceOptions() { }
+
+    public:
+        CVBF_Config getConfig() const
+        {
+            CVBF_Config conf = CVBF_Options::newConfig();
+            conf.updateIfSet("sea_level",           _seaLevel );
+            conf.updateIfSet("high_feather_offset", _highFeatherOffset );
+            conf.updateIfSet("low_feather_offset",  _lowFeatherOffset );
+            conf.updateIfSet("max_range",           _maxRange );
+            conf.updateIfSet("fade_range",          _fadeRange );
+            conf.updateIfSet("max_lod",             _maxLOD );
+            conf.updateIfSet("base_color",          _baseColor );
+            conf.updateIfSet("texture_url",         _textureURI );
+            conf.updateObjIfSet("mask_layer",       _maskLayerOptions );
+            return conf;
+        }
+
+    protected:
+        void mergeConfig( const CVBF_Config& conf )
+        {
+            CVBF_Options::mergeConfig( conf );
+            fromConfig( conf );
+        }
+
+    private:
+        void fromConfig( const CVBF_Config& conf )
+        {
+            conf.getIfSet("sea_level",           _seaLevel );
+            conf.getIfSet("high_feather_offset", _highFeatherOffset );
+            conf.getIfSet("low_feather_offset",  _lowFeatherOffset );
+            conf.getIfSet("max_range",           _maxRange );
+            conf.getIfSet("fade_range",          _fadeRange );
+            conf.getIfSet("max_lod",             _maxLOD );
+            conf.getIfSet("base_color",          _baseColor );
+            conf.getIfSet("texture_url",         _textureURI );
+            conf.getObjIfSet("mask_layer",       _maskLayerOptions );
+        }
+
+    private:
+        CVBF_Optional<float>             _seaLevel;
+        CVBF_Optional<float>             _lowFeatherOffset;
+        CVBF_Optional<float>             _highFeatherOffset;
+        CVBF_Optional<float>             _maxRange;
+        CVBF_Optional<float>             _fadeRange;
+        CVBF_Optional<unsigned>          _maxLOD;
+        CVBF_Optional<VBFCOLOR>          _baseColor;
+        CVBF_Optional<URI>               _textureURI;
+        CVBF_Optional<ImageLayerOptions> _maskLayerOptions;
+    };
+
+
+    // 在地图上渲染海洋表面的节点
+    class  OceanSurfaceNode : public osg::CVBF_SGNodeGroup
+    {
+    public:
+
+        OceanSurfaceNode( CVBFO_SGNodeMap* mapNode, const OceanSurfaceOptions& initialOptions =OceanSurfaceOptions() )
+            : _mapNode( mapNode ), _options( initialOptions )
+        {
+            this->setName("Ocean Surface Root");
+
+            osg::IVBF_SGNode* pINode = load();
+            if ( pINode ) this->addChild( pINode );
+        }
+
+        virtual ~OceanSurfaceNode() { }
+
+        // 控制海洋视觉和行为的配置项
+        OceanSurfaceOptions& options() { return _options; }
+        const OceanSurfaceOptions& options() const { return _options; }
+
+        // 当改变配置项时，使其起作用
+        void dirty() { load(); }
+
+    private:
+        observer_ptr<CVBFO_SGNodeMap> _mapNode;
+        OceanSurfaceOptions        _options;
+
+        osg::IVBF_SGNode* load()
+        {
+            ref_ptr<CVBFO_SGNodeMap> safeMapNode = _mapNode.get();
+            if ( !safeMapNode.valid() ) return 0L;
+
+            ref_ptr<osgDB::Options> o = Registry::instance()->cloneOrCreateOptions();
+            o->setPluginData( "mapNode", (void*)_mapNode.get() );
+            o->setPluginData( "options", (void*)&_options );
+            osgDB::ReaderWriter::ReadResult r = osgDB::readNodeFile( ".Earth_ocean_surface", o.get() );
+            return r.takeNode();
+        }
+
+    };
+
+} } // namespace osgEarth::Drivers
+
+#endif // OSGEARTH_DRIVER_OCEAN_SURFACE

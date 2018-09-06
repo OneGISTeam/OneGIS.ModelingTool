@@ -1,0 +1,89 @@
+#ifndef OSGEARTHUTIL_MOUSE_COORDS_TOOL_H
+#define OSGEARTHUTIL_MOUSE_COORDS_TOOL_H 1
+
+#include <VBF_3DMap/VBF_EarthUtil/Common>
+#include <VBF_3DMap/VBF_EarthUtil/Controls>
+#include <VBF_3DMap/VBF_EarthUtil/VBF_Formatter.h>
+
+#include <VBF_Display/VBF_Manipulator/VBF_GUIEventHandler.h>
+
+class CVBFO_SGNodeMap;
+
+namespace osgEarth { namespace Util
+{
+    using namespace Controls;
+
+    /**
+     * Tool that prints the map coordinates under the mouse into a LabelControl.
+     */
+    class OSGEARTHUTIL_EXPORT MouseCoordsTool : public osgGA::GUIEventHandler
+    {
+    public:
+        struct Callback : public ::CVBF_Referenced
+        {
+            // called when valid map coordinates are found under the mouse
+            virtual void set( const GeoPoint& coords, osg::IVBF_ViewBrief* view, CVBFO_SGNodeMap* mapNode ) =0;
+
+            // called when no map coords are found under the mouse
+            virtual void reset( osg::IVBF_ViewBrief* view, CVBFO_SGNodeMap* mapNode ) =0;
+
+            virtual ~Callback() { }
+        };
+
+    public:
+        /**
+         * Constructs a new handler
+         * @param label
+         *      Label control that will accept the coordinate readout
+         * @param mapNode
+         *      CVBF_Map node from which to query coordinates
+         * @param label
+         *     (optional) label control to use for readout (automatically installs
+         *     a MouseCoordsLabelCallback)
+         * @param formatter
+         *     (optional) When used with the label, specifies a formatter to use
+         *     for the readout.
+         */
+        MouseCoordsTool( CVBFO_SGNodeMap* mapNode, LabelControl* label =0L, Formatter* formatter =0L );
+
+        virtual ~MouseCoordsTool() { }
+
+        /**
+         * Adds a readout callback.
+         */
+        void addCallback( Callback* callback );
+
+
+    public: // GUIEventHandler
+
+        bool handle( const osgGA::GUIEventAdapter& ea, ::IVBF_GUIActionAdapter& aa );
+
+    protected:
+        CVBFO_SGNodeMap*      _mapNode;
+        osg::CVBF_SGNodePath _mapNodePath;
+        typedef std::vector< ref_ptr<Callback> > Callbacks;
+        Callbacks _callbacks;
+    };
+
+
+    /**
+     * A sample callback that will display the mouse coords in a LabelControl.
+     */
+    class OSGEARTHUTIL_EXPORT MouseCoordsLabelCallback : public MouseCoordsTool::Callback
+    {
+    public:
+        MouseCoordsLabelCallback( LabelControl* label, Formatter* formatter =0L );
+
+        virtual ~MouseCoordsLabelCallback() { }
+
+        virtual void set( const GeoPoint& coords, osg::IVBF_ViewBrief* view, CVBFO_SGNodeMap* mapNode );
+        virtual void reset( osg::IVBF_ViewBrief* view, CVBFO_SGNodeMap* mapNode );
+
+    protected:
+        observer_ptr<LabelControl> _label;
+        ref_ptr<Formatter>         _formatter;
+    };
+
+} } // namespace VBF_EarthUtil
+
+#endif // OSGEARTHUTIL_MOUSE_COORDS_TOOL_H

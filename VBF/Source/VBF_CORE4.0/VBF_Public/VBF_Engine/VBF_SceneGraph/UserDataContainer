@@ -1,0 +1,173 @@
+#ifndef OSG_USERDATACONTAINER
+#define OSG_USERDATACONTAINER 1
+
+#include <VBF_Engine/VBF_SceneGraph/Export>
+//#include <VBF_Engine/VBF_SceneGraph/VBF_Object.h>
+
+#include <string>
+#include <vector>
+
+namespace osg {
+
+class CVBF_Object;
+
+// 自定义数据的容器。由用户数据、用户对象列表、描述字符串三项内容组成
+class OSG_EXPORT UserDataContainer : public osg::CVBF_Object
+{
+    public:
+        UserDataContainer();
+        UserDataContainer(const UserDataContainer& udc, const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY);
+
+		// 与基本信息有关的内容
+
+        virtual bool isSameKindAs(const CVBF_Object* obj) const { return dynamic_cast<const UserDataContainer*>(obj)!=0; }
+
+        /** 返回所在的库的名字。*/
+        virtual const char* libraryName() const { return "osg"; }
+
+        /** 返回类的名字。*/
+        virtual const char* className() const  { return "UserDataContainer"; }
+
+
+		// 1.与用户数据有关的内容
+
+        /**
+         * 设置/获取用户数据。数据必须是Referenced的子类，以实现自动内存管理。
+		 * 如果用户数据不是Referenced的子类，创建一个适配对象。
+         */
+        virtual void setUserData(CVBF_Referenced* obj) = 0;
+		virtual CVBF_Referenced* getUserData() = 0;
+        virtual const CVBF_Referenced* getUserData() const  = 0;
+
+
+
+		// 2.与用户数据列表有关的内容
+
+        /** 添加用户数据，返回被放置的索引位置。*/
+        virtual unsigned int addUserObject(CVBF_Object* obj)  = 0;
+
+         /** 向用户数据列表添加一个元素。*/
+        virtual void setUserObject(unsigned int i, CVBF_Object* obj)  = 0;
+
+        /** 用户数据列表移除一个元素。*/
+        virtual void removeUserObject(unsigned int i)  = 0;
+
+        /** 从指定的索引位置获取用户数据。 */
+        virtual CVBF_Object* getUserObject(unsigned int i)  = 0;
+        virtual const CVBF_Object* getUserObject(unsigned int i) const  = 0;
+
+        /** 获取用户数据的个数。*/
+        virtual unsigned int getNumUserObjects() const  = 0;
+
+        /** 获取指定用户数据所在的索引位置。*/
+        virtual unsigned int getUserObjectIndex(const osg::CVBF_Object* obj, unsigned int startPos=0) const = 0;
+
+        /** 获取指定名字的第一个用户数据的索引位置。*/
+        virtual unsigned int getUserObjectIndex(const std::string& name, unsigned int startPos=0) const = 0;
+
+        
+        /** 获取指定名字的第一个用户数据。 */
+        virtual CVBF_Object* getUserObject(const std::string& name, unsigned int startPos=0);
+		virtual const CVBF_Object* getUserObject(const std::string& name, unsigned int startPos=0) const;
+
+
+
+		// 3.与描述字符串有关的内容 
+
+        typedef std::vector<std::string> DescriptionList;
+      
+		/** 设置/获取描述字符串的列表。*/
+	    virtual void setDescriptions(const DescriptionList& descriptions) = 0;
+		virtual DescriptionList& getDescriptions() = 0;
+	    virtual const DescriptionList& getDescriptions() const = 0;
+        
+		/** 获取描述字符串的个数*/
+        virtual unsigned int getNumDescriptions() const = 0;
+      
+		/** 添加一个描述字符串*/
+        virtual void addDescription(const std::string& desc) = 0;
+
+    protected:
+        virtual ~UserDataContainer() {}// IE可能错误
+};
+
+/** 缺省的自定义数据的容器。由用户数据、用户对象列表、描述字符串列表三项内容组成*/
+
+class OSG_EXPORT DefaultUserDataContainer : public osg::UserDataContainer
+{
+    public:
+        DefaultUserDataContainer();
+        DefaultUserDataContainer(const DefaultUserDataContainer& udc, const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY);
+
+ 		// 与基本信息有关的内容     
+		META_Object(osg, DefaultUserDataContainer)
+
+        virtual void setThreadSafeRefUnref(bool threadSafe);
+
+ 		// 与用户数据有关的内容
+
+		/**
+		* 设置/获取用户数据。数据必须是Referenced的子类，以实现自动内存管理。
+		* 如果用户数据不是Referenced的子类，创建一个适配对象。
+		*/
+		virtual void setUserData(CVBF_Referenced* obj);
+		virtual CVBF_Referenced* getUserData();
+		virtual const CVBF_Referenced* getUserData() const;
+
+
+
+		// 与用户数据列表有关的内容
+
+		/** 添加用户数据，返回被放置的索引位置。*/
+		virtual unsigned int addUserObject(CVBF_Object* obj);
+
+		/** 向用户数据列表添加一个元素。*/
+		virtual void setUserObject(unsigned int i, CVBF_Object* obj);
+
+        /** 用户数据列表移除一个元素。*/
+		virtual void removeUserObject(unsigned int i);
+
+
+        /** 从指定的索引位置获取用户数据。 */
+        virtual CVBF_Object* getUserObject(unsigned int i);
+        virtual const CVBF_Object* getUserObject(unsigned int i) const;
+
+ 
+        /** 获取用户数据的个数。*/
+         virtual unsigned int getNumUserObjects() const;
+
+        /** 获取指定用户数据所在的索引位置。*/
+        virtual unsigned int getUserObjectIndex(const osg::CVBF_Object* obj, unsigned int startPos=0) const;
+
+        /** 获取指定名字的第一个用户数据的索引位置。*/
+        virtual unsigned int getUserObjectIndex(const std::string& name, unsigned int startPos=0) const;
+
+
+
+    	// 与描述字符串有关的内容 
+    
+		/** 设置/获取描述字符串的列表。*/
+        virtual void setDescriptions(const DescriptionList& descriptions);
+	    virtual DescriptionList& getDescriptions();
+        virtual const DescriptionList& getDescriptions() const;
+
+        /** 获取描述字符串的个数*/
+        virtual unsigned int getNumDescriptions() const;
+
+ 		/** 添加一个描述字符串*/
+        virtual void addDescription(const std::string& desc);
+
+protected:
+
+        virtual ~DefaultUserDataContainer() {}// IE可能错误
+
+        typedef std::vector< ref_ptr<osg::CVBF_Object> > ObjectList;
+
+        ref_ptr<CVBF_Referenced>     _userData;         // 用户数据
+        DescriptionList         _descriptionList;  // 描述字符串列表
+        ObjectList              _objectList;       // 用户对象列表列表
+};
+
+}
+
+#endif

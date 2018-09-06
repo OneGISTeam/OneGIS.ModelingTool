@@ -1,0 +1,144 @@
+#ifndef OSGEARTHUTIL_SPATIAL_DATA
+#define OSGEARTHUTIL_SPATIAL_DATA
+
+#include <VBF_3DMap/VBF_EarthUtil/Common>
+#include <VBF_3DMap/VBF_Terrain/GeoData.h>
+#include <VBF_Base/observer_ptr>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGeometry.h>
+#include <Types/VBF_Plane.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGNodeGroupLOD.h>
+#include <map>
+
+namespace osgEarth { namespace Util
+{
+    using namespace osgEarth;
+
+    class GeoObject;
+
+    typedef std::pair< float, ref_ptr<GeoObject> > GeoObjectPair;
+    typedef std::multimap< float, ref_ptr<GeoObject> > GeoObjectCollection;
+
+    // 一个组节点对应一个特定的地理单元（geospatial cell）
+    class OSGEARTHUTIL_EXPORT GeoCell : public osg::CVBF_SGNodeGroupLOD
+    {
+    public:
+        GeoCell( const CVBF_GeoExtent& extent, float maxRange, unsigned maxOjbects,
+                unsigned splitDim, float splitRangeFactor, unsigned depth );
+        virtual ~GeoCell() { }
+
+        // 插入/移除地理对象
+        virtual bool insertObject( GeoObject* object );
+        bool removeObject( GeoObject* object );
+
+        // 根据新位置重建索引
+        bool reindexObject( GeoObject* object );
+
+        // 获取分裂容积，即分裂的行数和列数
+        unsigned getSplitDimension() const { return _splitDim; }
+
+        // 最大对象数，超出该数值将进行分裂
+        unsigned getMaxObjects() const { return _maxObjects; }
+
+        /** Child cells have a maximum LOD range of this cell's max range times this factor. */
+        float getSplitRangeFactor() const { return _splitRangeFactor; }
+
+        const CVBF_GeoExtent& getExtent() const { return _extent; }
+
+        // 获取该GeoCell最后一次进行筛选的帧号
+        unsigned getLastCullFrame() const { return _frameStamp; }
+
+    public: // osg::LOD overrides
+
+        virtual osg::BoundingSphere computeBound() const;
+
+        virtual void traverse( osg::NodeVisitor& nv );
+
+    protected:
+        CVBF_GeoExtent _extent;
+        unsigned  _splitDim;
+        unsigned  _maxObjects;  // maximum # of objects to render in this cell before splitting.
+        unsigned  _minObjects;  // minimum # of objects to drop below before pulling up
+        float     _maxRange;    // maximum visibility range of this cell.
+        float     _splitRangeFactor; // child range = cell range * factor
+        unsigned  _count;       // # of objects in this cell (including all children)
+        unsigned  _depth;
+        unsigned  _frameStamp;  // last fram this cell was visited by CULL
+
+        void split();
+        void merge();
+        void adjustCount( int delta );
+        bool intersects( const class osg::Polytope& tope ) const;
+        void generateBoundaries();
+        void generateBoundaryGeometry();
+
+        std::vector<osg::Vec3d> _boundaryPoints;
+
+        // priority-order collection of objects
+        GeoObjectCollection _objects;
+
+        ref_ptr<osg::IVBF_SGNodeGeometry> _clusterGeode;
+        ref_ptr<osg::IVBF_SGNodeGeometry> _boundaryGeode;
+        osg::Vec4Array* _boundaryColor;
+
+        friend class GeoCellVisitor;
+    };
+
+    class OSGEARTHUTIL_EXPORT GeoGraph : public GeoCell
+    {
+    public:
+        GeoGraph( const CVBF_GeoExtent& extent, float maxRange, unsigned maxObjects =500, unsigned splitDim =2,
+                  float splitRangeFactor = 0.5f, unsigned rootWidth =2, unsigned rootHeight =2 );
+
+        virtual ~GeoGraph() { }
+
+        bool insertObject( GeoObject* object );
+
+    private:
+        unsigned _rootWidth, _rootHeight;
+    };
+
+    class GeoCellVisitor : public osg::NodeVisitor
+    {
+    public:
+        GeoCellVisitor() : osg::NodeVisitor( osg::NodeVisitor::TRAVERSE_ALL_CHILDREN ) { }
+        virtual ~GeoCellVisitor() { }
+
+        virtual void operator()( const GeoCell* cell, const GeoObjectCollection& objects ) =0;
+
+        void apply(osg::IVBF_SGNodeGroupLOD& node )
+        {
+            const GeoCell* cell = static_cast<const GeoCell*>(&node);
+            if ( cell->_depth > 0 )
+                this->operator()( cell, cell->_objects );
+            traverse( node );
+        }
+    };
+
+
+    // 地理对象，使用GeoCell层次结构进行索引
+    class OSGEARTHUTIL_EXPORT GeoObject : public ::CVBF_Referenced
+    {
+    public:
+        // 获取位置（用于空间索引），必须和GeoGraph具有相同的空间参考系统
+        virtual bool getLocation( osg::Vec3d& output ) const =0;
+
+        // 该对象相对于其他对象的优先级
+        virtual float getPriority() const { return 0.0; }
+
+        // 获取该对象的节点，用于渲染
+        virtual osg::IVBF_SGNode* getNode() const =0;
+
+        // 拥有该对象的GeoCell
+        GeoCell* getGeoCell() const { return _cell.get(); }
+
+    protected:
+        GeoObject();
+        virtual ~GeoObject() { }
+        observer_ptr<GeoCell> _cell;
+        float _priority;
+        friend class GeoCell;
+    };    
+
+} } // namespace osgEarth::Util
+
+#endif // OSGEARTHUTIL_SPATIAL_DATA

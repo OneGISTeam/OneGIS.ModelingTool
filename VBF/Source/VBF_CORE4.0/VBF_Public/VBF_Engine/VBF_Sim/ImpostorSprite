@@ -1,0 +1,183 @@
+#ifndef OSG_ImpostorSprite
+#define OSG_ImpostorSprite 1
+
+#include <Types/Vec2>
+#include <Types/VBF_BoundingSphere.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGDrawable.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_StateAttrAlphaFunc.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_StateAttrTexEnv.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_StateAttrTexture2D.h>
+#include <VBF_Engine/VBF_SceneGraph/VBF_Camera.h>
+
+#include <VBF_Engine/VBF_Sim/Export>
+
+namespace osgSim {
+
+class Impostor;
+class ImpostorSpriteManager;
+
+/** ImposterSprite是一个贴图的方块，用于渲染时替代三维几何体。它的生成方法是通过将三维几何体
+	渲染到贴图作为图像缓存。是通过osgUtil::CullVisitor类自动产生的，不必要直接处理。
+*/
+class OSGSIM_EXPORT ImpostorSprite : public osg::Drawable
+{
+public:
+
+	ImpostorSprite();
+
+	// 拷贝类型
+	virtual osg::CVBF_Object* cloneType() const { return new ImpostorSprite(); }
+
+	// 拷贝ImpostorSprite仅是拷贝类型，因此不能共享数据
+	virtual osg::CVBF_Object* clone(const osg::CopyOp&) const { return new ImpostorSprite(); }
+	virtual bool isSameKindAs(const osg::CVBF_Object* obj) const { return dynamic_cast<const ImpostorSprite*>(obj)!=NULL; }
+	virtual const char* libraryName() const { return "osgSim"; }
+	virtual const char* className() const { return "ImpostorSprite"; }
+
+	// 设置/获取父节点，父节点必须是替代节点（Impostor），ImpostorSprites只能有一个父节点，与通常的Drawables不同
+	void setParent(Impostor* parent) { _parent = parent; }
+	Impostor* getParent() { return _parent; }
+	const Impostor* getParent() const { return _parent; }
+
+	/** Set/Get the eye point for when the ImpostorSprite was snapped. */
+	inline void setStoredLocalEyePoint(const osg::Vec3& v) { _storedLocalEyePoint=v; }
+	inline const osg::Vec3& getStoredLocalEyePoint() const { return _storedLocalEyePoint; }
+
+	/** Set the frame number for when the ImpostorSprite was last used in rendering. */
+	inline void setLastFrameUsed(unsigned int frameNumber) { _lastFrameUsed = frameNumber; }
+	inline unsigned int getLastFrameUsed() const { return _lastFrameUsed; }
+
+
+	// 获取方块的角点坐标，存储顺序为[0]-top_left，[1]-bottom_left，[2]-bottom_right，[3]-top_left
+	inline osg::Vec3* getCoords() { return _coords; }
+	inline const osg::Vec3* getCoords() const { return _coords; }
+
+	// 获取方块的角点坐标，存储顺序为[0]-top_left，[1]-bottom_left，[2]-bottom_right，[3]-top_left.
+	inline osg::Vec2* getTexCoords() { return _texcoords; }
+	inline const osg::Vec2* getTexCoords() const { return _texcoords; }
+
+	/** 获取方块角点的控制坐标（control coordinates）
+	* The control coordinates are the corners of the quad projected
+	* out onto the front face of bounding box which enclosed the impostor
+	* geometry when it was pre-rendered into the impostor sprite's texture.
+	* At the point of creation/or update of the impostor sprite the control
+	* coords will lie on top of the corners of the quad in screen space - 没有误差，
+	一旦相机相机相对于impostor sprite移动了，控制坐标将不再位于方块的角点上- 误差将被累积。
+	该误差用于确定impostor是否需要更新。
+	控制坐标点存储顺序为[0]-top_left，[1]-bottom_left，[2]-bottom_right，[3]-top_left.
+	*/
+	inline osg::Vec3* getControlCoords() { return _controlcoords; }
+	inline const osg::Vec3* getControlCoords() const { return _controlcoords; }
+
+	// 计算像素误差值，传入ModelViewProjectionWindow变换矩阵，该矩阵从局部坐标变换到屏幕空间。        
+	float calcPixelError(const osg::Matrix& MVPW) const;
+
+	// 设置/获取纹理
+	void setTexture(osg::Texture2D* tex,int s,int t);
+	osg::Texture2D* getTexture() { return _texture; }
+	const osg::Texture2D* getTexture() const { return _texture; }
+
+	// 获取纹理坐标
+	int s() const { return _s; }
+	int t() const { return _t; }
+
+	// 绘制实现
+	virtual void drawImplementation(osg::RenderInfo& renderInfo) const;
+
+	/** Return true, osg::ImpostorSprite does support accept(Drawable::AttributeFunctor&). */
+	virtual bool supports(const Drawable::AttributeFunctor&) const { return true; }
+
+	/** Accept an Drawable::AttributeFunctor and call its methods to tell it about the internal attributes that this Drawable has. */
+	virtual void accept(Drawable::AttributeFunctor& af);
+
+	/** Return true, osg::ImpostorSprite does support accept(Drawable::ConstAttributeFunctor&). */
+	virtual bool supports(const Drawable::ConstAttributeFunctor&) const { return true; }
+
+	/** Accept a Drawable::ConstAttributeFunctor and call its methods to tell it about the internal attributes that this Drawable has. */
+	virtual void accept(Drawable::ConstAttributeFunctor& af) const;
+
+	/** Return true, osg::ImpostorSprite does support accept(PrimitiveFunctor&). */
+	virtual bool supports(const osg::PrimitiveFunctor&) const { return true; }
+
+	/** Accept a PrimtiveFunctor and call its methods to tell it about the internal primitives that this Drawable has. */
+	virtual void accept(osg::PrimitiveFunctor& pf) const;
+
+	// for debugging purposes.
+	osg::Vec4 _color;
+
+	// 计算包围盒
+	virtual osg::BoundingBox computeBound() const;
+
+	// 设置/获取相机，用于预先渲染impostor sprite的纹理
+	void setCamera(osg::IVBF_Camera* camera) { _camera = camera; }
+	osg::IVBF_Camera* getCamera() { return _camera.get(); }
+	const osg::IVBF_Camera* getCamera() const { return _camera.get(); }
+
+protected:
+
+	ImpostorSprite(const ImpostorSprite&);
+	ImpostorSprite& operator = (const ImpostorSprite&) { return *this;}
+
+	virtual ~ImpostorSprite();
+
+	Impostor* _parent;
+
+	friend class osgSim::ImpostorSpriteManager;
+
+	ref_ptr<osg::IVBF_Camera> _camera; // 用于预先渲染的相机
+
+	// support for a double linked list managed by the ImposotorSpriteManager.
+	ImpostorSpriteManager*  _ism;
+	ImpostorSprite*         _previous;
+	ImpostorSprite*         _next;
+
+	unsigned int _lastFrameUsed;
+
+	osg::Vec3 _storedLocalEyePoint;
+
+	osg::Vec3 _coords[4];
+	osg::Vec2 _texcoords[4];
+	osg::Vec3 _controlcoords[4];
+
+	osg::Texture2D* _texture;
+	int _s;
+	int _t;
+};
+
+// 辅助类，用于管理ImpostorSprite资源以便重用
+class OSGSIM_EXPORT ImpostorSpriteManager : public ::CVBF_Referenced
+{
+public:
+	ImpostorSpriteManager();
+
+	bool empty() const { return _first==0; }
+
+	ImpostorSprite* first() { return _first; }
+	ImpostorSprite* last()  { return _last; }
+
+	void push_back(ImpostorSprite* is);
+	void remove(ImpostorSprite* is);
+
+	ImpostorSprite* createOrReuseImpostorSprite(int s,int t,unsigned int frameNumber);
+
+	osg::StateSet* createOrReuseStateSet();
+
+	void reset();
+
+protected:
+	~ImpostorSpriteManager();
+
+	ref_ptr<osg::TexEnv>       _texenv;
+	ref_ptr<osg::AlphaFunc>    _alphafunc;
+
+	ImpostorSprite*                 _first;
+	ImpostorSprite*                 _last;
+
+	typedef std::vector< ref_ptr<osg::StateSet> > StateSetList;
+	StateSetList                    _stateSetList;
+	unsigned int                    _reuseStateSetIndex;
+};
+
+}
+
+#endif

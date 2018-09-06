@@ -1,0 +1,92 @@
+#ifndef OSGEARTHFEATURES_TFS_PACKAGER_H
+#define OSGEARTHFEATURES_TFS_PACKAGER_H 1
+
+#include <VBF_3DMap/VBF_Features/Common>
+#include <VBF_3DMap/VBF_Features/Feature.h>
+#include <VBF_3DMap/VBF_Features/VBF_SourceFeature.h>
+#include <VBF_3DMap/VBF_Features/VBF_FeatureFilterCrop.h>
+#include <VBF_3DMap/VBF_EarthUtil/TFS>
+
+
+namespace osgEarth { namespace Util {
+    using namespace osgEarth;    
+    using namespace osgEarth::Features;
+    using namespace osgEarth::Symbology;
+
+    /**
+     * Utility that grids up feature data into a tiled json format.
+     */
+    class OSGEARTHUTIL_EXPORT TFSPackager
+    {
+    public:
+        TFSPackager();
+
+        /**
+         * The first level in the quadtree that tiles will be added.          
+         */
+        unsigned int getFirstLevel() const { return _firstLevel;}
+        void setFirstLevel( unsigned int value ) { _firstLevel = value;}
+
+        /**
+         * The maximum level in the quadtree that tiles can be added.
+         */
+        unsigned int getMaxLevel() const { return _maxLevel;}
+        void setMaxLevel( unsigned int value) { _maxLevel = value;}
+
+        /**
+         * The maximum number of features that should be added to a tile before moving onto the next level.
+         * Once the max level is reached, features will simply be added to it no matter how many features are in the tile.
+         */
+        unsigned int getMaxFeatures() const { return _maxFeatures;}
+        void setMaxFeatures( unsigned int value ) { _maxFeatures = value;}
+
+        /**
+         * The query to run on the FeatureSource.
+         */
+        const Query& getQuery() const { return _query;}
+        void setQuery( const Query& query) { _query = query;}
+
+        /**
+         * The cropping method to use when processing the features
+         * If the cropping method is set to METHOD_CROP features can be added to multiple tiles.
+         */
+        CropFilter::Method getMethod() const { return _method;}
+        void setMethod( CropFilter::Method method) { _method = method;}
+
+        /**
+         * The SRS to use for the output dataset.  If not set the SRS of the FeatureSource wil be used.
+         * Can be any string that will result in a valid CVBF_SpatialReference (epsg codes, wkt, proj4).
+         */
+        const std::string& getDestSRS() const { return _destSRSString;}
+        void setDestSRS(const std::string& srs ) { _destSRSString = srs; }
+
+        /**
+         * Package the given feature source
+         * @param features
+         *     The feature source to package
+         * @param destination
+         *     The destination directory
+         * @param layername
+         *     The name of the layer
+         * @param description
+         *     Optional description that will be written to the metadata document
+         */
+        void package( FeatureSource* features, const std::string& destination, const std::string& layername, const std::string& description = "" );
+
+
+
+
+    private:
+        unsigned int _firstLevel;
+        unsigned int _maxLevel;
+        unsigned int _maxFeatures;
+        Query _query;
+        CropFilter::Method _method;
+        std::string _destSRSString;
+        ref_ptr< const CVBF_SpatialReference > _srs;
+
+    };
+
+} } // namespace osgEarth::Util
+
+#endif

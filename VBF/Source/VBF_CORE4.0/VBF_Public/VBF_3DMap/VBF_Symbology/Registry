@@ -1,0 +1,37 @@
+#ifdef wuyuguo
+
+#ifndef OSGEARTHSYMBOLOGY_REGISTRY_H
+#define OSGEARTHSYMBOLOGY_REGISTRY_H 1
+
+#include <VBF_3DMap/VBF_Symbology/Common>
+#include <VBF_3DMap/VBF_Symbology/SymbolDisplayFunctor>
+#include <VBF_Base/VBF_Referenced.h>
+
+namespace osgEarth { namespace Symbology
+{
+
+    /**
+     * Interface for an object that compiles attributed geometry into
+     * OSG scene graph elements based on a Style and a SymbologyContext.
+     */
+    class OSGEARTHSYMBOLOGY_EXPORT Registry : public ::CVBF_Referenced
+    {
+    public:
+
+        Registry();
+
+        static Registry* instance(bool erase = false);
+
+        SymbolDisplayFunctor* getOrCreateDisplay(const std::string& symbol);
+        typedef std::map<std::string, ref_ptr<SymbolDisplayFunctor> > SymbolDisplayMap;
+
+    protected:
+        
+        SymbolDisplayMap _symbols;
+    };
+
+} } // namespace osgEarth::Symbology
+
+#endif
+
+#endif

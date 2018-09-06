@@ -1,0 +1,259 @@
+/* -*-c++-*- OpenSceneGraph - Copyright (C) 1998-2006 Robert Osfield
+ *
+ * This library is open source and may be redistributed and/or modified under  
+ * the terms of the OpenSceneGraph Public License (OSGPL) version 0.0 or 
+ * (at your option) any later version.  The full license is in LICENSE file
+ * included with this distribution, and on the openscenegraph.org website.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * OpenSceneGraph Public License for more details.
+*/
+
+#ifndef VBF_SGDB_READERWRITER
+#define VBF_SGDB_READERWRITER 1
+
+#include <VBF_Engine/VBF_SceneGraph/Image>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_Shape.h>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeImpl.h>
+
+#include <VBF_Engine/VBF_SGDB/AuthenticationMap>
+
+#include <deque>
+#include <list>
+#include <iosfwd>
+
+namespace osgDB {
+
+class Archive;
+class Options;
+
+// 查找文件的路径列表
+typedef std::deque<std::string> FilePathList;
+
+
+
+// 文件读写插件的核心类的基类
+class VBF_SGDB_EXPORT ReaderWriter : public osg::CVBF_Object
+{
+    public:
+        ReaderWriter();
+        ReaderWriter(const ReaderWriter& rw,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY);
+        virtual ~ReaderWriter();
+
+        virtual osg::CVBF_Object* cloneType() const;
+        virtual osg::CVBF_Object* clone(const osg::CopyOp& copyop) const;
+        virtual bool isSameKindAs(const osg::CVBF_Object* obj) const;
+        virtual const char* libraryName() const;
+        virtual const char* className() const;
+
+//        META_Object(osgDB,ReaderWriter);
+
+        typedef std::map<std::string, std::string> FormatDescriptionMap;
+        typedef std::list<std::string> FeatureList;
+
+		// 获取支持的协议
+        virtual const FormatDescriptionMap& supportedProtocols() const;
+
+		// 获取支持的文件扩展名
+        virtual const FormatDescriptionMap& supportedExtensions() const;
+
+		// 获取支持的选项
+        virtual const FormatDescriptionMap& supportedOptions() const;
+
+		// 判断是否支持指定的文件扩展名
+        virtual bool acceptsExtension(const std::string& /*extension*/) const;
+
+        // 掩码位，用于设置可以读/写哪种类型的feature
+        enum Features
+        {
+            FEATURE_NONE               = 0,
+            FEATURE_READ_OBJECT        = 1<<0,
+            FEATURE_READ_IMAGE         = 1<<1, 
+            FEATURE_READ_HEIGHT_FIELD  = 1<<2,
+            FEATURE_READ_NODE          = 1<<3, 
+            FEATURE_READ_SHADER        = 1<<4, 
+            FEATURE_WRITE_OBJECT       = 1<<5,
+            FEATURE_WRITE_IMAGE        = 1<<6,
+            FEATURE_WRITE_HEIGHT_FIELD = 1<<7,
+            FEATURE_WRITE_NODE         = 1<<8,
+            FEATURE_WRITE_SHADER       = 1<<9,
+            FEATURE_ALL                = FEATURE_READ_OBJECT        |
+                                         FEATURE_READ_IMAGE         |
+                                         FEATURE_READ_HEIGHT_FIELD  |
+                                         FEATURE_READ_NODE          |
+                                         FEATURE_READ_SHADER        |
+                                         FEATURE_WRITE_OBJECT       |
+                                         FEATURE_WRITE_IMAGE        |
+                                         FEATURE_WRITE_HEIGHT_FIELD |
+                                         FEATURE_WRITE_NODE         |
+                                         FEATURE_WRITE_SHADER       
+        };    
+        
+		// 获取支持读写的feature类型
+        virtual Features supportedFeatures() const;
+
+        // 把Features转换为字符串
+        static FeatureList featureAsString(Features feature);
+
+        class VBF_SGDB_EXPORT ReadResult
+        {
+            public:
+                enum ReadStatus
+                {
+                    NOT_IMPLEMENTED,  //!< read*() 没有实现
+                    FILE_NOT_HANDLED, //!< 文件不适合此读写器，导致一些不兼容，但*not* a read error.
+                    FILE_NOT_FOUND,   //!< 文件找不到或不能读
+                    FILE_LOADED,      //!< 成功读取。文件找到了、加载了并变成了osg
+                    FILE_LOADED_FROM_CACHE,     //!< 在缓存中找到文件并返回
+                    ERROR_IN_READING_FILE,      //!< 文件找到了、加载了，在处理过程中遇到错误
+                    FILE_REQUESTED,             //!< 异步文件读取已经发出请求，但立即返回了，保持轮询plugin直到文件被读完
+                    INSUFFICIENT_MEMORY_TO_LOAD //!< 文件找到但没有加载，因为预计需要的内存超过可用内存
+                };
+
+                ReadResult(ReadStatus status=FILE_NOT_HANDLED);
+                ReadResult(const std::string& m);
+                ReadResult(osg::CVBF_Object* obj, ReadStatus status=FILE_LOADED);              
+                ReadResult(const ReadResult& rr);
+                ~ReadResult();
+                ReadResult& operator = (const ReadResult& rr);
+                
+                osg::CVBF_Object* getObject();
+                osg::Image* getImage();
+                osg::HeightField* getHeightField();
+                osg::IVBF_SGNode* getNode();
+                osgDB::Archive* getArchive();
+                osg::Shader* getShader();
+
+                bool validObject();
+                bool validImage();
+                bool validHeightField();
+                bool validNode();
+                bool validArchive();
+                bool validShader();
+
+                osg::CVBF_Object* takeObject();
+                osg::Image* takeImage();
+                osg::HeightField* takeHeightField();
+                osg::IVBF_SGNode* takeNode();
+                osgDB::Archive* takeArchive();
+                osg::Shader* takeShader();
+
+                std::string& message();
+                const std::string& message() const;
+
+                ReadStatus status() const;
+                bool success() const;
+                bool loadedFromCache() const;
+                bool error() const ;
+                bool notHandled() const;
+                bool notFound() const;
+                bool notEnoughMemory() const;
+
+            protected:
+            
+                ReadStatus                  _status;
+                std::string                 _message;
+                ref_ptr<osg::CVBF_Object>   _object;
+
+        };
+
+        class VBF_SGDB_EXPORT WriteResult
+        {
+            public:
+                enum WriteStatus
+                {
+                    NOT_IMPLEMENTED,		//!< write*()方法没实现
+                    FILE_NOT_HANDLED,		// 文件不适合此读写器
+                    FILE_SAVED,				// 成功保存
+                    ERROR_IN_WRITING_FILE	// 写文件时发生错误
+                };
+
+                WriteResult(WriteStatus status=FILE_NOT_HANDLED);
+                WriteResult(const std::string& m);
+                WriteResult(const WriteResult& rr);
+
+                WriteResult& operator = (const WriteResult& rr);
+                
+                std::string& message() ;
+                const std::string& message() const ;
+
+                WriteStatus status() const ;
+                bool success() const ;
+                bool error() const ;
+                bool notHandled() const ;
+
+            protected:
+            
+                WriteStatus                 _status;
+                std::string                 _message;
+        };
+
+        enum ArchiveStatus
+        {
+            READ,
+            WRITE,
+            CREATE
+        };
+
+        typedef osgDB::Options Options;
+
+        // 判断文件是否存在。通常情况下的实现是查找本地文件，但有些插件，如libcurl，是查找服务器文件
+        virtual bool fileExists(const std::string& filename, const Options* options) const;
+
+        virtual ReadResult openArchive(const std::string& fileName,ArchiveStatus status, unsigned int indexBlockSize=4096, const Options* options=NULL) const;
+        virtual ReadResult openArchive(std::istream& fin,const Options* =NULL) const;
+
+        virtual ReadResult readObject(const std::string& fileName,const Options* =NULL) const;
+        virtual ReadResult readImage(const std::string& fileName,const Options* =NULL) const;
+        virtual ReadResult readHeightField(const std::string& fileName,const Options* =NULL) const;
+        virtual ReadResult readNode(const std::string& fileName,const Options* =NULL) const;
+        virtual ReadResult readShader(const std::string& fileName,const Options* =NULL) const;
+
+        virtual WriteResult writeObject(const osg::CVBF_Object& obj,const std::string& fileName,const Options* =NULL) const;
+        virtual WriteResult writeImage(const osg::Image& image,const std::string& fileName,const Options* =NULL) const;
+        virtual WriteResult writeHeightField(const osg::HeightField& heightField,const std::string& fileName,const Options* =NULL) const;
+        virtual WriteResult writeNode(const osg::IVBF_SGNode& node,const std::string& fileName,const Options* =NULL) const;
+        virtual WriteResult writeShader(const osg::Shader& shader,const std::string& fileName,const Options* =NULL) const;
+
+        virtual ReadResult readObject(std::istream& fin,const Options* =NULL) const;
+        virtual ReadResult readImage(std::istream& fin,const Options* =NULL) const;
+        virtual ReadResult readHeightField(std::istream& fin,const Options* =NULL) const;
+        virtual ReadResult readNode(std::istream& fin,const Options* =NULL) const;
+        virtual ReadResult readShader(std::istream& fin,const Options* =NULL) const;
+
+        virtual WriteResult writeObject(const osg::CVBF_Object& obj,std::ostream& fout,const Options* =NULL) const;
+        virtual WriteResult writeImage(const osg::Image& image,std::ostream& fout,const Options* =NULL) const;
+        virtual WriteResult writeHeightField(const osg::HeightField& heightField,std::ostream& fout,const Options* =NULL) const;
+        virtual WriteResult writeNode(const osg::IVBF_SGNode& node,std::ostream& fout,const Options* =NULL) const;
+        virtual WriteResult writeShader(const osg::Shader& shader,std::ostream& fout,const Options* =NULL) const;
+
+        /** Specify fmt string as a supported protocol.
+          * Please note, this method should usually only be used internally by subclasses of ReaderWriter, Only in special cases
+          * will a ReaderWriter implementation be able to handle a protocol format that it wasn't originally designed for.
+          * To know whether it's safe to inject a new protocol format into an existing ReaderWriter you will need to review
+          * the source code and dependencies of that ReaderWriter. */
+        void supportsProtocol(const std::string& fmt, const std::string& description);
+
+        /** Specify ext string as a supported file extension.
+          * Please note, this method should usually only be used internally by subclasses of ReaderWriter. Only in special cases
+          * will a ReaderWriter implementation be able to handle a file extension that it wasn't originally designed for.
+          * To know whether it's safe to inject a new file extension into an existing ReaderWriter you will need to review the
+          * the source code and dependencies of that ReaderWriter. */
+        void supportsExtension(const std::string& ext, const std::string& description);
+
+        /** Specify option string as a supported option string.
+          * Please note, this should usually only be used internally by subclasses of ReaderWriter. */
+        void supportsOption(const std::string& opt, const std::string& description);
+
+    protected:
+
+        FormatDescriptionMap _supportedProtocols;
+        FormatDescriptionMap _supportedExtensions;
+        FormatDescriptionMap _supportedOptions;
+};
+
+}
+
+#endif // VBF_SGDB_READERWRITER

@@ -1,0 +1,46 @@
+#ifndef PLUGINQUERY_H
+#define PLUGINQUERY_H
+
+#include <VBF_Engine/VBF_SGDB/Export>
+#include <VBF_Engine/VBF_SGDB/ReaderWriter>
+
+#include <VBF_Base/VBF_Referenced.h>
+#include <VBF_Base/ref_ptr>
+
+#include <list>
+#include <string>
+
+namespace osgDB
+{
+
+typedef std::list<std::string> FileNameList;
+
+FileNameList VBF_SGDB_EXPORT listAllAvailablePlugins();
+
+class ReaderWriterInfo : public ::CVBF_Referenced
+{
+    public:
+        
+        ReaderWriterInfo() {}
+    
+        std::string                         plugin;
+        std::string                         description;
+        ReaderWriter::FormatDescriptionMap  protocols;
+        ReaderWriter::FormatDescriptionMap  extensions;
+        ReaderWriter::FormatDescriptionMap  options;
+        ReaderWriter::Features              features;
+
+    protected:
+        
+        virtual ~ReaderWriterInfo() {}
+};
+
+typedef std::list< ref_ptr<ReaderWriterInfo> > ReaderWriterInfoList;
+
+bool VBF_SGDB_EXPORT queryPlugin(const std::string& fileName, ReaderWriterInfoList& infoList);
+
+bool VBF_SGDB_EXPORT outputPluginDetails(std::ostream& out, const std::string& fileName);
+
+}
+
+#endif

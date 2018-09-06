@@ -1,0 +1,123 @@
+#ifndef VBF_SGDB_READFILE
+#define VBF_SGDB_READFILE 1
+
+#include <string>
+
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeImpl.h>
+#include <VBF_Engine/VBF_SceneGraph/Image>
+#include <VBF_Base/VBF_ArgumentParser.h>
+
+#include <VBF_Engine/VBF_SGDB/Export>
+#include <VBF_Engine/VBF_SGDB/Registry>
+
+namespace osgDB {
+
+// 总的说明：从文件读取数据，成功则返回有效的数据指针，失败则返回NULL。
+//          Options参数控制缓存操作和文件查找路径，注册器根据文件扩展名装载合适的数据读写插件，插件读取数据 
+
+// 读取osg::Object 
+extern VBF_SGDB_EXPORT osg::CVBF_Object* readObjectFile(const std::string& filename,const Options* options);
+inline osg::CVBF_Object* readObjectFile(const std::string& filename)
+{
+    return readObjectFile(filename,Registry::instance()->getOptions());
+}
+
+// 读取osg::Image
+extern VBF_SGDB_EXPORT osg::Image* readImageFile(const std::string& filename,const Options* options);
+inline osg::Image* readImageFile(const std::string& filename)
+{
+    return readImageFile(filename,Registry::instance()->getOptions());
+}
+
+// 读取osg::HeightField
+extern VBF_SGDB_EXPORT osg::HeightField*  readHeightFieldFile(const std::string& filename,const Options* options);
+inline osg::HeightField* readHeightFieldFile(const std::string& filename)
+{
+    return readHeightFieldFile(filename,Registry::instance()->getOptions());
+}
+
+// 读取osg::IVBF_SGNode
+extern VBF_SGDB_EXPORT osg::IVBF_SGNode*  readNodeFile(const std::string& filename,const Options* options);
+// 线程读取osg::IVBF_SGNode
+extern VBF_SGDB_EXPORT bool  readNodeFileUseThread(const std::string& filename, osg::IVBF_SGNodeGroup* parent, const Options* options);
+inline osg::IVBF_SGNode* readNodeFile(const std::string& filename)
+{
+    return readNodeFile(filename,Registry::instance()->getOptions());
+}
+
+
+/** 从文件读取osg::IVBF_SGNode子图，如果超过一个子图则创建一个osg::Group包含这些子图
+  * Does NOT ignore strings beginning with a dash '-' character. */
+extern VBF_SGDB_EXPORT osg::IVBF_SGNode* readNodeFiles(std::vector<std::string>& fileList,const Options* options);
+inline osg::IVBF_SGNode* readNodeFiles(std::vector<std::string>& fileList)
+{
+    return readNodeFiles(fileList,Registry::instance()->getOptions());
+}
+
+extern VBF_SGDB_EXPORT osg::IVBF_SGNode* readNodeFiles(::ArgumentParser& parser,const Options* options);
+inline osg::IVBF_SGNode* readNodeFiles(::ArgumentParser& parser)
+{
+    return readNodeFiles(parser,Registry::instance()->getOptions());
+}
+
+// 读取osg::Shader
+extern VBF_SGDB_EXPORT osg::Shader*  readShaderFile(const std::string& filename,const Options* options);
+inline osg::Shader* readShaderFile(const std::string& filename)
+{
+    return readShaderFile(filename,Registry::instance()->getOptions());
+}
+
+// 读取指定类型的osg::Shader
+inline osg::Shader* readShaderFile(osg::Shader::Type type, const std::string& filename,const Options* options)
+{
+    osg::Shader* shader = readShaderFile(filename, options);
+    if (shader && type != osg::Shader::UNDEFINED) shader->setType(type);
+    return shader;
+}
+inline osg::Shader* readShaderFile(osg::Shader::Type type, const std::string& filename)
+{
+    return readShaderFile(type, filename,Registry::instance()->getOptions());
+}
+
+
+//注意： 以下返回智能指针。成功返回指定的智能指针，失败返回NULL指针构成的智能指针
+
+// 读取对象
+extern VBF_SGDB_EXPORT ref_ptr<osg::CVBF_Object> readRefObjectFile(const std::string& filename,const Options* options);
+inline ref_ptr<osg::CVBF_Object> readRefObjectFile(const std::string& filename)
+{
+    return readRefObjectFile(filename,Registry::instance()->getOptions());
+}
+
+// 读取图像
+extern VBF_SGDB_EXPORT ref_ptr<osg::Image> readRefImageFile(const std::string& filename,const Options* options);
+inline ref_ptr<osg::Image>  readRefImageFile(const std::string& filename)
+{
+    return readRefImageFile(filename,Registry::instance()->getOptions());
+}
+
+// 读取高程图
+extern VBF_SGDB_EXPORT ref_ptr<osg::HeightField> readRefHeightFieldFile(const std::string& filename,const Options* options);
+inline ref_ptr<osg::HeightField> readRefHeightFieldFile(const std::string& filename)
+{
+    return readRefHeightFieldFile(filename,Registry::instance()->getOptions());
+}
+
+// 读取节点
+extern VBF_SGDB_EXPORT ref_ptr<osg::IVBF_SGNode> readRefNodeFile(const std::string& filename,const Options* options);
+inline ref_ptr<osg::IVBF_SGNode> readRefNodeFile(const std::string& filename)
+{
+    return readRefNodeFile(filename,Registry::instance()->getOptions());
+}
+
+// 读取着色器
+extern VBF_SGDB_EXPORT ref_ptr<osg::Shader>  readRefShaderFile(const std::string& filename,const Options* options);
+inline ref_ptr<osg::Shader>  readRefShaderFile(const std::string& filename)
+{
+    return readRefShaderFile(filename,Registry::instance()->getOptions());
+}
+
+
+}
+
+#endif

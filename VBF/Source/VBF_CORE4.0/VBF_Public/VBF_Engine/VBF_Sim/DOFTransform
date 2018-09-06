@@ -1,0 +1,179 @@
+#ifndef OSGSIM_DOFTRANSFORM
+#define OSGSIM_DOFTRANSFORM 1
+
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGroupTransform.h>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGroupTransformImpl.h>
+#include <VBF_Engine/VBF_Sim/Export>
+
+namespace osgSim {
+
+// DOFTransform：是对Multigen（OpenFlight）中DOF操作的封装，主要用于机械仿真中的机械运动控制，
+// 如履带的运动和机器手臂的运动等
+class OSGSIM_EXPORT DOFTransform : public osg::IVBF_SGNodeGroupTransformImpl<osg::IVBF_SGNodeGroupTransform>
+{
+    public:
+
+        DOFTransform();
+        DOFTransform(const DOFTransform& dof, const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY);
+
+        META_Node(osgSim, DOFTransform);
+
+        virtual void traverse(osg::NodeVisitor& nv);
+
+		// 设置/获取最小HPR
+        void setMinHPR(const osg::Vec3& hpr) { _minHPR = hpr;}
+        const osg::Vec3& getMinHPR() const { return _minHPR;}
+
+		// 设置/获取最大HPR
+        void setMaxHPR(const osg::Vec3& hpr) {_maxHPR = hpr;}
+        const osg::Vec3& getMaxHPR() const { return _maxHPR;}
+
+		// 设置/获取HPR增量
+        void setIncrementHPR(const osg::Vec3& hpr) {_incrementHPR = hpr;}
+        const osg::Vec3& getIncrementHPR() const { return _incrementHPR;}
+
+		// 设置/获取当前HPR
+        void setCurrentHPR(const osg::Vec3& hpr) {_currentHPR = hpr; dirtyBound(); }
+        const osg::Vec3& getCurrentHPR() const {return _currentHPR;}
+
+		// 更新当前HPR
+        void updateCurrentHPR(const osg::Vec3& hpr);
+
+		// 设置/获取最小平移
+        void setMinTranslate(const osg::Vec3& translate) {_minTranslate = translate; }
+        const osg::Vec3& getMinTranslate() const { return _minTranslate;}
+
+		// 设置/获取最大平移
+        void setMaxTranslate(const osg::Vec3& translate) {_maxTranslate = translate; }
+        const osg::Vec3& getMaxTranslate() const { return _maxTranslate;}
+
+		// 设置/获取平移增量
+        void setIncrementTranslate(const osg::Vec3& translate) { _incrementTranslate = translate; }
+        const osg::Vec3& getIncrementTranslate() const { return _incrementTranslate;}
+
+		// 设置/获取当前平移
+        void setCurrentTranslate(const osg::Vec3& translate){ _currentTranslate = translate; dirtyBound(); }
+        inline const osg::Vec3& getCurrentTranslate() const { return _currentTranslate;}
+
+		// 更新当前平移
+        void updateCurrentTranslate(const osg::Vec3& translate);
+
+		// 设置/获取最小缩放比例
+        void setMinScale(const osg::Vec3& scale) { _minScale = scale;}
+        const osg::Vec3& getMinScale() const { return _minScale;}
+
+		// 设置/获取最大缩放比例
+        void setMaxScale(const osg::Vec3& scale) { _maxScale = scale;}
+        const osg::Vec3& getMaxScale() const { return _maxScale;}
+
+		// 设置/获取缩放比例增量
+        void setIncrementScale(const osg::Vec3& scale) { _incrementScale = scale;}
+        const osg::Vec3& getIncrementScale() const { return _incrementScale;}
+
+		// 设置/获取当前缩放比例
+        void setCurrentScale(const osg::Vec3& scale) { _currentScale = scale; dirtyBound(); }
+        inline const osg::Vec3& getCurrentScale() const { return _currentScale;}
+
+		// 更新当前缩放比例
+        void updateCurrentScale(const osg::Vec3& scale);
+
+		// 设置/获取放置矩阵
+        void setPutMatrix(const osg::Matrix& put) { _Put = put; dirtyBound(); }
+        inline const osg::Matrix& getPutMatrix() const {return _Put;}
+
+		// 设置/获取放置矩阵的逆矩阵
+        void setInversePutMatrix(const osg::Matrix& inversePut) { _inversePut = inversePut; dirtyBound(); }
+        inline const osg::Matrix& getInversePutMatrix() const {return _inversePut;}
+
+		// 设置/获取限制标志
+        void setLimitationFlags(unsigned long flags) { _limitationFlags = flags;}
+        inline unsigned long getLimitationFlags() const {return _limitationFlags;}
+
+        enum MultOrder
+        {
+            PRH,
+            PHR,
+            HPR,
+            HRP,
+            RPH,
+            RHP
+        };
+
+		// 
+        void setHPRMultOrder(MultOrder order) { _multOrder = order; }
+        inline MultOrder getHPRMultOrder() const { return _multOrder;}
+
+		// // 设置/获取动画开始的控制变量
+        void setAnimationOn(bool do_animate);
+        inline bool getAnimationOn() const { return _animationOn; }
+
+		// DOF动画
+        void animate(float deltaTime);
+
+		// 计算局部矩阵到世界矩阵
+        virtual bool computeLocalToWorldMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const;
+
+		// 计算世界矩阵到局部矩阵
+        virtual bool computeWorldToLocalMatrix(osg::Matrix& matrix,osg::NodeVisitor* nv) const;
+
+    protected:
+
+        virtual ~DOFTransform() {}
+
+        unsigned int    _previousTraversalNumber;
+        double          _previousTime;
+
+        osg::Vec3 _minHPR;
+        osg::Vec3 _maxHPR;
+        osg::Vec3 _currentHPR;
+        osg::Vec3 _incrementHPR;
+
+        osg::Vec3 _minTranslate;
+        osg::Vec3 _maxTranslate;
+        osg::Vec3 _currentTranslate;
+        osg::Vec3 _incrementTranslate;
+
+        osg::Vec3 _minScale;
+        osg::Vec3 _maxScale;
+        osg::Vec3 _currentScale;
+        osg::Vec3 _incrementScale;
+
+        osg::Matrix _Put;
+        osg::Matrix _inversePut;
+
+        unsigned long _limitationFlags;
+        /* bits from left to right
+        0 = x translation limited (2^31)
+        1 = y translation limited (2^30)
+        2 = z translation limited (2^29)
+        3 = pitch limited (2^28)
+        4 = roll limited (2^27)
+        5 = yaw limited (2^26)
+        6 = x scale limited (2^25)
+        7 = y scale limited (2^24)
+        8 = z scale limited (2^23)
+
+        else reserved
+        */
+
+        bool _animationOn;
+        /** flags indicating whether value is incerasing or decreasing in animation
+        bits form right to left, 1 means increasing while 0 is decreasing
+        0 = x translation
+        1 = y translation
+        2 = z translation
+        3 = pitch
+        4 = roll
+        5 = yaw
+        6 = x scale
+        7 = y scale
+        8 = z scale
+        */
+        unsigned short _increasingFlags;
+
+        MultOrder _multOrder;
+
+    };
+
+}
+#endif

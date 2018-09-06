@@ -1,0 +1,135 @@
+#ifndef    VBF_SGDB_SHAREDSTATEMANAGER
+#define VBF_SGDB_SHAREDSTATEMANAGER 1
+ 
+
+#include <VBF_Engine/VBF_SceneGraph/VBF_SGNVisitOp.h>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGeometry.h>
+
+#include <VBF_Engine/VBF_SGDB/Export>
+
+#include <OpenThreads/Mutex>
+
+#include <set>
+
+
+namespace osgDB {
+
+
+	/*
+	渲染状态共享管理器:负责记录分页数据库中各个节点的渲染属性，并判断节点之间是否共享了同一个渲染属性，
+	                 从而节省加载和预编译的时间。默认是关闭的，其性能目前可能没有想象的那么好。
+					 如果希望启用 SharedStateManager，需要在进入仿真循环之前执行osgDB::Registry::instance()->getOrCreateSharedStateManager();
+	*/
+    class VBF_SGDB_EXPORT SharedStateManager : public osg::NodeVisitor
+    {
+    public: 
+
+        enum ShareMode
+        {
+            SHARE_NONE                  = 0,
+            SHARE_STATIC_TEXTURES       = 1<<0,
+            SHARE_UNSPECIFIED_TEXTURES  = 1<<1,
+            SHARE_DYNAMIC_TEXTURES      = 1<<2,
+            SHARE_STATIC_STATESETS      = 1<<3,
+            SHARE_UNSPECIFIED_STATESETS = 1<<4,
+            SHARE_DYNAMIC_STATESETS     = 1<<5,
+            SHARE_TEXTURES  = SHARE_STATIC_TEXTURES | SHARE_UNSPECIFIED_TEXTURES,
+            SHARE_STATESETS = SHARE_STATIC_STATESETS | SHARE_UNSPECIFIED_STATESETS,
+            SHARE_ALL       = SHARE_TEXTURES |
+                              SHARE_STATESETS
+        };
+
+        SharedStateManager(unsigned int mode = SHARE_ALL);
+
+        META_NodeVisitor("osgDB","SharedStateManager")
+ 
+        void setShareMode(unsigned int mode);
+        
+        unsigned int getShareMode() { return _shareMode; }
+
+        // Call right after each unload and before Registry cache prune.
+		//剔除那些没有被共享的渲染属性
+        void prune();
+
+        // Call right after each load
+        void share(osg::IVBF_SGNode *node, OpenThreads::Mutex *mt=0);
+
+        void apply(osg::IVBF_SGNode& node);
+        void apply(osg::IVBF_SGNodeGeometry& geode);
+
+        // Answers the question "Will this state set be eliminated by
+        // the SharedStateManager because an equivalent one has been
+        // seen already?" Safe to call from the pager thread.
+        bool isShared(osg::StateSet* stateSet);
+
+        bool isShared(osg::Texture* texture);
+
+        void releaseGLObjects(osg::State* state ) const;
+
+    protected:
+
+        inline bool shareTexture(osg::CVBF_Object::DataVariance variance)
+        {
+            return _shareTexture[variance];
+        }
+
+        inline bool shareStateSet(osg::CVBF_Object::DataVariance variance)
+        {
+            return _shareStateSet[variance];
+        }
+
+
+        void process(osg::StateSet* ss, osg::CVBF_Object* parent);
+        osg::StateAttribute *find(osg::StateAttribute *sa);
+        osg::StateSet *find(osg::StateSet *ss);
+        void setStateSet(osg::StateSet* ss, osg::CVBF_Object* object);
+        void shareTextures(osg::StateSet* ss);
+
+        struct CompareStateAttributes
+        {
+            bool operator()(const ref_ptr<osg::StateAttribute>& lhs,
+                            const ref_ptr<osg::StateAttribute>& rhs) const
+            {
+                return *lhs < *rhs;
+            }
+        };
+
+        struct CompareStateSets
+        {
+            bool operator()(const ref_ptr<osg::StateSet>& lhs,
+                            const ref_ptr<osg::StateSet>& rhs) const
+            {
+                return lhs->compare(*rhs, true) < 0;
+            }
+        };
+        
+        // Lists of shared objects
+        typedef std::set< ref_ptr<osg::StateAttribute>, CompareStateAttributes > TextureSet;
+        TextureSet _sharedTextureList;
+
+        typedef std::set< ref_ptr<osg::StateSet>, CompareStateSets > StateSetSet;
+        StateSetSet _sharedStateSetList;
+
+        // Temporary lists just to avoid unnecessary find calls
+        typedef std::pair<osg::StateAttribute*, bool> TextureSharePair;
+        typedef std::map<osg::StateAttribute*, TextureSharePair> TextureTextureSharePairMap;
+        TextureTextureSharePairMap tmpSharedTextureList;
+
+        typedef std::pair<osg::StateSet*, bool> StateSetSharePair;
+        typedef std::map<osg::StateSet*, StateSetSharePair> StateSetStateSetSharePairMap;
+        StateSetStateSetSharePairMap tmpSharedStateSetList;
+
+        unsigned int    _shareMode;
+        bool            _shareTexture[3];
+        bool            _shareStateSet[3];
+
+        // Share connection mutex 
+
+        OpenThreads::Mutex *_mutex;
+        // Mutex for doing isShared queries from other threads
+        mutable OpenThreads::Mutex _listMutex;
+    };
+
+}
+
+#endif

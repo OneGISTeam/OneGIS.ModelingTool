@@ -1,0 +1,69 @@
+#ifndef __OSGCAL__CORE_MESH_H__
+#define __OSGCAL__CORE_MESH_H__
+
+#include <VBF_Engine/VBF_Cal/Export>
+#include <VBF_Engine/VBF_Cal/MeshData>
+#include <VBF_Engine/VBF_Cal/Material>
+#include <VBF_Engine/VBF_Cal/MeshParameters>
+#include <VBF_Engine/VBF_Cal/MeshDisplayLists>
+#include <VBF_Engine/VBF_Cal//MeshStateSets>
+
+namespace osgCal
+{
+    class CoreModel;
+    
+    /**
+     * Cal3d hardware submesh prepared for fast creation.
+     *
+     * Remark that it is not cal3d CalCoreMesh wrapper. It is hardware
+     * submesh which is actually drawn (there can be more that one
+     * CoreMesh per CalCoreMesh due to total bones count limit in
+     * shader).
+     *
+     * CalHardwareMesh as well as CalHardwareModel is not used in
+     * osgCal. All the necessary data (\c MeshData) is prepared in the
+     * MeshLoader and then loaded from meshes cache file (or from memory
+     * if there is no cache, but it is slow for large meshes and does
+     * many things that can be done offline [TBN calculation,
+     * rigidness detection, etc.]).
+     */
+    struct OSGCAL_EXPORT CoreMesh : public CVBF_Referenced
+    {
+        public:
+
+            /**
+             * Creation of fresh mesh from data and material.
+             * New display list is created in this case.
+             */
+            CoreMesh( const CoreModel* model,
+                      MeshData*        data,
+                      const Material*  material,
+                      const MeshParameters* ds  );
+
+            /**
+             * Creation of mesh with new material and display settings.
+             * Display list is shared in this case.
+             */
+            CoreMesh( const CoreModel* model,
+                      const CoreMesh* mesh,
+                      const Material* newMaterial,
+                      const MeshParameters* newDs  );
+
+            /**
+             * Mutable since we free some data after display lists compiled.
+             */
+            mutable ref_ptr< MeshData >    data;
+
+            ref_ptr< Material >            material;
+            ref_ptr< MeshParameters >      parameters;
+
+            ref_ptr< MeshDisplayLists >    displayLists;
+            ref_ptr< MeshStateSets >       stateSets;
+
+            virtual void releaseGLObjects( osg::State* state = 0 ) const;
+
+    };
+
+}; // namespace osgCal
+
+#endif

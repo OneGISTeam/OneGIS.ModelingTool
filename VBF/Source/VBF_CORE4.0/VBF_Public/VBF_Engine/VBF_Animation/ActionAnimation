@@ -1,0 +1,27 @@
+#ifndef OSGANIMATION_ACTION_ANIMATION_H
+#define OSGANIMATION_ACTION_ANIMATION_H
+
+#include <VBF_Engine/VBF_Animation/Action>
+#include <VBF_Engine/VBF_Animation/Export>
+
+
+namespace osgAnimation {
+
+
+    class OSGANIMATION_EXPORT ActionAnimation : public Action
+    {
+    public:
+        META_Action(osgAnimation, ActionAnimation);
+        ActionAnimation();
+        ActionAnimation(const ActionAnimation& a, const osg::CopyOp& c);
+        ActionAnimation(Animation* animation);
+        void updateAnimation(unsigned int frame, int priority);
+        Animation* getAnimation() { return _animation.get(); }
+
+    protected:
+        ref_ptr<Animation> _animation;
+    };
+
+}
+
+#endif

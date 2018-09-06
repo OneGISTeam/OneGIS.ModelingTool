@@ -1,0 +1,39 @@
+#ifndef OSG_STATEATTRIBUTECALLBACK
+#define OSG_STATEATTRIBUTECALLBACK 1
+
+#include <VBF_Engine/VBF_SceneGraph/Export>
+#include <VBF_Engine/VBF_SceneGraph/VBF_Object.h>
+
+namespace osg {
+
+class StateAttribute;
+class NodeVisitor;
+
+
+#ifdef VBF_USED_TYPEID_
+class OSG_EXPORT StateAttributeCallback : public CVBF_Object 
+#else
+class OSG_EXPORT StateAttributeCallback : public virtual CVBF_Object 
+#endif
+{
+    public:
+    // IE可能错误
+        StateAttributeCallback() 
+		{
+            CVBF_Object::m_dwTypeID = 0x90000000; //类型标识
+		}
+
+        StateAttributeCallback(const StateAttributeCallback&,const CopyOp&) 
+		{
+            CVBF_Object::m_dwTypeID = 0x90000000; //类型标识
+		}
+
+        META_Object(osg,StateAttributeCallback);
+
+
+        virtual void operator () (StateAttribute*, NodeVisitor*) {}
+};
+
+}
+
+#endif

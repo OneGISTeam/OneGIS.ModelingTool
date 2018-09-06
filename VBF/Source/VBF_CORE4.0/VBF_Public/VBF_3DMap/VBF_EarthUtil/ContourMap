@@ -1,0 +1,84 @@
+/* -*-c++-*- */
+/* osgEarth - Dynamic map generation toolkit for OpenSceneGraph
+* Copyright 2008-2012 Pelican Mapping
+* http://osgearth.org
+*
+* osgEarth is free software; you can redistribute it and/or modify
+* it under the terms of the GNU Lesser General Public License as published by
+* the Free Software Foundation; either version 2 of the License, or
+* (at your option) any later version.
+*
+* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+* AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+* IN THE SOFTWARE.
+*
+* You should have received a copy of the GNU Lesser General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>
+*/
+
+//xahg h00017
+
+#ifndef OSGEARTHUTIL_CONTOUR_MAP_H
+#define OSGEARTHUTIL_CONTOUR_MAP_H
+
+#include <VBF_3DMap/VBF_EarthUtil/Common>
+#include <VBF_3DMap/VBF_Terrain/IVBF_TerrainEffect.h>
+#include <VBF_3DMap/VBF_Terrain/VBF_LayerTerrainImage.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_StateAttrTexture1D.h>
+#include <VBF_Engine/VBF_SceneGraph/TransferFunction>
+#include <Types/VBF_Optional.h>
+
+namespace osgEarth {
+    class Map;
+}
+
+namespace osgEarth { namespace Util
+{
+    /**
+     * Terrain effect that applies a 1D contour coloring texture
+     * to the terrain based an on elevation->color map.
+     */
+    class OSGEARTHUTIL_EXPORT ContourMap : public IVBF_TerrainEffect
+    {
+    public:
+        ContourMap();
+
+        /** Sets a custom transfer function. */
+        void setTransferFunction(osg::TransferFunction1D* xf);
+        osg::TransferFunction1D* getTransferFunction() const { return _xfer.get(); }
+
+        /** Sets the opacity of the effect (default = 1.0) */
+        void setOpacity(float value);
+
+    public:
+        void onInstall(CVBFO_SGNodeTerrainEngine* engine);
+        void onUninstall(CVBFO_SGNodeTerrainEngine* engine);
+
+    public:
+        ContourMap(const CVBF_Config& conf);
+        void mergeConfig(const CVBF_Config& conf);
+        virtual CVBF_Config getConfig() const;
+
+    protected:
+        virtual ~ContourMap();
+        void init();
+
+        int                                   _unit;
+        ref_ptr<osg::TransferFunction1D> _xfer;
+        ref_ptr<osg::Texture1D>          _xferTexture;
+        ref_ptr<osg::Uniform>            _xferSampler;
+        ref_ptr<osg::Uniform>            _xferMin;
+        ref_ptr<osg::Uniform>            _xferRange;
+        ref_ptr<osg::Uniform>            _opacityUniform;
+
+        CVBF_Optional<float> _opacity;
+    };
+
+} } // namespace osgEarth::Util
+
+#endif // OSGEARTHUTIL_CONTOUR_MAP_H
+//xahg h00017

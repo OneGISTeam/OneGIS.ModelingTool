@@ -1,0 +1,126 @@
+#ifndef OSGTEXT_TEXT3D
+#define OSGTEXT_TEXT3D 1
+
+
+#include <VBF_Engine/VBF_Text/TextBase>
+#include <VBF_Engine/VBF_Text/Style>
+
+namespace osgText {
+
+// 三维文字，带有厚度的文字。没有直接设置颜色的接口，可以通过设置材质来设置颜色
+class OSGTEXT_EXPORT Text3D : public osgText::TextBase
+{
+    public:
+        Text3D();
+        Text3D(const Text3D& text,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY);
+
+        META_Object(osgText,Text3D)
+
+		// 设置/获取字符的厚度（Depth）
+        float getCharacterDepth() const;
+        void setCharacterDepth(float characterDepth);
+
+        enum RenderMode // 渲染模式
+        {
+            PER_FACE,  // 用默认的StateSet渲染前面，用wall StateSet渲染墙面（侧面），用back StateSet渲染背面（字符的背面，而不是OpenGL面的背面）
+            PER_GLYPH  // 用默认的StateSet渲染所有的字符
+        };
+
+		// 设置/获取字符的渲染模式
+        RenderMode getRenderMode() const { return _renderMode; }
+        void setRenderMode(RenderMode renderMode) { _renderMode = renderMode; computeGlyphRepresentation(); }
+
+
+        // 设置/获取侧面（墙面）的状态集
+		void setWallStateSet(osg::StateSet* wallStateSet)  { _wallStateSet = wallStateSet; }
+		osg::StateSet* getWallStateSet() { return _wallStateSet.get(); }
+		const osg::StateSet* getWallStateSet() const { return _wallStateSet.get(); }
+		osg::StateSet* getOrCreateWallStateSet()
+		{
+			if (_wallStateSet.valid() == false) _wallStateSet = new osg::StateSet;
+           return _wallStateSet.get();
+        }
+ 
+		// 设置/获取背面的状态集
+		void setBackStateSet(osg::StateSet* backStateSet)  { _backStateSet = backStateSet; }
+		osg::StateSet* getBackStateSet() { return _backStateSet.get(); }
+		osg::StateSet* getBackStateSet() const { return _backStateSet.get(); }
+		osg::StateSet* getOrCreateBackStateSet() { if (_backStateSet.valid() == false) _backStateSet = new osg::StateSet; return _backStateSet.get(); }
+
+
+
+        // 绘制文字
+        virtual void drawImplementation(osg::RenderInfo& renderInfo) const;
+
+
+
+        /** return false, osgText::Text does not support accept(AttributeFunctor&).*/
+        virtual bool supports(const osg::Drawable::AttributeFunctor&) const { return false; }
+
+        /** return true, osgText::Text does support accept(ConstAttributeFunctor&).*/
+        virtual bool supports(const osg::Drawable::ConstAttributeFunctor&) const { return false; }
+
+        /** accept an ConstAttributeFunctor and call its methods to tell it about the interal attributes that this Drawable has.*/
+        virtual void accept(osg::Drawable::ConstAttributeFunctor& af) const;
+
+        /** return true, osgText::Text does support accept(PrimitiveFunctor&) .*/
+        virtual bool supports(const osg::PrimitiveFunctor&) const { return false; }
+
+        /** accept a PrimtiveFunctor and call its methods to tell it about the interal primtives that this Drawable has.*/
+        virtual void accept(osg::PrimitiveFunctor& pf) const;
+
+
+        // 设置是否使用mutex确保ref()和unref()的线程安全性
+        virtual void setThreadSafeRefUnref(bool threadSafe);
+
+        // 改变每个上下文GLObject buffers 为指定大小
+        virtual void resizeGLObjectBuffers(unsigned int maxSize);
+
+        // 如果State非0, 释放特定GC的OpenGL对象，否则释放所有GC的OpenGL对象。
+        virtual void releaseGLObjects(osg::State* state=0) const;
+
+		// make Font a friend to allow it set the _font to 0 if the font is forcefully unloaded.
+        friend class Font;
+
+        virtual osg::BoundingBox computeBound() const;
+
+
+    protected:
+
+        virtual ~Text3D() {}
+
+        void renderPerGlyph(osg::State & state) const;
+        void renderPerFace(osg::State & state) const;
+
+        String::iterator computeLastCharacterOnLine(osg::Vec2& cursor, String::iterator first,String::iterator last);
+
+        void computeGlyphRepresentation();
+        void computePositions(unsigned int contextID) const;
+
+        // ** glyph and other information to render the glyph
+        struct GlyphRenderInfo
+        {
+            GlyphRenderInfo(GlyphGeometry* glyphGeometry, osg::Vec3 & pos):
+                _glyphGeometry(glyphGeometry),
+                _position(pos) {}
+
+            ref_ptr<GlyphGeometry> _glyphGeometry;
+            osg::Vec3 _position;
+        };
+
+        typedef std::vector<GlyphRenderInfo> LineRenderInfo;
+        typedef std::vector<LineRenderInfo> TextRenderInfo;
+
+        TextRenderInfo _textRenderInfo;
+
+
+        RenderMode _renderMode;
+
+        ref_ptr<osg::StateSet> _wallStateSet;
+        ref_ptr<osg::StateSet> _backStateSet;
+};
+
+}
+
+
+#endif

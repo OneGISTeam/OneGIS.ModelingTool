@@ -1,0 +1,187 @@
+#ifndef OSG_OPERATIONTHREAD
+#define OSG_OPERATIONTHREAD 1
+
+#include <VBF_Base/observer_ptr>
+#include <VBF_Engine/VBF_SceneGraph/VBF_Object.h>
+
+#include <OpenThreads/Thread>
+#include <OpenThreads/Barrier>
+#include <OpenThreads/Condition>
+#include <OpenThreads/Block>
+
+#include <list>
+#include <set>
+
+namespace osg {
+
+class RefBlock : virtual public ::CVBF_Referenced, public OpenThreads::Block
+{
+    public:
+        RefBlock(): CVBF_Referenced(true) {}
+
+};
+
+class RefBlockCount : virtual public ::CVBF_Referenced, public OpenThreads::BlockCount
+{
+    public:
+        RefBlockCount(unsigned blockCount): CVBF_Referenced(true), OpenThreads::BlockCount(blockCount) 
+		{}
+};
+
+
+// 图形操作的基类
+class Operation : virtual public ::CVBF_Referenced
+{
+    public:
+        Operation(const std::string& name, bool keep): CVBF_Referenced(true),
+            m_sName(name),
+            _keep(keep) 
+		{}
+
+		// 设置/获取名字（便于理解）
+        void setName(const std::string& name) { m_sName = name; }
+        const std::string& getName() const { return m_sName; }
+
+		// 设置/获取操作执行后是否还保留，不保留的操作是一次性操作，保留的操作是循环型的操作
+        void setKeep(bool keep) { _keep = keep; }
+        bool getKeep() const { return _keep; }
+
+		// 如果操作是一个栅栏，则释放它
+        virtual void release() {}
+
+		// 执行该操作
+        virtual void operator () (CVBF_Object*) = 0;
+
+    protected:
+    
+        Operation(): CVBF_Referenced(true),
+            _keep(false) 
+		{}
+
+        Operation(const Operation& op): CVBF_Referenced(true),
+            m_sName(op.m_sName),
+            _keep(op._keep) 
+		{}
+
+        virtual ~Operation() {}
+
+        std::string m_sName;
+        bool        _keep;
+};
+
+class OperationThread;
+
+class OSG_EXPORT OperationQueue : public ::CVBF_Referenced
+{
+    public:    
+        OperationQueue();
+          
+		// 获取下一个操作，如果队列中没有操作则返回null ref_ptr<>
+        ref_ptr<Operation> getNextOperation(bool blockIfEmpty = false);
+
+        bool empty(); // 判断是否为空
+        
+        /** Return the num of pending operations that are sitting in the OperationQueue.*/
+        unsigned int getNumOperationsInQueue();
+
+ 		
+        void add(Operation* operation);		 // 在队列尾部添加操作，当该操作移到队列头部时被执行        
+        void remove(Operation* operation);	 // 移除操作
+        void remove(const std::string& name);// 根据名称移除操作
+        void removeAllOperations();			 // 移除所有的操作
+        
+        /** Run the operations. */
+        void runOperations(CVBF_Object* callingObject=0);
+
+		// 调用所有操作的release函数
+        void releaseAllOperations(); 
+
+        /** Release operations block that is used to block threads that are waiting on an empty operations queue.*/
+        void releaseOperationsBlock();
+
+        typedef std::set<OperationThread*> OperationThreads;
+        
+        /** Get the set of OperationThreads that are sharing this OperationQueue. */
+        const OperationThreads& GetOperationThreads() const { return _operationThreads; }
+
+    protected:
+
+        virtual ~OperationQueue();
+
+        friend class OperationThread;
+        
+        void addOperationThread(OperationThread* thread);
+        void removeOperationThread(OperationThread* thread);
+        
+        typedef std::list< ref_ptr<Operation> > Operations;
+
+        OpenThreads::Mutex          _operationsMutex;
+        ref_ptr<osg::RefBlock> _operationsBlock;
+        Operations                  _operations;
+        Operations::iterator        _currentOperationIterator;
+
+        OperationThreads            _operationThreads;
+};
+
+
+// 在一个线程中执行操作的辅助类
+class OSG_EXPORT OperationThread : public ::CVBF_Referenced, public OpenThreads::Thread
+{
+    public:
+        OperationThread();
+
+        void setParent(CVBF_Object* parent) { _parent = parent; }
+        CVBF_Object* getParent() { return _parent.get(); }       
+        const CVBF_Object* getParent() const { return _parent.get(); }
+
+		// 设置/获取操作队列
+        void setOperationQueue(OperationQueue* opq);
+        OperationQueue* getOperationQueue() { return _operationQueue.get(); }
+        const OperationQueue* getOperationQueue() const { return _operationQueue.get(); }
+
+        
+        /** Add operation to end of OperationQueue, this will be 
+          * executed by the graphics thread once this operation gets to the head of the queue.*/
+        void add(Operation* operation);
+        
+        /** Remove operation from OperationQueue.*/
+        void remove(Operation* operation);
+
+        /** Remove named operation from OperationQueue.*/
+        void remove(const std::string& name);
+
+        /** Remove all operations from OperationQueue.*/
+        void removeAllOperations();
+
+        
+        /** Get the operation currently being run.*/
+        ref_ptr<Operation> getCurrentOperation() { return _currentOperation; }
+
+        /** Run does the opertion thread run loop.*/
+        virtual void run();
+        
+        void SetDone(bool done);       
+        bool IsDone() const { return m_bDone; }
+
+        /** Cancel this graphics thread.*/        
+        virtual int cancel();
+
+    protected:
+    
+        virtual ~OperationThread();
+        
+        observer_ptr<CVBF_Object>            _parent;
+
+        bool                            m_bDone;
+
+        OpenThreads::Mutex              _threadMutex;
+        ref_ptr<OperationQueue>    _operationQueue;
+        ref_ptr<Operation>         _currentOperation;
+
+};
+
+typedef OperationThread OperationsThread;
+
+}
+
+#endif

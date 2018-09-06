@@ -1,0 +1,114 @@
+#ifndef OSG_BUFFERED_VALUE
+#define OSG_BUFFERED_VALUE 1
+
+#include <VBF_Engine/VBF_SceneGraph/DisplaySettings.h>
+#include <vector>
+
+namespace osg {
+
+// 数值型数据的数组，与对象型的区别仅仅是初始内存处理的区别 
+template<class T>
+class buffered_value
+{
+    public:
+    
+        inline buffered_value():
+            _array(DisplaySettings::instance()->getMaxNumberOfGraphicsContexts(),0)
+            {}
+
+        inline buffered_value(unsigned int size):
+            _array(size,0)
+            {}
+
+        buffered_value& operator = (const buffered_value& rhs)
+        {
+            _array = rhs._array;
+            return *this;
+        }
+        
+        inline void setAllElementsTo(const T& t) { std::fill(_array.begin(),_array.end(),t); }
+
+        inline void clear() { _array.clear(); }
+
+        inline bool empty() const { return _array.empty(); }
+
+        inline unsigned int size() const { return _array.size(); }
+        
+        inline void resize(unsigned int newSize) { _array.resize(newSize,0); }
+
+        inline T& operator[] (unsigned int pos)
+        {
+            // 自动调整大小
+            if (_array.size()<=pos) _array.resize(pos+1,0);
+
+            return _array[pos];
+        }
+
+        inline T operator[] (unsigned int pos) const
+        {
+            // 自动调整大小
+            if (_array.size()<=pos)  _array.resize(pos+1,0);
+
+            return _array[pos];
+        }
+
+    protected:
+    
+        mutable std::vector<T> _array;
+};
+
+// 对象型数据的数组 
+template<class T>
+class buffered_object
+{
+    public:
+    
+        inline buffered_object():
+            _array(DisplaySettings::instance()->getMaxNumberOfGraphicsContexts())
+            {}
+
+        inline buffered_object(unsigned int size):
+            _array(size)
+            {}
+
+        buffered_object& operator = (const buffered_object& rhs)
+        {
+            _array = rhs._array;
+            return *this;
+        }
+
+        inline void setAllElementsTo(const T& t) { std::fill(_array.begin(),_array.end(),t); }
+
+        inline void clear() { _array.clear(); }
+
+        inline bool empty() const { return _array.empty(); }
+
+        inline unsigned int size() const { return _array.size(); }
+
+        inline void resize(unsigned int newSize) { _array.resize(newSize); }
+
+        inline T& operator[] (unsigned int pos)
+        {
+            // 自动调整大小
+            if (_array.size()<=pos) _array.resize(pos+1);
+
+            return _array[pos];
+        }
+
+        inline const T& operator[] (unsigned int pos) const
+        {
+            // 自动调整大小
+            if (_array.size()<=pos) _array.resize(pos+1);
+
+            return _array[pos];
+        }
+        
+
+    protected:
+    
+        mutable std::vector<T> _array;
+};
+
+}
+
+#endif

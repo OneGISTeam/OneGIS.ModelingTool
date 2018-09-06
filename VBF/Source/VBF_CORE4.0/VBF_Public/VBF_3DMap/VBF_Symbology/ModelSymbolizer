@@ -1,0 +1,22 @@
+#ifndef OSGEARTHSYMBOLOGY_MODEL_SYMBOLIZER_H
+#define OSGEARTHSYMBOLOGY_MODEL_SYMBOLIZER_H 1
+
+#include <VBF_3DMap/VBF_Symbology/Common>
+#include <VBF_3DMap/VBF_Symbology/Symbolizer>
+
+namespace osgEarth { namespace Symbology
+{
+    class OSGEARTHSYMBOLOGY_EXPORT ModelSymbolizer : public Symbolizer< State<GeometryContent> >
+    {
+    public: // Symbolizer
+
+        // 创建或更新一个子图（节点），用于显示需要符号化的数据，把该子图关联到一个节点
+        virtual bool compile( State<GeometryContent>* state,
+                               osg::IVBF_SGNodeGroup* attachPoint);
+
+        ModelSymbolizer();
+    };
+
+} } // namespace osgEarth::Symbology
+
+#endif

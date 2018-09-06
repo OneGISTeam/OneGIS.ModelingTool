@@ -1,0 +1,36 @@
+#ifndef OSGEARTHSYMBOLOGY_GEOMETRY_SYMBOLIZER_H
+#define OSGEARTHSYMBOLOGY_GEOMETRY_SYMBOLIZER_H 1
+
+#include <VBF_3DMap/VBF_Symbology/Common>
+#include <VBF_3DMap/VBF_Symbology/Symbolizer>
+
+namespace osgEarth { namespace Symbology
+{
+    typedef State<GeometryContent> GeometrySymbolizerState;
+
+    class OSGEARTHSYMBOLOGY_EXPORT GeometrySymbolizer : public Symbolizer<GeometrySymbolizerState>
+    {
+    public:
+        GeometrySymbolizer();
+
+    public:
+        /**
+         * Creates or updates a subgraph representing the symbolized data.
+         * The Symbolizer can attach the subgraph to the attachPoint.
+         */
+        virtual bool compile(
+            GeometrySymbolizerState* state,
+            osg::IVBF_SGNodeGroup*              attachPoint);
+
+
+        class OSGEARTHSYMBOLOGY_EXPORT GeometrySymbolizerOperator
+        {
+        public:
+            osg::IVBF_SGNode* operator()(const GeometryList& geoms, 
+                                  const Style* style);
+        };
+    };
+
+} } // namespace osgEarth::Symbology
+
+#endif

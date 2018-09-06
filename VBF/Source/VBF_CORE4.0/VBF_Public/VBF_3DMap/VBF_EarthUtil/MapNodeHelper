@@ -1,0 +1,51 @@
+#ifndef OSGEARTH_UTIL_MAP_NODE_HELPER_H
+#define OSGEARTH_UTIL_MAP_NODE_HELPER_H 1
+
+#include <VBF_3DMap/VBF_EarthUtil/Common>
+#include <VBF_3DMap/VBF_EarthUtil/Controls>
+#include <VBF_Display/VBF_Viewer/IVBF_View.h>
+#include <VBF_3DMap/VBF_Terrain/VBF_MapNode.h>
+
+/**
+ * This is a collection of resources used by the osgEarth example applications.
+ */
+namespace osgEarth { namespace Util
+{
+    using namespace osgEarth;
+    using namespace osgEarth::Util::Controls;
+
+    /**
+     * Parses a set of built-in example arguments. Any Controls created by parsing
+     * command-line parameters will appear in the lower-left corner of the display.
+     */
+    class OSGEARTHUTIL_EXPORT MapNodeHelper
+    {
+    public:
+        /**
+         * Loads a map file and processes all the built-in example command line
+         * arguemnts and XML externals.
+         */
+        osg::IVBF_SGNodeGroup* load( ::ArgumentParser& args,
+            IVBF_View* view, Control* userControl =0L ) const;
+
+        /**
+         * Takes an existing map node and processes all the built-in example command
+         * line arguments and mapNode externals.
+         */
+        void parse( CVBFO_SGNodeMap* mapNode, ::ArgumentParser& args, IVBF_View* view,
+                    osg::IVBF_SGNodeGroup* parentGroup =0L, Control* userControl =0L) const;
+
+        /**
+         * Configures a view with a stock set of event handlers that are useful
+         * for demos, and performs some other common view configuation for osgEarth.
+         */
+        void configureView( IVBF_View* view ) const;
+
+        std::string usage() const;
+    };
+
+
+
+} } // namespace osgEarth::Util
+
+#endif // OSGEARTH_UTIL_EXAMPLE_RESOURCES_H

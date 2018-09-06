@@ -1,0 +1,111 @@
+#ifndef OSGVIEWER_RENDERER
+#define OSGVIEWER_RENDERER 1
+
+#include <OpenThreads/Condition>
+#include <VBF_Base/VBF_Timer.h>
+#include <VBF_Engine/VBF_SGDB/DatabasePager>
+#include <VBF_Engine/VBF_SGUtil/SceneView>
+#include <VBF_Display/VBF_Viewer/Export>
+
+namespace osgViewer {
+
+class OSGVIEWER_EXPORT OpenGLQuerySupport : public ::CVBF_Referenced
+{
+    public:
+        OpenGLQuerySupport();
+
+        virtual void checkQuery(CVBF_Stats* stats, osg::State* state,
+                                CVBF_Timer_t startTick) = 0;
+        
+        virtual void beginQuery(unsigned int frameNumber, osg::State* state) = 0;
+        virtual void endQuery(osg::State* state) = 0;
+        virtual void initialize(osg::State* state, CVBF_Timer_t startTick);
+    protected:
+
+        const osg::Drawable::Extensions*            _extensions;
+};
+// 图形渲染器负责一切渲染有关的调度，是交互前台对渲染后台进行调度的入口
+class OSGVIEWER_EXPORT Renderer : public osg::GraphicsOperation
+{
+    public:
+
+        Renderer(osg::IVBF_Camera* camera);
+
+        osgUtil::SceneView* getSceneView(unsigned int i) { return _sceneView[i].get(); }
+        const osgUtil::SceneView* getSceneView(unsigned int i) const { return _sceneView[i].get(); }
+
+        void SetDone(bool done) { _done = done; }
+        bool getDone() { return _done; }
+
+        void setGraphicsThreadDoesCull(bool flag);
+        bool getGraphicsThreadDoesCull() const { return _graphicsThreadDoesCull; }
+
+
+        virtual void cull();
+        virtual void draw();
+        virtual void cull_draw();
+
+        virtual void compile();
+        
+        void setCompileOnNextDraw(bool flag) { _compileOnNextDraw = flag; }
+        bool getCompileOnNextDraw() const { return _compileOnNextDraw; }
+
+        virtual void operator () (osg::CVBF_Object* object);
+        
+		// 在图形环境GC上渲染
+        virtual void operator () (osg::GraphicsContext* context);
+
+        virtual void release();
+        
+        /** Force update of state associated with cameras. */
+        void setCameraRequiresSetUp(bool flag);
+        bool getCameraRequiresSetUp() const;
+
+    protected:
+        void initialize(osg::State* state);
+        virtual ~Renderer();
+
+        virtual void updateSceneView(osgUtil::SceneView* sceneView);        
+
+        observer_ptr<osg::IVBF_Camera>                      _camera;
+        
+        bool                                                _done;
+        bool                                                _graphicsThreadDoesCull;
+        bool                                                _compileOnNextDraw;
+        
+		// 创建两个SceneView，支持渲染后台双缓存。SingleThreaded和CullDrawThreadPerContext只用到第一个。？？？
+        ref_ptr<osgUtil::SceneView>                    _sceneView[2];
+
+        struct OSGVIEWER_EXPORT ThreadSafeQueue
+        {
+            OpenThreads::Mutex _mutex;
+            OpenThreads::Condition _cond;
+            typedef std::list<osgUtil::SceneView*> SceneViewList;
+            SceneViewList _queue;
+            bool _isReleased;
+            
+            ThreadSafeQueue();
+            ~ThreadSafeQueue();
+
+            /** Release any thread waiting on the queue, even if the queue is empty. */
+            void release();
+
+            /** Take a SceneView from the queue. Can return 0 if release() is called when the queue is empty. */
+            osgUtil::SceneView* takeFront();
+
+            /**  Add a SceneView object to the back of the queue. */
+            void add(osgUtil::SceneView* sv);
+        };
+
+
+        ThreadSafeQueue _availableQueue;
+        ThreadSafeQueue _drawQueue;
+
+        bool _initialized;
+        ref_ptr<OpenGLQuerySupport> _querySupport;
+        CVBF_Timer_t _startTick;
+};
+
+}
+
+#endif

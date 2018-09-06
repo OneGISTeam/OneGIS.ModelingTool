@@ -1,0 +1,7 @@
+#ifndef OSGEARTH_ENGINE_MP_COMMON_H
+#define OSGEARTH_ENGINE_MP_COMMON_H 1
+
+#include <VBF_3DMap/VBF_Terrain/Common.h>
+
+
+#endif // OSGEARTH_ENGINE_MP_COMMON_H

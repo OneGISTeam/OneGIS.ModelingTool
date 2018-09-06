@@ -1,0 +1,39 @@
+#ifndef OSGFX_MULTITEXTURECONTROL
+#define OSGFX_MULTITEXTURECONTROL
+
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGroupImpl.h>
+
+#include <VBF_Engine/VBF_FX/Export>
+
+namespace osgFX
+{
+    
+	// 多纹理控制节点：该节点提供纹理单元的控制（哪个纹理单元被激活及各纹理单元混合的权重）
+    class OSGFX_EXPORT MultiTextureControl: public osg::IVBF_SGNodeGroupImpl<osg::IVBF_SGNodeGroup> 
+	{
+    public:
+
+        MultiTextureControl();
+        MultiTextureControl(const MultiTextureControl& copy, const osg::CopyOp& copyop = osg::CopyOp::SHALLOW_COPY);
+
+        META_Node(osgFX, MultiTextureControl);
+        
+		// 设置/获取各纹理单元的权重
+        void setTextureWeight(unsigned int unit, float weight);
+        float getTextureWeight(unsigned int unit) const { return (unit<_textureWeightList.size()) ?  _textureWeightList[unit] : 0.0f; }
+        
+        unsigned int getNumTextureWeights() const { return _textureWeightList.size(); }
+        
+    protected:
+        virtual ~MultiTextureControl() {}
+        MultiTextureControl& operator = (const MultiTextureControl&) { return *this; }
+        
+        void updateStateSet();
+        
+        typedef std::vector<float> TextureWeightList;
+        TextureWeightList _textureWeightList;
+    };
+
+}
+
+#endif

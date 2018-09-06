@@ -1,0 +1,130 @@
+#ifndef OSG_GRAPHICSTHREAD
+#define OSG_GRAPHICSTHREAD 1
+
+// 绘图线程及绘图操作
+
+#include <VBF_Engine/VBF_SceneGraph/OperationThread>
+#include <VBF_Engine/VBF_SceneGraph/VBF_StateMachine.h>
+
+namespace osg 
+{
+
+
+
+/** 渲染线程，执行GraphicsOperation*/
+class OSG_EXPORT GraphicsThread : public osg::OperationThread
+{
+    public:
+    
+        GraphicsThread();
+        
+        virtual void run();
+};
+
+// 绘图操作的基类
+struct OSG_EXPORT GraphicsOperation : public Operation
+{
+    GraphicsOperation(const std::string& name, bool keep);
+    ~GraphicsOperation();
+
+    /** 重载标准操作，把Object*动态转换为GraphicsContext*，如果成功调用operation()(GraphicsContext*)。*/
+    virtual void operator () (CVBF_Object* object);
+
+    virtual void operator () (GraphicsContext* context) = 0;
+};
+
+
+/** 交换缓存操作：调用GC的swapBuffers*/
+struct OSG_EXPORT SwapBuffersOperation : public GraphicsOperation
+{
+// IE可能错误
+    SwapBuffersOperation(): GraphicsOperation("SwapBuffers",true) {}
+
+    virtual void operator () (GraphicsContext* context);
+};
+
+/** 栅栏操作：同步多个GraphicsThreads */
+struct OSG_EXPORT BarrierOperation : public Operation, public OpenThreads::Barrier
+{
+    enum PreBlockOp
+    {
+        NO_OPERATION,
+        GL_FLUSH,
+        GL_FINISH
+    };
+    BarrierOperation();
+    BarrierOperation(int numThreads, PreBlockOp op=NO_OPERATION, bool keep=true);
+    ~BarrierOperation();
+    virtual void block(unsigned int numThreads=0);
+
+    BarrierOperation& operator = (const BarrierOperation& rhs );
+
+    virtual void release();
+
+    virtual void operator () (CVBF_Object* object);
+    
+    PreBlockOp _preBlockOp;
+};
+
+
+/** ReleaseContext_Block_MakeCurrentOperation：释放context，以便另外的线程获得。 
+  * blocks等待直到 context被释放，once the block is release the context is re-acquired.*/
+struct OSG_EXPORT ReleaseContext_Block_MakeCurrentOperation : public GraphicsOperation, public RefBlock
+{
+// IE可能错误
+    ReleaseContext_Block_MakeCurrentOperation():
+        GraphicsOperation("ReleaseContext_Block_MakeCurrent", false) {}
+
+    virtual void release();
+
+    virtual void operator () (GraphicsContext* context);
+};
+
+/**阻塞等待刷新操作*/
+
+struct OSG_EXPORT BlockAndFlushOperation : public GraphicsOperation, public OpenThreads::Block
+{
+    BlockAndFlushOperation();
+
+    virtual void release();
+
+    virtual void operator () (GraphicsContext*);
+};
+
+
+struct OSG_EXPORT FlushDeletedGLObjectsOperation : public GraphicsOperation
+{
+    FlushDeletedGLObjectsOperation(double availableTime, bool keep=false);
+
+    virtual void operator () (GraphicsContext*);
+    
+    double _availableTime;
+};
+
+class OSG_EXPORT RunOperations : public osg::GraphicsOperation
+{
+public:
+// IE可能错误
+    RunOperations():
+        osg::GraphicsOperation("RunOperation",true) {}
+    
+    virtual void operator () (osg::GraphicsContext* context);
+    
+};
+
+class OSG_EXPORT EndOfDynamicDrawBlock : public OpenThreads::BlockCount, public osg::State::DynamicObjectRenderingCompletedCallback
+{
+    public:
+    
+        EndOfDynamicDrawBlock(unsigned int);
+    
+        void completed(osg::State* state);
+
+    protected:
+// IE可能错误
+        ~EndOfDynamicDrawBlock() {}
+};
+
+}
+
+#endif

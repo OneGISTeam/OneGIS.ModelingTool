@@ -1,0 +1,166 @@
+#ifndef VBF_SGDB_OBJECTWRAPPER
+#define VBF_SGDB_OBJECTWRAPPER
+
+#include <VBF_Engine/VBF_SGDB/Serializer>
+
+namespace osgDB
+{
+
+typedef std::vector<std::string> StringList;
+extern VBF_SGDB_EXPORT void split( const std::string& src, StringList& list, char separator=' ' );
+
+class VBF_SGDB_EXPORT BaseCompressor : public ::CVBF_Referenced
+{
+public:
+    BaseCompressor();
+    void setName( const std::string& name ) { m_sName = name; }
+    const std::string& getName() const { return m_sName; }
+
+    virtual bool compress( std::ostream&, const std::string& ) = 0;
+    virtual bool decompress( std::istream&, std::string& ) = 0;
+
+protected:
+    std::string m_sName;
+};
+
+struct FinishedObjectReadCallback : public ::CVBF_Referenced
+{
+    virtual void objectRead(osgDB::InputStream& is, osg::CVBF_Object& obj) = 0;
+};
+
+class VBF_SGDB_EXPORT ObjectWrapper : public ::CVBF_Referenced
+{
+public:
+    typedef std::vector< ref_ptr<BaseSerializer> > SerializerList;
+    typedef std::vector< ref_ptr<FinishedObjectReadCallback> > FinishedObjectReadCallbackList;
+    
+    ObjectWrapper( osg::CVBF_Object* proto, const std::string& name, const std::string& associates );
+    void setUpdatedVersion( int ver ) { _version = ver; }
+    
+    const osg::CVBF_Object* getProto() const { return _proto.get(); }
+    const std::string& getName() const { return m_sName; }
+    const StringList& getAssociates() const { return _associates; }
+
+    void addSerializer( BaseSerializer* s, BaseSerializer::Type t=BaseSerializer::RW_UNDEFINED );
+    void markSerializerAsRemoved( const std::string& name );
+    BaseSerializer* getSerializer( const std::string& name );
+    void addFinishedObjectReadCallback ( FinishedObjectReadCallback* forc) { _finishedObjectReadCallbacks.push_back(forc); }
+
+    bool read( InputStream&, osg::CVBF_Object& );
+    bool write( OutputStream&, const osg::CVBF_Object& );
+
+    bool readSchema( const StringList& properties, const std::vector<int>& types );
+    void writeSchema( StringList& properties, std::vector<int>& types );
+    void resetSchema()
+    { if ( _backupSerializers.size()>0 ) _serializers = _backupSerializers; }
+    
+protected:
+    ObjectWrapper();
+    virtual ~ObjectWrapper();
+
+    ref_ptr<osg::CVBF_Object> _proto;
+    std::string m_sName;
+    StringList _associates;
+    SerializerList _serializers;
+    SerializerList _backupSerializers;
+    std::vector<int> _typeList;
+    FinishedObjectReadCallbackList _finishedObjectReadCallbacks;
+    int _version;  // Last updated version of the wrapper
+};
+
+class Registry;
+
+class VBF_SGDB_EXPORT ObjectWrapperManager : public ::CVBF_Referenced
+{
+public:
+
+    // Wrapper handlers
+    void addWrapper( ObjectWrapper* wrapper );
+    void removeWrapper( ObjectWrapper* wrapper );
+    ObjectWrapper* findWrapper( const std::string& name );
+
+    typedef std::map< std::string, ref_ptr<ObjectWrapper> > WrapperMap;
+    WrapperMap& getWrapperMap() { return _wrappers; }
+    const WrapperMap& getWrapperMap() const { return _wrappers; }
+
+    // Compressor handlers
+    void addCompressor( BaseCompressor* compressor );
+    void removeCompressor( BaseCompressor* compressor );
+    BaseCompressor* findCompressor( const std::string& name );
+
+    typedef std::map< std::string, ref_ptr<BaseCompressor> > CompressorMap;
+    CompressorMap& getCompressorMap() { return _compressors; }
+    const CompressorMap& getCompressorMap() const { return _compressors; }
+
+    typedef std::map<std::string, IntLookup> IntLookupMap;
+    IntLookup::Value getValue( const std::string& group, const std::string& str ) { return findLookup(group).getValue(str.c_str()); }
+    const std::string& getString( const std::string& group, IntLookup::Value value ) { return findLookup(group).getString(value); }
+
+protected:
+
+    friend class osgDB::Registry;
+
+    ObjectWrapperManager();
+    virtual ~ObjectWrapperManager();
+
+    WrapperMap _wrappers;
+    CompressorMap _compressors;
+
+    IntLookup& findLookup( const std::string& group )
+    {
+        IntLookupMap::iterator itr = _globalMap.find(group);
+        if ( itr!=_globalMap.end() ) return itr->second;
+        else return _globalMap["GL"];
+    }
+
+    IntLookupMap _globalMap;
+};
+
+
+class VBF_SGDB_EXPORT RegisterWrapperProxy
+{
+public:
+    typedef void (*AddPropFunc)( ObjectWrapper* );
+
+    RegisterWrapperProxy( osg::CVBF_Object* proto, const std::string& name,
+                          const std::string& associates, AddPropFunc func );
+
+    virtual ~RegisterWrapperProxy();
+
+protected:
+    ref_ptr<ObjectWrapper> _wrapper;
+};
+
+#define REGISTER_OBJECT_WRAPPER(NAME, PROTO, CLASS, ASSOCIATES) \
+    extern "C" void wrapper_serializer_##NAME(void) {} \
+    extern void wrapper_propfunc_##NAME(osgDB::ObjectWrapper*); \
+    static osgDB::RegisterWrapperProxy wrapper_proxy_##NAME( \
+        PROTO, #CLASS, ASSOCIATES, &wrapper_propfunc_##NAME); \
+    typedef CLASS MyClass; \
+    void wrapper_propfunc_##NAME(osgDB::ObjectWrapper* wrapper)
+
+#define REGISTER_OBJECT_WRAPPER2(NAME, PROTO, CLASS, CLASSNAME, ASSOCIATES) \
+    extern "C" void wrapper_serializer_##NAME(void) {} \
+    extern void wrapper_propfunc_##NAME(osgDB::ObjectWrapper*); \
+    static osgDB::RegisterWrapperProxy wrapper_proxy_##NAME( \
+        PROTO, CLASSNAME, ASSOCIATES, &wrapper_propfunc_##NAME); \
+    typedef CLASS MyClass; \
+    void wrapper_propfunc_##NAME(osgDB::ObjectWrapper* wrapper)
+
+class VBF_SGDB_EXPORT RegisterCompressorProxy
+{
+public:
+    RegisterCompressorProxy( const std::string& name, BaseCompressor* compressor );
+    ~RegisterCompressorProxy();
+
+protected:
+    ref_ptr<BaseCompressor> _compressor;
+};
+
+#define REGISTER_COMPRESSOR(NAME, CLASS) \
+    extern "C" void wrapper_compressor_##CLASS(void) {} \
+    static osgDB::RegisterCompressorProxy compressor_proxy_##CLASS(NAME, new CLASS);
+
+}
+
+#endif

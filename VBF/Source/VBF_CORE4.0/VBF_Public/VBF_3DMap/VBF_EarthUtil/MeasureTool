@@ -1,0 +1,90 @@
+#ifndef OSGEARTHUTIL_MEASURETOOL_H
+#define OSGEARTHUTIL_MEASURETOOL_H 1
+
+#include <VBF_3DMap/VBF_EarthUtil/Common>
+#include <VBF_3DMap/VBF_Terrain/VBF_MapNode.h>
+#include <VBF_3DMap/VBF_Terrain/MapNodeObserver.h>
+#include <VBF_3DMap/VBF_Annotation/FeatureNode.h>
+#include <VBF_3DMap/VBF_Symbology/Style.h>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGroup.h>
+#include <VBF_Display/VBF_Manipulator/VBF_GUIEventHandler.h>
+#include <VBF_Display/VBF_Viewer/IVBF_View.h>
+
+namespace osgEarth { namespace Util
+{
+    using namespace osgEarth::Symbology;
+
+    struct OSGEARTHUTIL_EXPORT MeasureToolHandler : public osgGA::GUIEventHandler, public MapNodeObserver
+    {
+    public:
+
+        class MeasureToolEventHandler : public ::CVBF_Referenced
+        {
+        public:
+            virtual void onDistanceChanged(MeasureToolHandler* sender, double distance) {}
+            virtual ~MeasureToolEventHandler() { }
+        };
+
+        typedef std::list< ref_ptr< MeasureToolEventHandler > > MeasureToolEventHandlerList;
+
+
+        MeasureToolHandler( osg::IVBF_SGNodeGroup* group, CVBFO_SGNodeMap* mapNode );        
+        virtual ~MeasureToolHandler();
+
+        bool handle( const osgGA::GUIEventAdapter& ea, ::IVBF_GUIActionAdapter& aa );        
+
+        bool getLocationAt(IVBF_View* view, double x, double y, double &lon, double &lat);
+        
+        void clear();
+
+        void addEventHandler(MeasureToolEventHandler* handler );
+
+        void setMouseButton(int mouseButton);
+        int getMouseButton() const;
+
+        GeoInterpolation getGeoInterpolation() const;
+        void setGeoInterpolation( GeoInterpolation geoInterpolation );
+
+        void setIsPath( bool path );
+        bool getIsPath() const;
+
+        /** Sets the style of the measurment line (to something other than the default) */
+        void setLineStyle( const Style& style );
+        const Style& getLineStyle() const { return _feature->style().value(); }
+
+        void setIntersectionMask( osg::IVBF_SGNode::NodeMask intersectionMask ) { _intersectionMask = intersectionMask; }
+        osg::IVBF_SGNode::NodeMask getIntersectionMask() const { return _intersectionMask;}
+        
+        osgEarth::Features::Feature* getFeature() const { return _feature.get(); }
+
+    public: // MapNodeObserver
+
+        virtual void setMapNode( CVBFO_SGNodeMap* mapNode );
+        virtual CVBFO_SGNodeMap* GetMapNode() { return _mapNode.get(); }
+
+    protected:
+        GeoInterpolation _geoInterpolation;
+        void fireDistanceChanged();
+        bool _lastPointTemporary;
+        bool _gotFirstLocation;
+        bool _finished;
+        bool _mouseDown;
+        float _mouseDownX, _mouseDownY;
+        int _mouseButton;
+        ref_ptr< osg::IVBF_SGNodeGroup > _group;
+
+        ref_ptr< osgEarth::Annotation::FeatureNode > _featureNode;
+        ref_ptr< osgEarth::Features::Feature >  _feature;
+
+        ref_ptr< osgEarth::Annotation::FeatureNode > _extentFeatureNode;
+        ref_ptr< osgEarth::Features::Feature >       _extentFeature;
+
+        MeasureToolEventHandlerList _eventHandlers;
+        bool _isPath;        
+        observer_ptr< CVBFO_SGNodeMap > _mapNode;
+        osg::IVBF_SGNode::NodeMask _intersectionMask;
+
+        void rebuild();
+    };
+}}
+#endif

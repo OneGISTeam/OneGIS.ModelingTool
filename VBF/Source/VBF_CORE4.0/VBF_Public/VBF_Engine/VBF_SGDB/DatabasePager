@@ -1,0 +1,449 @@
+#ifndef VBF_SGDB_DATABASEPAGER
+#define VBF_SGDB_DATABASEPAGER 1
+
+#include <VBF_Engine/VBF_SceneGraph/VBF_SGNVisitOp.h>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGroup.h>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGroupLODPaged.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGDrawable.h>
+#include <VBF_Engine/VBF_SceneGraph/GraphicsThread>
+#include <VBF_Base/VBF_FrameStamp.h>
+#include <VBF_Engine/VBF_SceneGraph/VBF_ObserverNodePath.h>
+#include <VBF_Base/observer_ptr>
+
+#include <OpenThreads/Thread>
+#include <OpenThreads/Mutex>
+#include <OpenThreads/ScopedLock>
+#include <OpenThreads/Condition>
+
+#include <VBF_Engine/VBF_SGUtil/IncrementalCompileOperation>
+
+#include <VBF_Engine/VBF_SGDB/SharedStateManager>
+#include <VBF_Engine/VBF_SGDB/ReaderWriter>
+#include <VBF_Engine/VBF_SGDB/Options>
+
+
+#include <map>
+#include <list>
+#include <algorithm>
+#include <functional>
+
+namespace osgDB {
+
+
+
+/*分页数据库：每一帧的更新遍历执行到updateSceneGraph函数时，都会自动将"一段时间之内始终不在当前视野的"场景子树去除，
+           并将"新载入到当前视野"的场景子树加入渲染。
+		   这些分页和节点管理的工作如果由渲染循环来完成的话，对于场景的显示速度有较大的影响，
+		   因此，DatabasePager中内置了专用于相关工作处理的DatabaseThread线程。
+
+		   缺省创建了两个数据处理线程，保存在线程列表中，这两个线程分别负责处理来自本地文件的数据队列_fileRequestQueue
+		   和来自HTTP站点的网络数据队列_httpRequestQueue。来自DatabaseThread线程之外的文件加载请求被本地文件处理线程所接收；
+		   如果从文件名（DatabaseRequest::_fileName）判断出是来自网络的文件的话，则转交给网络数据处理线程。来自网络的数据也可以被缓存到本地，方法是设置系统变量OSG_FILE_CACHE 为本地路径。
+与性能关系密切的函数：
+    setTargetMaximumNumberOfPageLOD
+    setUpThreads
+    setSchedulePriority
+    setIncrementalCompileOperation
+    setDoPreCompile
+    setDrawablePolicy
+    setUnrefImageDataAfterApplyPolicy
+*/
+
+class VBF_SGDB_EXPORT DatabasePager : public osg::NodeVisitor::DatabaseRequestHandler
+{
+    public :
+
+        typedef OpenThreads::Thread::ThreadPriority ThreadPriority;
+
+        DatabasePager();
+        DatabasePager(const DatabasePager& rhs);
+
+        virtual const char* className() const { return "DatabasePager"; }
+
+        // 创建一个浅拷贝对象
+        virtual DatabasePager* clone() const { return new DatabasePager(*this); }
+
+        // 获取单实例的原型（被DatabasePager::create()调用）
+        static ref_ptr<DatabasePager>& prototype();        
+        // 创建一个对象（通过克隆DatabasePager::prototype()）
+        static DatabasePager* create();
+
+        
+        // 向数据请求列表（末尾）添加一个节点文件加载请求
+        virtual void requestNodeFile(const std::string& fileName, osg::CVBF_SGNodePath& nodePath,
+                         float priority, const ::CVBF_FrameStamp* framestamp,
+                         ref_ptr<CVBF_Referenced>& databaseRequest, const CVBF_Referenced* options);
+
+		virtual void requestNodeFile(const std::string& fileName, osg::CVBF_SGNodePath& nodePath, const CVBF_Referenced* options=0);
+        
+		// 设置分页数据调度线程的优先级
+        int setSchedulePriority(OpenThreads::Thread::ThreadPriority priority);
+
+        // 取消分页数据调度线程
+        virtual int cancel();
+        
+        virtual bool isRunning() const;
+
+        // 清除所有的内部缓存
+        virtual void clear();
+        
+
+
+
+
+        // 分页数据库的核心处理线程，它负责实现场景元素的定期清理，加载以及合并工作。
+        // 如果一直循环检查各个数据列表太耗费系统资源，因此，这个线程通常被阻塞，需要时再唤醒。
+        class VBF_SGDB_EXPORT DatabaseThread : public ::CVBF_Referenced, public OpenThreads::Thread
+        {
+        public:
+        
+            enum Mode
+            {
+                HANDLE_ALL_REQUESTS,
+                HANDLE_NON_HTTP,
+                HANDLE_ONLY_HTTP,
+				HANDLE_ONLY_NODE
+            };
+        
+            DatabaseThread(DatabasePager* pager, Mode mode, const std::string& name);
+            
+            DatabaseThread(const DatabaseThread& dt, DatabasePager* pager);
+
+            void setName(const std::string& name) { m_sName = name; }
+            const std::string& getName() const { return m_sName; }
+
+            void SetDone(bool done) { m_bDone.exchange(done?1:0); }
+            bool IsDone() const { return m_bDone!=0; }
+            
+            void setActive(bool active) { _active = active; }
+            bool getActive() const { return _active; }
+
+            virtual int cancel();          
+            virtual void run();
+            
+        protected:
+            virtual ~DatabaseThread();
+        
+            OpenThreads::Atomic m_bDone;
+            volatile bool       _active;
+            DatabasePager*      _pager;
+            Mode                _mode;
+            std::string         m_sName;
+        };
+
+
+
+
+
+
+        // 设置线程（数量）
+        void setUpThreads(unsigned int totalNumThreads=2, unsigned int numHttpThreads=1);
+
+        unsigned int addDatabaseThread(DatabaseThread::Mode mode, const std::string& name);
+        DatabaseThread* getDatabaseThread(unsigned int i) { return _databaseThreads[i].get(); }      
+        const DatabaseThread* getDatabaseThread(unsigned int i) const { return _databaseThreads[i].get(); }
+        unsigned int getNumDatabaseThreads() const { return _databaseThreads.size(); }
+        
+
+        // 设置/获取分页数据库线程是否被暂停
+        void setDatabasePagerThreadPause(bool pause);
+        bool getDatabasePagerThreadPause() const { return _databasePagerThreadPaused; }
+        
+        // 设置/获取是否接收（或忽略）新的数据请求
+        void setAcceptNewDatabaseRequests(bool acceptNewRequests) { _acceptNewRequests = acceptNewRequests; }
+        bool getAcceptNewDatabaseRequests() const { return _acceptNewRequests; }
+        
+        // 未用到
+        int getNumFramesActive() const { return _numFramesActive; }
+
+        /** Signal the database thread that the update, cull and draw has begun for a new frame.
+          * Note, this is called by the application so that the database pager can go to sleep while the CPU is busy on the main rendering threads. */
+        virtual void signalBeginFrame(const ::CVBF_FrameStamp* framestamp);
+        
+        /** Signal the database thread that the update, cull and draw dispatch has completed.
+          * Note, this is called by the application so that the database pager can go to wake back up now the main rendering threads are iddle waiting for the next frame.*/
+        virtual void signalEndFrame();
+        
+
+        // 注册分页LOD节点，以便DatabasePager能跟踪删除该分页LOD节点的过期子节点，只能被更新线程调用
+        virtual void registerPagedLODs(osg::IVBF_SGNode* subgraph, unsigned int frameNumber = 0);
+
+        // 设置/获取增量编译操作。用于管理OpenGL对象编译以及合并子图，防止一帧中加载太多的新对象
+        void setIncrementalCompileOperation(osgUtil::IncrementalCompileOperation* ico);
+        osgUtil::IncrementalCompileOperation* getIncrementalCompileOperation() { return _incrementalCompileOperation.get(); }
+
+
+        // 设置/获取是否打开预编译功能。在融合到场景之前提前编译，编译是指将纹理加载到内存、编译显示列表、shader文件等，可以减少跳帧，但会影响加载的效率，默认为true。
+        void setDoPreCompile(bool flag) { _doPreCompile = flag; }
+        bool getDoPreCompile() const { return _doPreCompile; }
+
+
+        // 设置/获取内存中保留的PagedLOD的最大个数，如果一帧所需的个数超过该值，则该值忽略不计
+        void setTargetMaximumNumberOfPageLOD(unsigned int target) { _targetMaximumNumberOfPageLOD = target; }
+        unsigned int getTargetMaximumNumberOfPageLOD() const { return _targetMaximumNumberOfPageLOD; }
+
+        // 设置/获取数据线程中移除的子节点是否被删除
+        void setDeleteRemovedSubgraphsInDatabaseThread(bool flag) { _deleteRemovedSubgraphsInDatabaseThread = flag; }
+        bool getDeleteRemovedSubgraphsInDatabaseThread() const { return _deleteRemovedSubgraphsInDatabaseThread; }
+
+        enum DrawablePolicy
+        {
+            DO_NOT_MODIFY_DRAWABLE_SETTINGS,
+            USE_DISPLAY_LISTS,
+            USE_VERTEX_BUFFER_OBJECTS,
+            USE_VERTEX_ARRAYS
+        };
+
+        // 设置/获取加载的drawables将被如何处理
+        void setDrawablePolicy(DrawablePolicy policy) { _drawablePolicy = policy; }
+        DrawablePolicy getDrawablePolicy() const { return _drawablePolicy; }
+
+
+        // 未使用，设置/获取新加载的纹理是否指派一个PixelBufferObject，帮助加载到GPU
+        void setApplyPBOToImages(bool assignPBOToImages) { _assignPBOToImages = assignPBOToImages; }
+        bool getApplyPBOToImages() const { return _assignPBOToImages; }
+
+        // 设置/获取新加载的纹理在应用过该纹理对象后（apply），是否自动释放其对Image对象的引用，以减少内存占用。_changeAutoUnRef是否更改，_valueAutoUnRef更改的值
+        void setUnrefImageDataAfterApplyPolicy(bool changeAutoUnRef, bool valueAutoUnRef) { _changeAutoUnRef = changeAutoUnRef; _valueAutoUnRef = valueAutoUnRef; }
+        void getUnrefImageDataAfterApplyPolicy(bool& changeAutoUnRef, bool& valueAutoUnRef) const { changeAutoUnRef = _changeAutoUnRef; valueAutoUnRef = _valueAutoUnRef; }
+
+
+        // 设置/获取新加载的纹理最大的各项异性值，changeAnisotropy是否更改该值，valueAnisotropy值
+        void setMaxAnisotropyPolicy(bool changeAnisotropy, float valueAnisotropy) { _changeAnisotropy = changeAnisotropy; _valueAnisotropy = valueAnisotropy; }
+        void getMaxAnisotropyPolicy(bool& changeAnisotropy, float& valueAnisotropy) const { changeAnisotropy = _changeAnisotropy; valueAnisotropy = _valueAnisotropy; }
+
+
+        // 是否需要更新场景图（仍有未合并的节点）
+        bool requiresUpdateSceneGraph() const;
+        
+        // 通过调用移除过期节点（removeExpiredSubgraphs）和加载新节点（addLoadedDataToSceneGraph）更新场景。只能被单线程更新阶段调用
+        virtual void updateSceneGraph(const ::CVBF_FrameStamp& frameStamp);
+
+        // 获取各种队列中的数据量（待读队列、等待编译列表、等待合并列表）
+        unsigned int getFileRequestListSize() const { return _fileRequestQueue->size() + _httpRequestQueue->size(); }
+        unsigned int getDataToCompileListSize() const { return _dataToCompileList->size(); }        
+        unsigned int getDataToMergeListSize() const { return _dataToMergeList->size(); }
+
+        // 是否有请求存在（各种请求，加载、编译、合并）
+        bool getRequestsInProgress() const;
+        
+        // 获取最小/最大/平均时间（从请求加载一个瓦片到被合并到主场景）
+        double getMinimumTimeToMergeTile() const { return _minimumTimeToMergeTile; }
+        double getMaximumTimeToMergeTile() const { return _maximumTimeToMergeTile; }
+        double getAverageTimeToMergeTiles() const { return (_numTilesMerges > 0) ? _totalTimeToMergeTiles/static_cast<double>(_numTilesMerges) : 0; }
+
+        void resetStats();// 重新设置统计量
+
+//        typedef std::set< ref_ptr<osg::StateSet> >                 StateSetList;
+//        typedef std::vector< ref_ptr<osg::Drawable> >              DrawableList;
+
+        class ExpirePagedLODsVisitor;
+
+        typedef std::list<  ref_ptr<osg::CVBF_Object> > ObjectList;
+
+        struct PagedLODList : public ::CVBF_Referenced
+        {
+            virtual PagedLODList* clone() = 0;
+            virtual void clear() = 0;
+            virtual unsigned int size() = 0;
+            virtual void removeExpiredChildren(int numberChildrenToRemove, double expiryTime, unsigned int expiryFrame, ObjectList& childrenRemoved, bool visitActive) = 0;
+            virtual void removeNodes(osg::NodeList& nodesToRemove) = 0;
+            virtual void insertPagedLOD(const observer_ptr<osg::IVBF_SGNodeGroupLODPaged>& plod) = 0;
+            virtual bool containsPagedLOD(const observer_ptr<osg::IVBF_SGNodeGroupLODPaged>& plod) const = 0;
+        };
+
+
+    protected:
+
+        virtual ~DatabasePager();
+
+        friend class DatabaseThread;
+        friend struct DatabaseRequest;
+
+        struct RequestQueue;
+
+
+        // 这个结构体保存了用户的单个数据请求，包括数据文件名，请求时间，数据加载后存入的节点，以及要进行合并的父节点等；
+        // 除此之外还有一个重要的编译映射表_dataToCompileMap，负责保存图形设备ID与编译对象（几何体显示列表，纹理等）的映射关系。
+        struct VBF_SGDB_EXPORT DatabaseRequest : public ::CVBF_Referenced
+        {
+            DatabaseRequest();
+
+            void invalidate();
+
+            bool valid() const { return _valid; }
+
+            bool                        _valid;
+            std::string                 _fileName;
+            unsigned int                _frameNumberFirstRequest;
+            double                      _timestampFirstRequest;
+            float                       _priorityFirstRequest;
+            unsigned int                _frameNumberLastRequest;
+            double                      _timestampLastRequest;
+            float                       _priorityLastRequest;
+            unsigned int                _numOfRequests;
+            
+			unsigned int				_numExpireFrame;
+
+            observer_ptr<osg::IVBF_SGNode>        _terrain;
+            observer_ptr<osg::IVBF_SGNodeGroup>   _group;
+
+            ref_ptr<osg::IVBF_SGNode>             _loadedModel;
+            ref_ptr<Options>               _loadOptions;
+
+            observer_ptr<osgUtil::IncrementalCompileOperation::CompileSet> _compileSet;
+            bool                        _groupExpired; // flag used only in update thread
+
+            bool isRequestCurrent (int frameNumber) const
+            {
+                return _valid && (frameNumber - _frameNumberLastRequest <= _numExpireFrame);
+            }
+        };
+
+
+
+		//！！！Read（file、http）、Compile、Merge都是Request的一种（DataRequestQueueToRead、DataRequestQueueToCompile）
+
+		/* 它负责保存和管理一个"数据请求列表"_requestList，也就是由DatabaseRequest对象组成的向量组，
+		除此之外还负责对列表中的数据按请求时间排序。*/
+        struct VBF_SGDB_EXPORT RequestQueue : public ::CVBF_Referenced
+        {
+        public:
+
+            RequestQueue(DatabasePager* pager);
+
+            void add(DatabaseRequest* databaseRequest);
+            void remove(DatabaseRequest* databaseRequest);
+
+            void addNoLock(DatabaseRequest* databaseRequest);
+
+            void takeFirst(ref_ptr<DatabaseRequest>& databaseRequest);
+
+            // 删除所有旧的请求，如果请求列表已空，返回true
+            bool pruneOldRequestsAndCheckIfEmpty();
+
+            virtual void updateBlock() {} 
+
+            void invalidate(DatabaseRequest* dr);
+
+            bool empty();
+
+            unsigned int size();
+
+            void clear();
+
+
+            typedef std::list< ref_ptr<DatabaseRequest> > RequestList;
+            void swap(RequestList& requestList);
+
+            DatabasePager*              _pager;
+            RequestList                 _requestList;   // 数据请求列表
+            OpenThreads::Mutex          _requestMutex;
+            unsigned int                _frameNumberLastPruned;
+
+        protected:
+            virtual ~RequestQueue();
+        };
+
+        
+        typedef std::vector< ref_ptr<DatabaseThread> > DatabaseThreadList;
+
+		/* 这个结构体继承自RequestQueue，不过还增加了一个“弃用对象列表”_childrenToDeleteList。
+		   它是数据处理线程中最重要的对象之一，除了可以随时向两个列表里追加数据请求和弃用对象之外，
+		   这个结构体还包括了一个updateBlock函数，负责阻塞或者放行DatabaseThread 线程，
+		   其根据是：列表中是否存在新的数据请求或弃用对象需要处理，以及用户是否通过函数设置暂时不要启用线程（DatabasePager ::setDatabasePagerThreadPause）。
+		*/
+        struct VBF_SGDB_EXPORT ReadQueue : public RequestQueue
+        {
+            ReadQueue(DatabasePager* pager, const std::string& name);
+
+            void block() { _block->block(); }
+            void release() { _block->release(); }
+            virtual void updateBlock();
+
+            ref_ptr<osg::RefBlock> _block;
+            std::string            m_sName;
+            OpenThreads::Mutex     _childrenToDeleteListMutex;
+            ObjectList             _childrenToDeleteList;   // 弃用对象列表
+        };
+
+
+
+
+
+        // 声明内部的辅助类
+        class FindCompileableGLObjectsVisitor;
+        friend class FindCompileableGLObjectsVisitor;
+
+        struct DatabasePagerCompileCompletedCallback;
+        friend struct DatabasePagerCompileCompletedCallback;
+
+        class FindPagedLODsVisitor;
+        friend class FindPagedLODsVisitor;
+
+        struct SortFileRequestFunctor;
+        friend struct SortFileRequestFunctor;
+
+
+        
+        OpenThreads::Mutex              _run_mutex;
+        OpenThreads::Mutex              _dr_mutex;
+        bool                            _startThreadCalled;
+
+        void compileCompleted(DatabaseRequest* databaseRequest);
+
+        // 遍历PagedLOD节点的子节点删除过期（长期未被访问）的子节点。只能被更新（update）线程调用
+        virtual void removeExpiredSubgraphs(const ::CVBF_FrameStamp &frameStamp);
+
+        // 把加载的数据添加到场景图
+        void addLoadedDataToSceneGraph(const ::CVBF_FrameStamp &frameStamp);
+
+
+        bool                            m_bDone;
+        bool                            _acceptNewRequests;
+        bool                            _databasePagerThreadPaused;
+
+
+        // 数据线程列表：缺省创建了两个数据处理线程，保存在线程列表中，这两个线程分别负责处理来自
+        //             本地文件的数据队列_fileRequestQueue和来自HTTP站点的网络数据队列_httpRequestQueue
+        DatabaseThreadList              _databaseThreads;
+
+
+        int                             _numFramesActive;       // 未用到
+        mutable OpenThreads::Mutex      _numFramesActiveMutex;  // 未用到
+        OpenThreads::Atomic             _frameNumber;
+
+        ref_ptr<ReadQueue>         _fileRequestQueue;  // 待读队列
+        ref_ptr<ReadQueue>         _nodeRequestQueue;  // 待读队列
+        ref_ptr<ReadQueue>         _httpRequestQueue;
+        ref_ptr<RequestQueue>      _dataToCompileList; // 等待编译列表
+        ref_ptr<RequestQueue>      _dataToMergeList;   // 等待合并列表
+
+        DrawablePolicy                  _drawablePolicy;
+
+        bool                            _assignPBOToImages;
+        bool                            _changeAutoUnRef;
+        bool                            _valueAutoUnRef;
+        bool                            _changeAnisotropy;
+        float                           _valueAnisotropy;
+
+        bool                            _deleteRemovedSubgraphsInDatabaseThread;
+
+
+        ref_ptr<PagedLODList>      _activePagedLODList;
+
+        unsigned int                    _targetMaximumNumberOfPageLOD;
+
+        bool                            _doPreCompile;
+        ref_ptr<osgUtil::IncrementalCompileOperation>  _incrementalCompileOperation;
+
+
+        double                          _minimumTimeToMergeTile;
+        double                          _maximumTimeToMergeTile;
+        double                          _totalTimeToMergeTiles;
+        unsigned int                    _numTilesMerges;
+};
+
+}
+
+#endif

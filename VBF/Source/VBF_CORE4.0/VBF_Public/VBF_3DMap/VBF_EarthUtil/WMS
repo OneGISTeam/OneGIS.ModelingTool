@@ -1,0 +1,176 @@
+#ifndef OSGEARTHUTIL_WMS_H
+#define OSGEARTHUTIL_WMS_H 1
+
+#include <VBF_3DMap/VBF_EarthUtil/Common>
+#include <VBF_Base/VBF_Referenced.h>
+#include <VBF_Base/ref_ptr>
+#include <VBF_3DMap/VBF_Terrain/Common.h>
+
+#include <VBF_Engine/VBF_SGDB/ReaderWriter>
+#include <VBF_Engine/VBF_SceneGraph/Version>
+#if OSG_MIN_VERSION_REQUIRED(2,9,5)
+#include <VBF_Engine/VBF_SGDB/Options>
+#endif
+
+
+#include <string>
+#include <vector>
+
+namespace osgEarth { namespace Util
+{
+	// A WMS Style
+    class OSGEARTHUTIL_EXPORT WMSStyle : public ::CVBF_Referenced
+    {
+    public:
+        WMSStyle();
+        WMSStyle(const std::string& name, const std::string& title);
+        virtual ~WMSStyle() { }
+
+		// 获取/设置名称
+        const std::string& getName() {return m_sName;}
+        void setName(const std::string &name) {m_sName = name;}
+
+		// 获取/设置标题
+        const std::string& getTitle() {return _title;}
+        void setTitle(const std::string &title) {_title = title;}
+        
+    protected:
+        std::string m_sName;
+        std::string _title;
+    };
+
+ 
+    // A WMS layer
+    class OSGEARTHUTIL_EXPORT WMSLayer : public ::CVBF_Referenced
+    {
+    public:
+        WMSLayer();
+        virtual ~WMSLayer() { }
+
+		// 获取/设置名称
+        const std::string& getName() {return m_sName;}
+        void setName(const std::string &name) {m_sName = name;}
+
+        // 获取/设置标题
+        const std::string& getTitle() {return _title;}
+        void setTitle(const std::string &title) {_title = title;}
+
+		// 获取/设置the abstract of the layer
+        const std::string& getAbstract() {return _abstract;}
+        void setAbstract(const std::string &abstract) {_abstract = abstract;}
+
+		// 获取/设置经纬度范围
+        void getLatLonExtents(double &minLon, double &minLat, double &maxLon, double &maxLat);
+        void setLatLonExtents(double minLon, double minLat, double maxLon, double maxLat);
+
+		// 获取/设置范围
+        void getExtents(double &minX, double &minY, double &maxX, double &maxY);
+        void setExtents(double minX, double minY, double maxX, double maxY);
+
+
+        typedef std::vector<WMSStyle> StyleList; // 风格列表
+
+        // 获取本图层风格的列表
+        StyleList& getStyles() {return _styles;}
+
+        /**A list of spatial references*/
+        typedef std::vector<std::string> SRSList;
+
+        /**
+        *Gets this Layer's list of spatial references
+        */
+        SRSList& getSpatialReferences() {return _spatialReferences;}
+
+        /**A list of Layers*/
+        typedef std::vector< ref_ptr<WMSLayer> > LayerList;
+
+        /**
+        *Gets this Layer's list of child Layers
+        */
+        LayerList& getLayers() {return _layers;}
+
+        /**
+        *Gets this Layer's parent layer
+        */
+        WMSLayer* getParentLayer() {return _parentLayer;}
+
+        /**
+        *Sets this Layer's parent layer
+        */
+        void setParentLayer( WMSLayer* layer ) {_parentLayer = layer;}
+
+        /**
+        *Finds the child Layer with the given name.
+        *@returns
+        *       The Layer with the given name or NULL if not found.
+        */
+        WMSLayer* getLayerByName(const std::string &name);
+    protected:
+        std::string m_sName;
+        std::string _title;
+        std::string _abstract;
+        double _minLon, _minLat, _maxLon, _maxLat;
+        double _minX, _minY, _maxX, _maxY;
+        StyleList _styles;
+        SRSList _spatialReferences;
+
+        LayerList _layers;
+        WMSLayer* _parentLayer;
+    };
+
+
+    class OSGEARTHUTIL_EXPORT WMSCapabilities : public ::CVBF_Referenced
+    {
+    public:
+        WMSCapabilities();
+        virtual ~WMSCapabilities() { }
+
+        // 设置/获取版本号
+        const std::string& getVersion() {return _version;}
+        void setVersion(const std::string& version) {_version = version;}
+
+        /**A list of supported formats*/
+        typedef std::vector<std::string> FormatList;
+
+        /**
+        *Gets the list of supported formats
+        */
+        FormatList& getFormats() {return _formats;}
+
+        /**
+        *Gets the Layer's for the CVBF_Capabilities.
+        */
+        WMSLayer::LayerList& getLayers() {return _layers;}
+
+        /**
+        *Suggests an extension to use for WMS layers defined for the service.
+        *This function will analyze the list of formats contained in the CVBF_Capabilities request
+        *and recommend the first format that has an OpenSceneGraph ReaderWriter that can support
+        *it's extension.
+        *@returns
+        *       The suggested extension.
+        */
+        std::string suggestExtension();
+
+        WMSLayer* getLayerByName(const std::string &name);
+
+    protected:
+        FormatList _formats;
+        WMSLayer::LayerList _layers;
+        std::string _version;
+    };
+
+    class OSGEARTHUTIL_EXPORT WMSCapabilitiesReader
+    {
+    public:
+        static WMSCapabilities* read( const std::string &location, const osgDB::ReaderWriter::Options *options );
+        static WMSCapabilities* read( std::istream &in );
+    private:
+        WMSCapabilitiesReader(){}
+        WMSCapabilitiesReader(const WMSCapabilitiesReader &cr){}
+        virtual ~WMSCapabilitiesReader() { }
+    };
+
+} } // namespace osgEarth::Util
+
+#endif //OSGEARTHUTIL_WMS_H

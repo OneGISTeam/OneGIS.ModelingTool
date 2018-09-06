@@ -1,0 +1,46 @@
+#ifndef OSGFX_REGISTRY_
+#define OSGFX_REGISTRY_
+
+#include <VBF_Engine/VBF_FX/Export>
+#include <VBF_Engine/VBF_FX/VBF_Effect.h>
+
+#include <VBF_Base/ref_ptr>
+
+#include <map>
+#include <string>
+
+namespace osgFX
+{
+	// 特效注册
+    class OSGFX_EXPORT Registry : public ::CVBF_Referenced
+    {
+    public:
+        struct Proxy //建议改为CVBF_FxRegistryProxy
+		{
+            Proxy(const Effect* effect)
+            {
+                Registry::instance()->registerEffect(effect);
+            }
+        };
+
+		static Registry* instance();
+
+        typedef std::map<std::string, ref_ptr<const Effect> > EffectMap;
+       
+		// 注册一个特效
+        inline void registerEffect(const Effect* effect) { _effects[effect->effectName()] = effect; }
+		inline const EffectMap& getEffectMap() const     { return _effects; }
+
+    protected:
+
+        // Singlon模式，外部不能构建
+		Registry()  {}
+        ~Registry() {}
+
+    private:
+        EffectMap _effects;
+    };
+
+}
+
+#endif

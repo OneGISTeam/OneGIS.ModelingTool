@@ -1,0 +1,152 @@
+/* -*-c++-*- */
+/* osgEarth - Dynamic map generation toolkit for OpenSceneGraph
+ * Copyright 2008-2013 Pelican Mapping
+ * http://osgearth.org
+ *
+ * osgEarth is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ */
+#ifndef OSGEARTH_DRIVER_WMS_DRIVEROPTIONS
+#define OSGEARTH_DRIVER_WMS_DRIVEROPTIONS 1
+
+#include <VBF_3DMap/VBF_Terrain/Common.h>
+#include <VBF_3DMap/VBF_Terrain/VBF_SourceTile.h>
+
+
+namespace osgEarth { namespace Drivers
+{
+    using namespace osgEarth;
+
+    class WMSOptions : public CVBF_OptionsDriverSourceTile // NO EXPORT; header only
+    {
+    public:
+        CVBF_Optional<URI>& url() { return _url; }
+        const CVBF_Optional<URI>& url() const { return _url; }
+
+        CVBF_Optional<URI>& capabilitiesUrl() { return _capabilitiesUrl; }
+        const CVBF_Optional<URI>& capabilitiesUrl() const { return _capabilitiesUrl; }
+
+        CVBF_Optional<URI>& tileServiceUrl() { return _tileServiceUrl; }
+        const CVBF_Optional<URI>& tileServiceUrl() const { return _tileServiceUrl; }
+
+        CVBF_Optional<std::string>& layers() { return _layers; }
+        const CVBF_Optional<std::string>& layers() const { return _layers; }
+
+        CVBF_Optional<std::string>& style() { return _style; }
+        const CVBF_Optional<std::string>& style() const { return _style; }
+
+        CVBF_Optional<std::string>& format() { return _format; }
+        const CVBF_Optional<std::string>& format() const { return _format; }
+
+        CVBF_Optional<std::string>& wmsFormat() { return _wmsFormat; }
+        const CVBF_Optional<std::string>& wmsFormat() const { return _wmsFormat; }
+
+        CVBF_Optional<std::string>& wmsVersion() { return _wmsVersion; }
+        const CVBF_Optional<std::string>& wmsVersion() const { return _wmsVersion; }
+
+        CVBF_Optional<std::string>& elevationUnit() { return _elevationUnit; }
+        const CVBF_Optional<std::string>& elevationUnit() const { return _elevationUnit; }
+
+        CVBF_Optional<std::string>& srs() { return _srs; }
+        const CVBF_Optional<std::string>& srs() const { return _srs; }
+
+        CVBF_Optional<std::string>& crs() { return _crs; }
+        const CVBF_Optional<std::string>& crs() const { return _crs; }
+
+        CVBF_Optional<bool>& transparent() { return _transparent; }
+        const CVBF_Optional<bool>& transparent() const { return _transparent; }
+
+        CVBF_Optional<std::string>& times() { return _times; }
+        const CVBF_Optional<std::string>& times() const { return _times; }
+
+        CVBF_Optional<double>& secondsPerFrame() { return _secondsPerFrame; }
+        const CVBF_Optional<double>& secondsPerFrame() const { return _secondsPerFrame; }
+
+    public:
+        WMSOptions( const CVBF_OptionsDriverSourceTile& opt =CVBF_OptionsDriverSourceTile() ) : CVBF_OptionsDriverSourceTile( opt ),
+            _wmsVersion( "1.1.1" ),
+            _elevationUnit( "m" ),
+            _transparent( true ),
+            _secondsPerFrame( 1.0 )
+        {
+            setDriver( "wms" );
+            fromConfig( m_conf );
+        }
+
+        /** dtor */
+        virtual ~WMSOptions() { }
+
+    public:
+        CVBF_Config getConfig() const {
+            CVBF_Config conf = CVBF_OptionsDriverSourceTile::getConfig();
+            conf.updateIfSet("url", _url);
+            conf.updateIfSet("capabilities_url", _capabilitiesUrl);
+            conf.updateIfSet("tile_service_url", _tileServiceUrl);
+            conf.updateIfSet("layers", _layers);
+            conf.updateIfSet("style", _style);
+            conf.updateIfSet("format", _format);
+            conf.updateIfSet("wms_format", _wmsFormat);
+            conf.updateIfSet("wms_version", _wmsVersion);
+            conf.updateIfSet("elevation_unit", _elevationUnit);
+            conf.updateIfSet("srs", _srs);
+            conf.updateIfSet("crs", _crs);
+            conf.updateIfSet("transparent", _transparent);
+            conf.updateIfSet("times", _times);
+            conf.updateIfSet("seconds_per_frame", _secondsPerFrame );
+            return conf;
+        }
+
+    protected:
+        void mergeConfig( const CVBF_Config& conf ) {
+            CVBF_OptionsDriverSourceTile::mergeConfig( conf );
+            fromConfig( conf );
+        }
+
+    private:
+        void fromConfig( const CVBF_Config& conf ) {
+            conf.getIfSet("url", _url);
+            conf.getIfSet("capabilities_url", _capabilitiesUrl);
+            conf.getIfSet("tile_service_url", _tileServiceUrl);
+            conf.getIfSet("layers", _layers);
+            conf.getIfSet("style", _style);
+            conf.getIfSet("format", _format);
+            conf.getIfSet("wms_format", _wmsFormat);
+            conf.getIfSet("wms_version", _wmsVersion);
+            conf.getIfSet("elevation_unit", _elevationUnit);
+            conf.getIfSet("srs", _srs);
+            conf.getIfSet("crs", _crs);
+            conf.getIfSet("transparent", _transparent);
+            conf.getIfSet("times", _times);
+            conf.getIfSet("seconds_per_frame", _secondsPerFrame );
+        }
+
+        CVBF_Optional<URI>         _url;
+        CVBF_Optional<URI>         _capabilitiesUrl;
+        CVBF_Optional<URI>         _tileServiceUrl;
+        CVBF_Optional<std::string> _layers;
+        CVBF_Optional<std::string> _style;
+        CVBF_Optional<std::string> _format;
+        CVBF_Optional<std::string> _wmsFormat;
+        CVBF_Optional<std::string> _wmsVersion;
+        CVBF_Optional<std::string> _elevationUnit;
+        CVBF_Optional<std::string> _srs;
+        CVBF_Optional<std::string> _crs;
+        CVBF_Optional<bool>        _transparent;
+        CVBF_Optional<std::string> _times;
+        CVBF_Optional<double>      _secondsPerFrame;
+    };
+
+} } // namespace osgEarth::Drivers
+
+#endif // OSGEARTH_DRIVER_WMS_DRIVEROPTIONS
+

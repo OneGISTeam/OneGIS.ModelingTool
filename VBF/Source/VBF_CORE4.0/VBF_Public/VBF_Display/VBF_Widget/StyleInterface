@@ -1,0 +1,27 @@
+#ifndef OSGWIDGET_STYLE_INTERFACE
+#define OSGWIDGET_STYLE_INTERFACE
+
+#include <VBF_Display/VBF_Widget/Export>
+
+namespace osgWidget {
+
+class OSGWIDGET_EXPORT StyleInterface
+{
+    public:
+        StyleInterface(): _style("") {}
+
+        StyleInterface(const StyleInterface& si): _style(si._style) {}
+
+        void setStyle(const std::string& style) { _style = style; }
+
+        std::string& getStyle() { return _style; }
+
+        const std::string& getStyle() const { return _style; }
+    private:
+        std::string _style;
+
+};
+
+}
+
+#endif

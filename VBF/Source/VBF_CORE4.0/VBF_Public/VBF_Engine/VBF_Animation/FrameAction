@@ -1,0 +1,12 @@
+#ifndef OSGANIMATION_FRAMEACTION_H
+#define OSGANIMATION_FRAMEACTION_H
+
+#include <map>
+#include <VBF_Base/ref_ptr>
+
+namespace osgAnimation
+{
+    class Action;
+    typedef std::pair<unsigned int, ref_ptr<Action> > FrameAction;
+}
+#endif

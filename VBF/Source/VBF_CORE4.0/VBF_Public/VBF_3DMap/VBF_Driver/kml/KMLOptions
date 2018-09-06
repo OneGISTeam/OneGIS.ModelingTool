@@ -1,0 +1,70 @@
+#ifndef OSGEARTH_DRIVER_KML_OPTIONS
+#define OSGEARTH_DRIVER_KML_OPTIONS 1
+
+#include <VBF_3DMap/VBF_Terrain/Common.h>
+#include <VBF_3DMap/VBF_Terrain/URI.h>
+#include <VBF_3DMap/VBF_Symbology/Style.h>
+#include <VBF_Engine/VBF_SceneGraph/Image>
+
+
+
+namespace osgEarth { namespace Drivers
+{
+    using namespace osgEarth;
+    using namespace osgEarth::Symbology;
+
+    // KML数据加载器的配置项，可用于KML::load()
+    class KMLOptions // NO EXPORT; header only
+    {
+    public:
+        /** TextSymbol to use when no styles are set in the KML. */
+        ref_ptr<TextSymbol>& defaultTextSymbol() { return _defaultTextSymbol; }
+        const ref_ptr<TextSymbol>& defaultTextSymbol() const { return _defaultTextSymbol; }
+
+        /** Default IconSymbol to use for placemarks that don't specify an icon or a model */
+        ref_ptr<IconSymbol>& defaultIconSymbol() { return _defaultIconSymbol; }
+        const ref_ptr<IconSymbol>& defaultIconSymbol() const { return _defaultIconSymbol; }
+
+        /** Default base scale to apply to marker Icons. */
+        CVBF_Optional<float>& iconBaseScale() { return _iconBaseScale; }
+        const CVBF_Optional<float>& iconBaseScale() const { return _iconBaseScale; }
+
+        /** Maximum size (either dimension) of placemarks icons */
+        CVBF_Optional<unsigned>& iconMaxSize() { return _iconMaxSize; }
+        const CVBF_Optional<unsigned>& iconMaxSize() const { return _iconMaxSize; }
+
+        /** Automatically assign KML icons and labels to a decluttering bin */
+        CVBF_Optional<bool>& declutter() { return _declutter; }
+        const CVBF_Optional<bool>& declutter() const { return _declutter; }
+
+        /** Specify a group to which to add screen-space items (2D icons and labels) */
+        ref_ptr<osg::IVBF_SGNodeGroup> iconAndLabelGroup() { return _iconAndLabelGroup; }
+        const ref_ptr<osg::IVBF_SGNodeGroup> iconAndLabelGroup() const { return _iconAndLabelGroup; }
+
+        /** Default scale factor to apply to embedded 3D models */
+        CVBF_Optional<float>& modelScale() { return _modelScale; }
+        const CVBF_Optional<float>& modelScale() const { return _modelScale; }
+
+        /** Default rotation to apply to embedded 3D models */
+        CVBF_Optional<osg::Quat>& modelRotation() { return _modelRotation; }
+        const CVBF_Optional<osg::Quat>& modelRotation() const { return _modelRotation; }
+
+    public:
+        KMLOptions() : _declutter( true ), _iconBaseScale( 1.0f ), _iconMaxSize(32), _modelScale(1.0f) { }
+
+        virtual ~KMLOptions() { }
+
+    protected:
+        ref_ptr<IconSymbol> _defaultIconSymbol;
+        ref_ptr<TextSymbol> _defaultTextSymbol;
+        CVBF_Optional<bool>           _declutter;
+        CVBF_Optional<float>          _iconBaseScale;
+        CVBF_Optional<unsigned>       _iconMaxSize;
+        CVBF_Optional<float>          _modelScale;
+        CVBF_Optional<osg::Quat>      _modelRotation;
+        ref_ptr<osg::IVBF_SGNodeGroup> _iconAndLabelGroup;
+    };
+
+} } // namespace osgEarth::Drivers
+
+#endif // OSGEARTH_DRIVER_KML_OPTIONS

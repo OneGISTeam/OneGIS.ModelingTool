@@ -1,0 +1,71 @@
+#ifndef OSGEARTH_DRIVER_TMS_MAPLAYERFACTORY
+#define OSGEARTH_DRIVER_TMS_MAPLAYERFACTORY 1
+
+#include <VBF_3DMap/VBF_Terrain/Common.h>
+#include <VBF_3DMap/VBF_Terrain/VBF_SourceTile.h>
+#include <VBF_3DMap/VBF_Terrain/URI.h>
+
+namespace osgEarth { namespace Drivers
+{
+    using namespace osgEarth;
+
+    class TMSOptions : public CVBF_OptionsDriverSourceTile // NO EXPORT; header only
+    {
+    public:
+        CVBF_Optional<URI>& url() { return _url; }
+        const CVBF_Optional<URI>& url() const { return _url; }
+
+        CVBF_Optional<std::string>& tmsType() { return _tmsType; }
+        const CVBF_Optional<std::string>& tmsType() const { return _tmsType; }
+
+        CVBF_Optional<std::string>& format() { return _format; }
+        const CVBF_Optional<std::string>& format() const { return _format; }
+
+    public:
+        TMSOptions( const CVBF_OptionsDriverSourceTile& opt =CVBF_OptionsDriverSourceTile() ) : CVBF_OptionsDriverSourceTile( opt )
+        {
+            setDriver( "tms" );
+            fromConfig( m_conf );
+        }
+
+        TMSOptions( const std::string& inUrl ) : CVBF_OptionsDriverSourceTile()
+        {
+            setDriver( "tms" );
+            fromConfig( m_conf );
+            url() = inUrl;
+        }
+
+        /** dtor */
+        virtual ~TMSOptions() { }
+
+    public:
+        CVBF_Config getConfig() const {
+            CVBF_Config conf = CVBF_OptionsDriverSourceTile::getConfig();
+            conf.updateIfSet("url", _url);
+            conf.updateIfSet("tms_type", _tmsType);
+            conf.updateIfSet("format", _format);
+            return conf;
+        }
+
+    protected:
+        void mergeConfig( const CVBF_Config& conf ) {
+            CVBF_OptionsDriverSourceTile::mergeConfig( conf );
+            fromConfig( conf );
+        }
+
+    private:
+        void fromConfig( const CVBF_Config& conf ) {
+            conf.getIfSet( "url", _url );
+            conf.getIfSet( "format", _format );
+            conf.getIfSet( "tms_type", _tmsType );
+        }
+
+        CVBF_Optional<URI>         _url;
+        CVBF_Optional<std::string> _tmsType;
+        CVBF_Optional<std::string> _format;
+    };
+
+} } // namespace osgEarth::Drivers
+
+#endif // OSGEARTH_DRIVER_TMS_MAPLAYERFACTORY
+

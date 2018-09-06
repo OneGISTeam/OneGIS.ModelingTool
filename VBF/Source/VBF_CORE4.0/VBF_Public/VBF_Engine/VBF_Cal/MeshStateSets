@@ -1,0 +1,38 @@
+
+#ifndef __OSGCAL__MESH_STATE_SETS_H__
+#define __OSGCAL__MESH_STATE_SETS_H__
+
+#include <VBF_Engine/VBF_SceneGraph/StateSet>
+#include <stdexcept>
+
+#include <cal3d/cal3d.h>
+
+#include <VBF_Engine/VBF_Cal/Export>
+#include <VBF_Engine/VBF_Cal/StateSetCache>
+#include <VBF_Engine/VBF_Cal/MeshData>
+#include <VBF_Engine/VBF_Cal/Material>
+#include <VBF_Engine/VBF_Cal/MeshParameters>
+
+namespace osgCal
+{
+    /**
+     * List of state sets used by Model's meshes
+     */
+    struct MeshStateSets : public CVBF_Referenced
+    {
+        public:
+            MeshStateSets( StateSetCache*  c, const MeshData* d,
+                           const Material* m, const MeshParameters* p );
+                    
+            ref_ptr< osg::StateSet >   stateSet;
+            ref_ptr< osg::StateSet >   staticStateSet; ///< zero bones state set
+
+            ref_ptr< osg::StateSet >   depthOnly; ///< depth only hw state ste
+            ref_ptr< osg::StateSet >   staticDepthOnly; ///< zero bones state set
+
+            virtual void releaseGLObjects( osg::State* state = 0 ) const;
+    };
+
+}; // namespace osgCal
+
+#endif

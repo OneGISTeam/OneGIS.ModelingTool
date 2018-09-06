@@ -1,0 +1,904 @@
+#ifndef OSGEARTHUTIL_CONTROLS
+#define OSGEARTHUTIL_CONTROLS
+
+#include <VBF_3DMap/VBF_EarthUtil/Common>
+#include <VBF_Common/VBF_Utils/VBF_Units.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGDrawable.h>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGeometry.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGNodeGroupTransformMatrix.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGNode.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGNodeGroup.h>
+#include <Types/MixinVector>
+#include <Types/VBF_Optional.h>
+#include <VBF_Display/VBF_Manipulator/VBF_GUIEventHandler.h>
+#include <VBF_Display/VBF_Viewer/IVBF_View.h>
+#include <VBF_Engine/VBF_Text/Font>
+#include <VBF_Engine/VBF_Text/Text>
+#include <vector>
+#include <queue>
+
+
+// 控件，是一些二维的可相应事件的图形，采用的是"HUD"
+namespace osgEarth { namespace Util { namespace Controls
+{
+    using namespace osgEarth;
+
+    typedef std::vector< ref_ptr<osg::Drawable> > DrawableList;
+    typedef std::map< class Control*, osg::IVBF_SGNodeGeometry* > GeodeTable;
+
+    // 控件所在的环境
+    struct ControlContext
+    {
+        ControlContext() : m_nViewGContextID(~0) { }
+        
+		osg::IVBF_ViewBrief*                 m_pIView;			// 视图
+        ref_ptr<const osg::Viewport>         m_ipViewport;		// 视口
+        unsigned int                         m_nViewGContextID;	// 图形环境ID
+        std::queue< ref_ptr<class Control> > _active;		// 
+        const ::CVBF_FrameStamp*             _frameStamp;	// 帧戳
+    };
+
+    // 2-vec 支持各种"units"指定
+    class OSGEARTHUTIL_EXPORT UVec2f : public osg::Vec2f
+    {
+    public:
+        enum Unit 
+		{
+            UNITS_FRACTION,
+            UNITS_PIXELS,
+            UNITS_INSET_PIXELS
+        };
+
+        UVec2f(double x, double y, Unit xunits =UNITS_PIXELS, Unit yunits =UNITS_PIXELS)
+            : osg::Vec2f(x,y), _xunits(xunits), _yunits(yunits) { }
+
+        Unit& xUnits() { return _xunits; }
+        const Unit& yUnits() const { return _yunits; }
+
+        float x( const osg::Vec2f& size ) const;
+        float x( const ControlContext& cx ) const;
+
+        float y( const osg::Vec2f& size) const;
+        float y( const ControlContext& cx ) const;
+
+        UVec2f asPixels( const osg::Vec2f& size ) const;
+        UVec2f asPixels( const ControlContext& cx ) const;
+
+    private:
+        Unit _xunits, _yunits;
+    };
+
+    // holds 4-sided gutter dimensions (for margins and padding) .. no-export, header-only.
+    struct Gutter
+    {
+        Gutter() : _top(0), _right(0), _bottom(0), _left(0) { }
+        Gutter( float fT, float fR, float fB, float fL ) : _top(fT), _right(fR), _bottom(fB), _left(fL) { }
+        Gutter( float y, float x ) : _top(y), _right(x), _bottom(y), _left(x) { }
+        Gutter( float all ) : _top(all), _right(all), _bottom(all), _left(all) { }
+        bool operator !=( const Gutter& rhs ) const { return _top != rhs._top || _right!= rhs._right|| _bottom != rhs._bottom || _left != rhs._left; }
+
+        float  top()  const { return _top; }
+        float& top() { return _top; }
+        float  left() const { return _left; }
+        float& left() { return _left; }
+        float  right() const { return _right; }
+        float& right() { return _right; }
+        float  bottom() const { return _bottom; }
+        float& bottom() { return _bottom; }
+
+        float x() const { return _left + _right; }
+        float y() const { return _top + _bottom; }
+
+        osg::Vec2f size() const { return osg::Vec2f(x(), y()); }
+        osg::Vec2f offset() const { return osg::Vec2f( _left, _top ); }
+
+    private:
+        float _top, _right, _bottom, _left;
+    };
+
+    // 控件事件处理器的基类
+    class ControlEventHandler : public ::CVBF_Referenced
+    {
+    public:
+        /** Click event. */
+        virtual void onClick( class Control* control ) { }
+
+        /** Click event with mouse button mask (see osgGA::GUIEventAdapter::MouseButtonMask) */
+        virtual void onClick( class Control* control, int mouseButtonMask ) { onClick(control); }
+
+        /** Click event with click position (negative values mean you're in the left/top padding) */
+        virtual void onClick( class Control* control, const osg::Vec2f& pos, int mouseButtonMask ) { onClick(control, mouseButtonMask); }
+
+        //  Value events
+        virtual void onValueChanged( class Control* control, bool value ) { onValueChanged(control); }
+        virtual void onValueChanged( class Control* control, double value ) { onValueChanged(control); }
+        virtual void onValueChanged( class Control* control, float value ) { onValueChanged(control, static_cast<double>(value)); }
+        virtual void onValueChanged( class Control* control, int value ) { onValueChanged(control); }
+        virtual void onValueChanged( class Control* control, const osg::Vec3f& value ) { onValueChanged(control); }
+        virtual void onValueChanged( class Control* control, const osg::Vec2f& value ) { onValueChanged(control); }
+        virtual void onValueChanged( class Control* control, const osg::Vec3d& value ) { onValueChanged(control); }
+        virtual void onValueChanged( class Control* control, const osg::Vec2d& value ) { onValueChanged(control); }
+        virtual void onValueChanged( class Control* control, const std::string& value ) { onValueChanged(control); }
+        virtual void onValueChanged( class Control* control, void* value ) { onValueChanged(control); }
+        virtual void onValueChanged( class Control* control ) { }
+
+
+		virtual void onHover(class Control* control) {} //响应处理鼠标位于控件上方的事件，武玉国杜莹扩展
+        virtual void onEnterHover(class Control* control) {} //响应处理鼠标位于控件上方的事件，武玉国杜莹扩展
+        virtual void onLeaveHover(class Control* control) {} //响应处理鼠标位于控件上方的事件，武玉国杜莹扩展
+
+		virtual ~ControlEventHandler() { }
+    };
+
+    typedef std::list< ref_ptr<ControlEventHandler> > ControlEventHandlerList;
+
+  
+
+	// 所有控件的基类
+    class OSGEARTHUTIL_EXPORT Control : public ::CVBF_Referenced
+    {
+    public:
+        enum Side
+        {
+            SIDE_TOP, SIDE_BOTTOM, SIDE_LEFT, SIDE_RIGHT
+        };
+
+        enum Alignment
+        {
+            ALIGN_NONE, ALIGN_LEFT, ALIGN_CENTER, ALIGN_RIGHT, ALIGN_TOP, ALIGN_BOTTOM
+        };
+
+        enum Dock
+        {
+            DOCK_NONE, DOCK_LEFT, DOCK_RIGHT, DOCK_TOP, DOCK_BOTTOM, DOCK_FILL
+        };
+
+    public:
+        Control();
+        Control(const std::string& strName);
+        Control(const Alignment& halign, const Alignment& valign, const Gutter& padding);
+        virtual ~Control();
+
+        // 设置/获取控件的名称，以便调试（杜莹添加：2015-02-16）
+        void SetName(const std::string& strName);
+        const std::string& GetName();
+
+        void setX( float value );
+        const CVBF_Optional<float>& x() const { return _x; }
+        void clearX() { _x.unset(); dirty(); }
+
+        void setY( float value );
+        const CVBF_Optional<float>& y() const { return _y; }
+        void clearY() { _y.unset(); dirty(); }
+
+        void setPosition( float x, float y );
+
+        void setWidth( float value );
+        const CVBF_Optional<float>& width() const { return _width; }
+        void clearWidth() { _width.unset(); dirty(); }
+
+        void setHeight( float value );
+        const CVBF_Optional<float>& height() const { return _height; }
+        void clearHeight() { _height.unset(); dirty(); }
+
+        void setSize( float w, float h );
+
+        void setMargin( const Gutter& value );
+        void setMargin( Side side, float value );
+        const Gutter& margin() const { return _margin; }
+
+        // space between container and its content
+        void setPadding( const Gutter& value );
+        void setPadding( float globalValue );
+        void setPadding( Side side, float value );
+        const Gutter& padding() const { return _padding; }
+
+        void setVertAlign( const Alignment& value );
+        const CVBF_Optional<Alignment>& vertAlign() const { return _valign; }
+
+        void setHorizAlign( const Alignment& value );
+        const CVBF_Optional<Alignment>& horizAlign() const { return _halign; }
+
+        void setHorizFill( bool value, float minWidth =0.0f );
+        bool horizFill() const { return _hfill; }
+
+        void setVertFill( bool value, float minHeight =0.0f );
+        const bool vertFill() const { return _vfill; }
+
+        void setVisible( bool value );
+        const bool visible() const { return _visible; }
+
+        void setForeColor( const osg::Vec4f& value );
+        void setForeColor( float r, float g, float b, float a ) { setForeColor( osg::Vec4f(r,g,b,a) ); }
+        const CVBF_Optional<osg::Vec4f> foreColor() const { return _foreColor; }
+        void clearForeColor() { _foreColor.unset(); dirty(); }
+
+        void setBackColor( const osg::Vec4f& value );
+        void setBackColor( float r, float g, float b, float a ) { setBackColor( osg::Vec4f(r,g,b,a) ); }
+        const CVBF_Optional<osg::Vec4f>& backColor() const { return _backColor; }
+        void clearBackColor() { _backColor.unset(); dirty(); }
+
+        void setActiveColor( const osg::Vec4f& value );
+        void setActiveColor( float r, float g, float b, float a ) { setActiveColor( osg::Vec4f(r,g,b,a) ); }
+        const CVBF_Optional<osg::Vec4f>& activeColor() const { return _activeColor; }
+        void clearActiveColor() { _activeColor.unset(); dirty(); }
+
+        bool getParent( ref_ptr<Control>& out ) const;
+
+        void setActive( bool value );
+        bool getActive() const { return _active; }
+
+        void setAbsorbEvents( bool value ) { _absorbEvents = value; }
+        bool getAbsorbEvents() const { return _absorbEvents; }
+
+        void addEventHandler( ControlEventHandler* handler, bool fire =false );
+
+    public:
+        
+        // mark the control as dirty so that it will regenerate on the next pass.
+        virtual void dirty();
+        bool isDirty() const { return m_bDirty; }
+
+        virtual void calcSize( const ControlContext& context, osg::Vec2f& out_size );
+        virtual void calcFill( const ControlContext& context ) { }
+        virtual void calcPos ( const ControlContext& context, const osg::Vec2f& cursor, const osg::Vec2f& parentSize );
+        virtual void draw    ( const ControlContext& context, DrawableList& out_drawables );
+
+        // actual rendering region on the control surface
+        const osg::Vec2f& renderPos() const { return _renderPos; }
+        const osg::Vec2f& renderSize() const { return _renderSize; }
+
+        // does the control contain the point?
+        virtual bool intersects( float x, float y ) const;
+
+        virtual bool handle( const osgGA::GUIEventAdapter& ea, ::IVBF_GUIActionAdapter& aa, ControlContext& cx );
+        virtual void fireValueChanged( ControlEventHandler* handler =0L ) { }
+
+        void setParent( class Control* c ) { _parent = c; }
+
+    protected:
+        std::string     m_strName;  // 控件的名称，以便调试（杜莹添加：2015-02-16）
+        bool            m_bDirty;
+        osg::Vec2f      _renderPos;  // rendering position (includes padding offset)
+        osg::Vec2f      _renderSize; // rendering size (includes padding)
+
+        // 为了对齐，调整renderpos
+        void init();
+        void align();
+
+        friend class ControlCanvas;
+        friend class Container;
+
+        ControlEventHandlerList _eventHandlers;
+
+
+
+    protected:
+        CVBF_Optional<float> _x, _y, _width, _height;
+        bool _hfill, _vfill;
+        Gutter _margin;
+        Gutter _padding;
+        bool _visible;
+        CVBF_Optional<Alignment> _valign, _halign;
+        CVBF_Optional<osg::Vec4f> _backColor, _foreColor, _activeColor;
+        observer_ptr<Control> _parent;
+        bool _active;
+        bool _absorbEvents;
+        ref_ptr<osg::Geometry> _geom;
+    };
+
+    typedef std::vector< ref_ptr<Control> > ControlVector;
+
+  	// 文字Label
+    class OSGEARTHUTIL_EXPORT LabelControl : public Control
+    {
+    public:
+        LabelControl( const std::string& value ="", float fontSize =18.0f, const osg::Vec4f& foreColor =osg::Vec4f(1,1,1,1) );
+        LabelControl( const std::string& value, const osg::Vec4f&  foreColor, float fontSize =18.0f );
+        LabelControl( Control* valueControl, const osg::Vec4f& foreColor, float fontSize =18.0f );
+        LabelControl( Control* valueControl, float fontSize =18.0f, const osg::Vec4f& fontColor =osg::Vec4f(1,1,1,1) );
+
+        virtual ~LabelControl() { }
+
+        void setText( const std::string& value );
+        const std::string& text() const { return _text; }
+
+        void setEncoding( osgText::String::Encoding value );
+        const osgText::String::Encoding& encoding() const { return _encoding; }
+
+        void setFont( osgText::Font* font );
+        osgText::Font* font() const { return _font.get(); }
+
+        void setFontSize( float value );
+        float fontSize() const { return _fontSize; }
+
+        void setHaloColor( const osg::Vec4f& value );
+        const CVBF_Optional<osg::Vec4f>& haloColor() const { return _haloColor; }
+
+        void setTextBackdropType(osgText::Text::BackdropType value);
+        const osgText::Text::BackdropType getTextBackdropType() const { return _backdropType; }
+
+        void setTextBackdropImplementation(osgText::Text::BackdropImplementation value);
+        const osgText::Text::BackdropImplementation getTextBackdropImplementation() const { return _backdropImpl; }
+
+        void setTextBackdropOffset(float offsetValue);
+        float getTextBackdropOffset() const { return _backdropOffset; }
+
+    public: // Control
+        virtual void calcSize( const ControlContext& context, osg::Vec2f& out_size );
+        virtual void draw    ( const ControlContext& context, DrawableList& out_drawables );
+
+    protected:
+        std::string _text;
+        ref_ptr<osgText::Font> _font;
+        float _fontSize;
+        ref_ptr<osgText::Text> _drawable;
+        osg::Vec3 _bmin, _bmax;
+        CVBF_Optional<osg::Vec4f> _haloColor;
+        osgText::String::Encoding _encoding;
+        osgText::Text::BackdropType _backdropType;
+        osgText::Text::BackdropImplementation _backdropImpl;
+        float _backdropOffset;
+    };
+
+  
+
+    class OSGEARTHUTIL_EXPORT ButtonControl : public LabelControl
+    {
+    public:
+        ButtonControl(
+            const std::string&   text        ="",
+            float                fontSize    =18.0f,
+            const osg::Vec4f&    foreColor   =osg::Vec4f(1,1,1,1),
+            const osg::Vec4f&    backColor   =osg::Vec4f(0.5,0.5,0.5,1),
+            const osg::Vec4f&    activeColor =osg::Vec4f(0.5,0.5,1,1),
+            ControlEventHandler* handler     =0L );
+
+        ButtonControl(
+            const std::string&   text,
+            const osg::Vec4f&    foreColor,
+            const osg::Vec4f&    backColor   =osg::Vec4f(0.5,0.5,0.5,1),
+            const osg::Vec4f&    activeColor =osg::Vec4f(0.5,0.5,1,1),
+            float                fontSize    =18.0f,
+            ControlEventHandler* handler     =0L );
+        
+        ButtonControl(
+            const std::string&   text,
+            ControlEventHandler* handler );
+    };
+
+
+	// 图像控件
+    class OSGEARTHUTIL_EXPORT ImageControl : public Control
+    {
+    public:
+        ImageControl( osg::Image* image =0L );
+        virtual ~ImageControl() ;
+
+		static void SetOpacity(float fOpacity) { ms_fOpacity = fOpacity; }
+
+        void setImage( osg::Image* image );
+        osg::Image* getImage() const { return m_ipImage.get(); }
+
+		// 旋转图像
+        void setRotation( const Angular& angle );
+        const Angular& getRotation() const { return _rotation; }
+
+ 		// 告诉控件旋转时固定其最小尺寸，否则基于旋转角自动计算宽度、高度
+        void setFixSizeForRotation( bool value );
+        bool getFixSizeForRotation() const { return _fixSizeForRot; }
+
+    public: // Control
+        virtual void calcSize( const ControlContext& context, osg::Vec2f& out_size );
+        virtual void draw( const ControlContext& cx, DrawableList& out );
+
+    protected:
+        ref_ptr<osg::Image> m_ipImage;	// 图像
+        ref_ptr<osg::Texture2D> m_ipTexture2D;	//纹理
+      
+		Angular _rotation;			// 图像的旋转角
+        bool    _fixSizeForRot;		// 旋转时固定大小
+
+        osg::Geometry* _geom;
+
+		static float ms_fOpacity;	// 图像的透明度
+    };
+
+	// 水平滚动条
+    class OSGEARTHUTIL_EXPORT HSliderControl : public Control
+    {
+    public:
+        HSliderControl( float min = 0.0f, float max = 100.0f, float value = 50.0f, ControlEventHandler* handler =0L );
+        virtual ~HSliderControl() { }
+
+        void setMin( float min, bool notify =true );
+        float getMin() const { return _min; }
+
+        void setMax( float max, bool notify =true );
+        float getMax() const { return _max; }
+
+        void setValue( float value, bool notify =true );
+        float getValue() const { return _value; }
+
+    public: // Control
+        virtual void draw( const ControlContext& cx, DrawableList& out );
+
+        virtual bool handle( const osgGA::GUIEventAdapter& ea, ::IVBF_GUIActionAdapter& aa, ControlContext& cx );
+        virtual void fireValueChanged( ControlEventHandler* one =0L );
+
+    protected:
+        float _min, _max, _value;
+    };
+
+  
+	// check box
+    class OSGEARTHUTIL_EXPORT CheckBoxControl : public Control
+    {
+    public:
+        CheckBoxControl( bool checked =false );
+        CheckBoxControl( bool checked, ControlEventHandler* callback );
+        virtual ~CheckBoxControl() { }
+
+        void setValue( bool value );
+        bool getValue() const { return _value; }
+
+    public:
+        virtual void draw( const ControlContext& cx, DrawableList& out );
+
+        virtual bool handle( const osgGA::GUIEventAdapter& ea, ::IVBF_GUIActionAdapter& aa, ControlContext& cx );
+        virtual void fireValueChanged( ControlEventHandler* one =0L );
+
+    protected:
+        bool _value;
+    };
+
+    class RadioBoxGroup;
+
+    // Radio box （杜莹添加：2015-02-17）
+    class OSGEARTHUTIL_EXPORT RadioBoxControl : public Control
+    {
+    public:
+        RadioBoxControl(RadioBoxGroup* pGroup, bool checked =false );
+        RadioBoxControl(RadioBoxGroup* pGroup, bool checked, ControlEventHandler* callback );
+        virtual ~RadioBoxControl() { }
+
+        void setValue( bool value );
+        bool getValue() const { return _value; }
+
+    public:
+        virtual void draw( const ControlContext& cx, DrawableList& out );
+
+        virtual bool handle( const osgGA::GUIEventAdapter& ea, ::IVBF_GUIActionAdapter& aa, ControlContext& cx );
+        virtual void fireValueChanged( ControlEventHandler* one =0L );
+
+    protected:
+        ref_ptr<RadioBoxGroup>      m_piGroup;   // 所在的组
+        bool                        _value;
+    };
+
+    // 定义迭代器
+    typedef std::vector< ref_ptr<RadioBoxControl> > RadioBoxList;
+
+    // Radio box 组 （杜莹添加：2015-02-18）
+    class OSGEARTHUTIL_EXPORT RadioBoxGroup : public ::CVBF_Referenced
+    {
+    public:
+        RadioBoxGroup();
+
+        // 设置/获取组的名称，以便调试
+        void SetName(const std::string& strName) { m_strName = strName; }
+        const std::string& GetName() { return m_strName; }
+
+        // 向组中添加/移除一个RadioBox
+        void AddRadioBox(RadioBoxControl* pRadioBox);
+        void RemoveRadioBox(RadioBoxControl* pRadioBox);
+
+        // 检验组中成员的有效性，即只允许一为选中状态
+        void AssertValid();
+
+        // 清除组中所有的单选框
+        void Clear();
+
+        // 响应事件
+        void onValueChanged(RadioBoxControl* pRadioBox, bool value);
+
+    protected:
+        std::string     m_strName;      // 组的名称，以便调试
+        RadioBoxList    m_vRadioBoxes;  // 该组中的所有单选框
+    };
+
+    // 定义迭代器
+    typedef std::vector< ref_ptr<Control> > ControlList;
+
+
+	// 绘制容器的一个带边框的矩形区域
+    class OSGEARTHUTIL_EXPORT Frame : public ImageControl
+    {
+    public:
+        Frame();
+        virtual ~Frame() { }
+
+    public: // Control
+        virtual void calcPos ( const ControlContext& context, const osg::Vec2f& cursor, const osg::Vec2f& parentSize );
+        virtual void draw( const ControlContext& context, DrawableList& drawables );
+    };
+
+ 
+	// 圆角的Frame
+    class OSGEARTHUTIL_EXPORT RoundedFrame : public Frame
+    {
+    public:
+        RoundedFrame();
+        virtual ~RoundedFrame() { }
+
+    public:
+        virtual void draw( const ControlContext& cx, DrawableList& drawables );
+    };
+
+	// 控件的容器，可以包含多个控件，同时容器也是控件，可以被其他容器包含
+    class OSGEARTHUTIL_EXPORT Container : public Control
+    {
+    public:
+        Container();
+        Container( const Alignment& halign, const Alignment& valign, const Gutter& padding, float spacing );
+        virtual ~Container();
+
+        // the Frame connected to this container. can be NULL for no frame.
+        void setFrame( Frame* frame );
+        Frame* getFrame() const { return _frame.get(); }
+        
+        // space between children
+        void setChildSpacing( float value );
+        float childSpacing() const { return _spacing; }
+
+        // horiz alignment to set on children (that do not already have alignment explicity set)
+        void setChildHorizAlign( Alignment align );
+        const CVBF_Optional<Alignment>& childHorizAlign() const { return _childhalign; }
+
+        // vert alignment to set on children (that do not already have alignment explicity set)
+        void setChildVertAlign( Alignment align );
+        const CVBF_Optional<Alignment>& childVertAlign() const { return _childvalign; }
+
+        // adds a control.
+        template<typename T>
+        T* addControl( T* control, int index =-1 ) { 
+            return dynamic_cast<T*>( addControlImpl(control, index) ); }
+
+        // default multiple-add function.
+        virtual void addControls( const ControlVector& controls );
+
+        // access to the child list.
+        virtual const ControlList& children() const =0;
+
+        // clear the controls list.
+        virtual void clearControls() =0;
+
+    public:
+        virtual void calcSize( const ControlContext& context, osg::Vec2f& out_size );
+        virtual void calcFill( const ControlContext& context );
+        virtual void calcPos ( const ControlContext& context, const osg::Vec2f& cursor, const osg::Vec2f& parentSize );
+        virtual void draw( const ControlContext& context, DrawableList& drawables );
+
+        virtual bool handle( const osgGA::GUIEventAdapter& ea, ::IVBF_GUIActionAdapter& aa, ControlContext& cx );
+
+    protected:
+
+        // default add function in subclass.
+        virtual Control* addControlImpl( Control* control, int index =-1 ) =0;
+
+        void applyChildAligns();
+        
+        //void setChildRenderSize( Control* child, float w, float h ) { child->_renderSize.set( w, h ); }
+        float& renderWidth(Control* child) { return child->_renderSize.x(); }
+        float& renderHeight(Control* child) { return child->_renderSize.y(); }
+
+    protected:
+        ref_ptr<Frame> _frame;
+        float _spacing;
+        CVBF_Optional<Alignment> _childhalign;
+        CVBF_Optional<Alignment> _childvalign;
+        
+        ControlList& mutable_children() { return const_cast<ControlList&>(children()); }
+    };
+
+    /**
+     * Container that stacks controls vertically.
+     */
+    class OSGEARTHUTIL_EXPORT VBox : public Container
+    {
+    public:
+        VBox();
+        VBox( const Alignment& halign, const Alignment& valign, const Gutter& padding, float spacing );
+        virtual ~VBox();
+
+    public: // Container
+        virtual const ControlList& children() const { return m_vControls; }
+        virtual void clearControls();
+
+    public: // Control        
+        virtual void calcSize( const ControlContext& context, osg::Vec2f& out_size );
+        virtual void calcFill( const ControlContext& context );
+        virtual void calcPos ( const ControlContext& context, const osg::Vec2f& cursor, const osg::Vec2f& parentSize );
+        virtual void draw( const ControlContext& context, DrawableList& drawables );
+
+    protected:
+        virtual Control* addControlImpl( Control* control, int index =-1 );
+
+    protected:
+        ControlList m_vControls;
+    };
+
+    /**
+     * Container that stacks controls horizontally.
+     */
+    class OSGEARTHUTIL_EXPORT HBox : public Container
+    {
+    public:
+        HBox();
+        HBox( const Alignment& halign, const Alignment& valign, const Gutter& padding, float spacing );
+
+        /** dtor */
+        virtual ~HBox() { }
+
+    public: // Container
+        virtual const ControlList& children() const { return m_vControls; }
+        virtual void clearControls();
+
+    public: // Control        
+        virtual void calcSize( const ControlContext& context, osg::Vec2f& out_size );
+        virtual void calcFill( const ControlContext& context );
+        virtual void calcPos ( const ControlContext& context, const osg::Vec2f& cursor, const osg::Vec2f& parentSize );
+        virtual void draw( const ControlContext& context, DrawableList& drawables );
+
+    protected:
+        virtual Control* addControlImpl( Control* control, int index =-1 );
+
+    protected:
+        ControlList m_vControls;
+    };
+
+    /**
+     * Container that organizes its children in a grid.
+     */
+    class OSGEARTHUTIL_EXPORT Grid : public Container
+    {
+    public:
+        Grid();
+
+        Grid( const Alignment& halign, const Alignment& valign, const Gutter& padding, float spacing );
+
+        /** dtor */
+        virtual ~Grid() { }
+
+        template<typename T>
+        T* setControl( int col, int row, T* control ) {
+            return dynamic_cast<T*>( setControlImpl(col, row, control)); }
+
+        Control* getControl(int col, int row);
+
+        unsigned getNumRows() const { return _rows.size(); }
+        unsigned getNumColumns() const { return _colWidths.size(); }
+
+    public: // Container
+        virtual const ControlList& children() const { return _children; }
+        virtual void clearControls();
+
+        // adds the controls as a row at the bottom of the grid.
+        virtual void addControls( const ControlVector& controls );
+
+    public: // Control        
+        virtual void calcSize( const ControlContext& context, osg::Vec2f& out_size );
+        virtual void calcFill( const ControlContext& context );
+        virtual void calcPos ( const ControlContext& context, const osg::Vec2f& cursor, const osg::Vec2f& parentSize );
+        virtual void draw( const ControlContext& context, DrawableList& drawables );
+
+    protected:
+        virtual Control* addControlImpl( Control* control, int index =-1 );
+        virtual Control* setControlImpl( int col, int row, Control* control );
+
+    protected:
+        typedef std::vector< ref_ptr<Control> > Row;
+        typedef std::vector< Row > RowVector;
+        RowVector _rows;
+        ControlList _children;
+        
+        ref_ptr<Control>& cell(int col, int row);
+        void expandToInclude(int cols, int rows);
+        
+        std::vector<float> _rowHeights, _colWidths;
+    };
+
+    class OSGEARTHUTIL_EXPORT RefNodeVector : public CVBF_Referenced, public osg::MixinVector<osg::IVBF_SGNode*> 
+	{ 
+	};
+
+	// 把一个控件隐藏在一个场景节点中，以便可以放在场景图的任何地方，场景中的定位确定它的二维屏幕坐标，并参与冲突解决
+    class OSGEARTHUTIL_EXPORT ControlNode : public osg::CVBF_SGNode
+    {
+    public:
+        ControlNode( Control* control, float priority =0.0f );
+        virtual ~ControlNode() { }
+
+        //The control encaspulated in this node
+        Control* getControl() const { return _control.get(); }
+
+        // The draw priority of this control
+        float getPriority() const { return _priority; }
+
+        // he point (in screen-space, relative to the lower-left of the control) that should anchor to the scene
+        CVBF_Optional<osg::Vec2f>& anchorPoint() { return _anchor; }
+        const CVBF_Optional<osg::Vec2f>& anchorPoint() const { return _anchor; }
+
+
+    public: // osg::Node overrides
+
+        virtual void traverse( osg::NodeVisitor& nv );
+
+        virtual osg::BoundingSphere computeBound() const;
+
+    protected:
+
+        struct PerViewData
+        {
+			// 为解决LNK2001错误，从cpp文件中调整至此 （杜莹修改：2013-05-09）
+		/*	PerViewData() :
+			_obscured   ( true ),
+			_visibleTime( 0.0 ),
+			_screenPos  ( 0.0, 0.0, 0.0 )
+			{
+				//nop
+			}
+*/
+			PerViewData();
+
+            bool                              _obscured;
+            osg::Vec3f                        _screenPos;
+            float                             _visibleTime;
+            unsigned                          _visitFrame;
+            ref_ptr<osg::Uniform>        _uniform;
+            observer_ptr<osg::IVBF_Camera>    _canvas;
+        };
+        typedef std::map<osg::IVBF_ViewBrief*,PerViewData> PerViewDataMap;
+
+        PerViewDataMap         _perViewData;
+        ref_ptr<Control>  _control;
+        float                  _priority;
+        CVBF_Optional<osg::Vec2f>   _anchor;
+
+        PerViewData& getData( osg::IVBF_ViewBrief* view ) { return _perViewData[view]; }
+
+        friend class ControlNodeBin;
+    };
+
+     //Internal class that renders ControlNode objects found in the scene graph.
+     //There is no need to instantiate or access this object directly.
+     
+    class OSGEARTHUTIL_EXPORT ControlNodeBin : public osg::CVBF_SGNodeGroup
+    {
+    public:
+        ControlNodeBin();
+        virtual ~ControlNodeBin() { }
+
+        // Registers a control node with this bin.
+        void addNode( ControlNode* node );
+
+        // Whether to fade-in controls when they appear in view (default=true)
+        void setFading( bool value );
+
+    private:
+        typedef std::pair<float, ref_ptr<ControlNode> > ControlNodePair;
+        typedef std::multimap<float, ref_ptr<ControlNode> > ControlNodeCollection;
+        ControlNodeCollection _controlNodes;
+
+        typedef std::pair<Control*, ControlNodeCollection::iterator> ControlIndexPair;
+        typedef std::map<Control*, ControlNodeCollection::iterator> ControlIndex;
+        ControlIndex _index;
+
+        typedef std::map<ControlNode*, osg::IVBF_SGNodeGroupTransformMatrix*> RenderNodeTable;
+        typedef std::pair<ControlNode*, osg::IVBF_SGNodeGroupTransformMatrix*> RenderNodePair;
+        RenderNodeTable _renderNodes;
+
+        ref_ptr<osg::IVBF_SGNodeGroup> _group;
+        std::vector<osg::BoundingBox> _taken;
+        bool                          _sortByDistance;
+        bool                          _fading;
+        bool                          _sortingEnabled;
+
+        friend class ControlCanvas;
+
+        void draw( const ControlContext& context, bool newContext, int bin );
+        osg::IVBF_SGNodeGroup* getControlGroup() const { return _group.get(); }
+    };
+
+
+	// 控件的画布，是控件的总容器，继承自一个正射相机
+    class OSGEARTHUTIL_EXPORT ControlCanvas : public osg::Camera
+    {
+    public:
+ 		// 获取与视图关联的控件容器
+        static ControlCanvas* get( osg::IVBF_ViewBrief* view, bool installCanvasInSceneData =false );
+	private:
+        typedef std::map<osg::IVBF_ViewBrief*, ControlCanvas*> ViewCanvasMap;
+        static ViewCanvasMap      ms_ViewCanvasMap;        
+        static OpenThreads::Mutex ms_ViewCanvasMapMutex;
+
+
+    public:
+		// 添加/移除一个控件
+        template<typename T>
+        T* addControl( T* control ) { return dynamic_cast<T*>( addControlImpl( control ) ); }
+        void removeControl( Control* control );
+
+        const ControlList& children() const { return m_vControls; }
+
+		// 获取指定位置的最上层控件
+        Control* getControlAtMouse( float x, float y ) const;
+
+		// 设置控件（节点）是否允许重叠
+        void setAllowControlNodeOverlap( bool value );
+
+    public:
+		// 内部函数，不需要直接调用
+        void update( const ::CVBF_FrameStamp* frameStamp );
+        void setControlContext( const ControlContext& );
+
+		// 获取控件节点的渲染台
+		ControlNodeBin* getControlNodeBin() { return m_piControlNodeBin.get(); }
+
+    public:
+        virtual void traverse( osg::NodeVisitor& nv ); // override
+
+        ControlCanvas( IVBF_View* view );
+        virtual ~ControlCanvas();
+
+        bool handle( const osgGA::GUIEventAdapter& ea, ::IVBF_GUIActionAdapter& aa );
+
+    protected:
+
+        ControlList     m_vControls;		// 包含的控件列表
+        GeodeTable      m_mapGeodeTable;	// 控件与对应的场景图节点映射表
+        ControlContext  m_Context;			// 控件所在的环境（视图、视口等）
+        bool            m_bContextDirty;	// 控件环境是否改变了
+        bool            m_bUpdatePending;
+
+        typedef std::map< observer_ptr<osgGA::GUIEventHandler>, observer_ptr<IVBF_View> > EventHandlersMap;
+        EventHandlersMap m_mapEventHandlers; // 事件处理器列表，为了析构时从View中清除
+
+		ref_ptr<ControlNodeBin> m_piControlNodeBin; // 控件节点的渲染台
+
+        Control* addControlImpl( Control* control );
+
+    private:
+        friend struct ControlCanvasEventHandler;
+  
+        ControlCanvas( IVBF_View* view, bool registerCanvas );
+        void init( IVBF_View* view, bool registerCanvas );
+    };
+
+
+    // 关闭控件按钮
+    class CVBF_EventHandlerCloseControl : public ControlEventHandler
+    {
+    public:
+
+       observer_ptr<osgEarth::Util::Controls::Control> m_opControl;
+       observer_ptr<IVBF_View> m_opIView;
+
+       CVBF_EventHandlerCloseControl(IVBF_View* pIView,osgEarth::Util::Controls::Control* pControl)
+       {
+           m_opIView = pIView;
+           m_opControl = pControl;
+       }
+       void onClick( Control* control, int mouseButtonMask )
+       {
+           if(m_opControl.valid() && m_opIView.valid())
+           {
+               ControlCanvas* pCanvas = ControlCanvas::get(m_opIView.get(), false);
+               pCanvas->removeControl( m_opControl.get() );
+           }
+       }
+    };
+
+} } } // namespace osgEarth::Util::Controls
+
+#endif // OSGEARTHUTIL_CONTROLS

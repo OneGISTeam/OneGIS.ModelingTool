@@ -1,0 +1,32 @@
+
+#ifndef OSGWIDGET_LUA
+#define OSGWIDGET_LUA
+
+#include <VBF_Display/VBF_Widget/WindowManager>
+
+namespace osgWidget {
+
+// Externally defined; does this work in Windows?
+struct LuaEngineData;
+
+// The actual Engine itself. Every attempt is made to export the implemenation into the
+// source file, rather than having it here.
+class OSGWIDGET_EXPORT LuaEngine: public ScriptEngine
+{
+    public:
+        LuaEngine(WindowManager* = 0);
+
+        bool initialize ();
+        bool close      ();
+        bool eval       (const std::string&);
+        bool runFile    (const std::string&);
+
+    protected:
+
+        LuaEngineData* _data;
+        WindowManager* _wm;
+};
+
+}
+
+#endif

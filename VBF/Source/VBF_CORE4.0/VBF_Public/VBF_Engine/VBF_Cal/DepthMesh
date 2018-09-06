@@ -1,0 +1,45 @@
+#ifndef __OSGCAL__DEPTH_MESH_H__
+#define __OSGCAL__DEPTH_MESH_H__
+
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGDrawableGeometry.h>
+
+#include <VBF_Engine/VBF_Cal/Export>
+
+namespace osgCal
+{
+    class HardwareMesh; // forward
+
+    /**
+     * Submesh which is only draws depth part of specified hardware submesh.
+     */
+    class DepthMesh :  public /*osg::Drawable //*/osg::Geometry
+    {
+        public:
+           
+            DepthMesh( HardwareMesh* hw );
+
+            virtual void drawImplementation(osg::RenderInfo& renderInfo) const;
+            void update( bool deformed, bool changed );
+
+            virtual void compileGLObjects(osg::RenderInfo& renderInfo) const;
+
+            osg::BoundingBox computeBound() const;
+
+            /**
+             * See Mesh::supports() for the comments.
+             */
+            virtual bool supports( const AttributeFunctor& ) { return false; }
+
+            const HardwareMesh* getHardwareMesh() const { return hwMesh; }
+
+        private:
+
+            HardwareMesh* hwMesh;
+
+            // TODO: merge DepthMesh & HardwareMesh into one
+            // class and move all shared part into other structure.
+    };
+
+}; //namespace osgCal
+
+#endif

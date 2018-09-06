@@ -1,0 +1,123 @@
+#ifndef OSGFX_TECHNIQUE_
+#define OSGFX_TECHNIQUE_
+
+#include <VBF_Engine/VBF_FX/Export>
+
+#include <VBF_Base/VBF_Referenced.h>
+#include <VBF_Engine/VBF_SceneGraph/VBF_StateMachine.h>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGroup.h>
+#include <VBF_Engine/VBF_SceneGraph/VBF_SGNVisitOp.h>
+
+#include <vector>
+#include <string>
+
+// 辅助宏
+#define META_Technique(name, description) \
+    inline virtual const char *techniqueName() { return name; } \
+    inline virtual const char *techniqueDescription() { return description; }
+
+
+namespace osgFX
+{
+
+    class Effect;
+
+    /** 特效技术的基类，抽象类，必须在子类中为自定义的特效实现自定义的技术。一种技术代表实现特效的一种可能方法。
+        继承类必须实现define_passes()方法，以便配置构成该技术的渲染pass(es)。
+	    通常，为每一个渲染pass创建一个StateSet对象，并调用 addPass(stateset)方法。
+     */
+    class OSGFX_EXPORT Technique: public ::CVBF_Referenced 
+	{
+    public:
+        Technique();
+
+        // 获取该技术的名字
+        virtual const char* techniqueName()        { return "Default"; }
+
+        // 获取该技术的描述
+        virtual const char* techniqueDescription() { return "This is the default technique"; }
+ 
+		// 该技术需要的OpenGL扩展
+        virtual void getRequiredExtensions(std::vector<std::string>&  /*extensions*/) const {};
+
+        // 测试该技术在当前的rendering context上是否有效。调用getRequiredExtensions()并比对可用的扩展
+        virtual bool validate(osg::State& ) const;
+
+		// 获取该技术中使用的passes的数量
+        inline int getNumPasses() const;
+
+		// 获取第i个pass关联的StateSet
+        inline osg::StateSet* getPassStateSet(int i);
+
+        /** get the const StateSet object associated to the i-th pass */
+        inline const osg::StateSet* getPassStateSet(int i) const;
+
+        /** 
+         traverse children with multipass if necessary. By default this method
+         simply calls the protected method traverse_implementation(); you can
+         override it to change the default behavior.
+         Don't call this method directly as it is called by osgFX::Effect
+         */
+        inline virtual void traverse(osg::NodeVisitor& nv, Effect* fx);
+        
+    protected:
+        Technique(const Technique &): CVBF_Referenced() {}    // copying is nonsense ;)
+        virtual ~Technique() {}
+        Technique &operator=(const Technique &)  { return *this; }
+
+        /** force rebuilding of pass nodes on next traversal */
+        inline void dirtyPasses();
+
+        /** create a new pass node, add it to the technique and associate a StateSet */
+        void addPass(osg::StateSet* ss = 0);
+        
+        /** optional: return a node that overrides the child node on a specified pass */
+        inline virtual osg::IVBF_SGNode* getOverrideChild(int)  { return 0; }
+
+        /**
+         define the rendering passes that make up this technique. You must
+         implement this method in derived classes to add the required passes.
+         */
+        virtual void define_passes() = 0;
+        
+        /**
+         traverse children with multipass if necessary. Don't call this method
+         directly unless you are in a customized version of traverse().
+         */
+        void traverse_implementation(osg::NodeVisitor& nv, Effect* fx);
+
+    private:
+        typedef std::vector<ref_ptr<osg::StateSet> > Pass_list;
+        Pass_list _passes;
+    };
+
+    // INLINE METHODS
+
+    inline int Technique::getNumPasses() const
+    {
+        return static_cast<int>(_passes.size());
+    }
+
+    inline osg::StateSet* Technique::getPassStateSet(int i)
+    {
+        return _passes[i].get();
+    }
+
+    inline const osg::StateSet* Technique::getPassStateSet(int i) const
+    {
+        return _passes[i].get();
+    }
+      
+    inline void Technique::dirtyPasses()
+    {
+        _passes.clear();
+    }
+    
+    inline void Technique::traverse(osg::NodeVisitor& nv, Effect* fx)
+    {
+        traverse_implementation(nv, fx);
+    }
+
+}
+
+#endif

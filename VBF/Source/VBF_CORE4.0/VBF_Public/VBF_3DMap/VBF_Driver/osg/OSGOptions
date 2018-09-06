@@ -1,0 +1,92 @@
+/* -*-c++-*- */
+/* osgEarth - Dynamic map generation toolkit for OpenSceneGraph
+ * Copyright 2008-2013 Pelican Mapping
+ * http://osgearth.org
+ *
+ * osgEarth is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ */
+#ifndef OSGEARTH_DRIVER_OSG_DRIVEROPTIONS
+#define OSGEARTH_DRIVER_OSG_DRIVEROPTIONS 1
+
+#include <VBF_3DMap/VBF_Terrain/Common.h>
+#include <VBF_3DMap/VBF_Terrain/VBF_SourceTile.h>
+#include <VBF_3DMap/VBF_Terrain/URI.h>
+
+namespace osgEarth { namespace Drivers
+{
+    using namespace osgEarth;
+
+    class OSGOptions : public CVBF_OptionsDriverSourceTile // NO EXPORT; header only
+    {
+    public:
+        CVBF_Optional<URI>& url() { return _url; }
+        const CVBF_Optional<URI>& url() const { return _url; }
+
+        CVBF_Optional<bool>& convertLuminanceToRGBA() { return _lum2rgba; }
+        const CVBF_Optional<bool>& convertLuminanceToRGBA() const { return _lum2rgba; }
+
+        CVBF_Optional<bool>& addAlpha() { return _addAlpha; }
+        const CVBF_Optional<bool>& addAlpha() const { return _addAlpha; }
+
+        CVBF_Optional<unsigned>& maxDataLevel() { return _maxDataLevel; }
+        const CVBF_Optional<unsigned>& maxDataLevel() const { return _maxDataLevel; }
+
+    public:
+        OSGOptions( const CVBF_OptionsDriverSourceTile& opt =CVBF_OptionsDriverSourceTile() ) :
+            CVBF_OptionsDriverSourceTile( opt ),
+            _lum2rgba( false ),
+            _addAlpha( false ),
+            _maxDataLevel( 21 )
+        {
+            setDriver( "osg" );
+            fromConfig( m_conf );
+        }
+
+        /** dtor */
+        virtual ~OSGOptions() { }
+
+    public:
+        CVBF_Config getConfig() const {
+            CVBF_Config conf = CVBF_OptionsDriverSourceTile::getConfig();
+            conf.updateIfSet("url", _url );
+            conf.updateIfSet("luminance_to_rgba", _lum2rgba);
+            conf.updateIfSet("add_alpha", _addAlpha);
+            conf.updateIfSet("max_data_level", _maxDataLevel );
+            return conf;
+        }
+
+    protected:
+        void mergeConfig( const CVBF_Config& conf ) {
+            CVBF_OptionsDriverSourceTile::mergeConfig( conf );
+            fromConfig( conf );
+        }
+
+    private:
+        void fromConfig( const CVBF_Config& conf ) {
+            conf.getIfSet( "url", _url );
+            conf.getIfSet( "luminance_to_rgba", _lum2rgba );
+            conf.getIfSet( "add_alpha", _addAlpha);
+            conf.getIfSet( "max_data_level", _maxDataLevel );
+        }
+
+        CVBF_Optional<URI>  _url;
+        CVBF_Optional<bool> _lum2rgba;
+        CVBF_Optional<bool> _addAlpha;
+        CVBF_Optional<unsigned> _maxDataLevel;
+    };
+
+} } // namespace osgEarth::Drivers
+
+#endif // OSGEARTH_DRIVER_OSG_DRIVEROPTIONS
+

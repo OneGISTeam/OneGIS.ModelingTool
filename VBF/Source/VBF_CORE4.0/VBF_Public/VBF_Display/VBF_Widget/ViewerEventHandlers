@@ -1,0 +1,110 @@
+#ifndef OSGWIDGET_VIEWER_EVENT_HANDLERS
+#define OSGWIDGET_VIEWER_EVENT_HANDLERS
+
+#include <VBF_Display/VBF_Manipulator/VBF_GUIEventAdapter.h>
+#include <VBF_Display/VBF_Manipulator/VBF_GUIEventHandler.h>
+#include <VBF_Display/VBF_Widget/WindowManager>
+
+// NOTE! These are all just examples of some default event handlers--they are not
+// required. You are more than welcome to provide your own even handlers that
+// communicate with a WindowManager using it's public API.
+
+namespace osgWidget {
+
+// This handles the pressing/moving of mouse buttons, etc.
+class OSGWIDGET_EXPORT MouseHandler: public osgGA::GUIEventHandler
+{
+    public:
+
+        MouseHandler(WindowManager*);
+
+        virtual bool handle(
+            const osgGA::GUIEventAdapter&,
+            ::IVBF_GUIActionAdapter&,
+            osg::CVBF_Object*,
+            osg::NodeVisitor*
+        );
+
+
+        typedef bool (MouseHandler::*MouseAction)(float, float, int);
+        typedef bool (WindowManager::*MouseEvent)(float, float);
+
+    protected:
+
+        observer_ptr<WindowManager> _wm;
+
+        bool _handleMousePush        (float, float, int);
+        bool _handleMouseRelease     (float, float, int);
+        bool _handleMouseDoubleClick (float, float, int);
+        bool _handleMouseDrag        (float, float, int);
+        bool _handleMouseMove        (float, float, int);
+        bool _handleMouseScroll      (float, float, int);
+
+        MouseAction _isMouseEvent (osgGA::GUIEventAdapter::EventType) const;
+        bool        _doMouseEvent (float, float, MouseEvent);
+};
+
+// This handles the forwarding of keypress events.
+class OSGWIDGET_EXPORT KeyboardHandler: public osgGA::GUIEventHandler 
+{
+    public:
+
+        KeyboardHandler(WindowManager*);
+
+        virtual bool handle(
+            const osgGA::GUIEventAdapter&,
+            ::IVBF_GUIActionAdapter&,
+            osg::CVBF_Object*,
+            osg::NodeVisitor*
+        );
+
+    protected:
+        observer_ptr<WindowManager> _wm;
+
+};
+
+// This class offers a default kind of handling for resizing.
+class OSGWIDGET_EXPORT ResizeHandler: public osgGA::GUIEventHandler
+{
+    public:
+
+        ResizeHandler(WindowManager*, osg::IVBF_Camera* = 0);
+
+        virtual bool handle(
+            const osgGA::GUIEventAdapter&,
+            ::IVBF_GUIActionAdapter&,
+            osg::CVBF_Object*,
+            osg::NodeVisitor*
+        );
+
+    protected:
+    
+        observer_ptr<WindowManager> _wm;
+        observer_ptr<osg::IVBF_Camera>   _camera;
+};
+
+// This class provides a hotkey that lets you toggle back and forth between
+// a camera and setting the CameraManipulator's home point.
+class OSGWIDGET_EXPORT CameraSwitchHandler: public osgGA::GUIEventHandler
+{
+    public:
+
+        CameraSwitchHandler(WindowManager*, osg::IVBF_Camera*);
+
+        virtual bool handle(
+            const osgGA::GUIEventAdapter&,
+            ::IVBF_GUIActionAdapter&,
+            osg::CVBF_Object*,
+            osg::NodeVisitor*
+        );
+
+    protected:
+    
+        observer_ptr<WindowManager> _wm;
+        observer_ptr<osg::IVBF_Camera>   _camera;
+        ref_ptr<osg::IVBF_SGNode>          _oldNode;
+};
+
+}
+
+#endif

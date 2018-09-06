@@ -1,0 +1,97 @@
+/*  -*-c++-*- 
+ *  Copyright (C) 2008 Cedric Pinson <cedric.pinson@plopbyte.net>
+ *
+ * This library is open source and may be redistributed and/or modified under  
+ * the terms of the OpenSceneGraph Public License (OSGPL) version 0.0 or 
+ * (at your option) any later version.  The full license is in LICENSE file
+ * included with this distribution, and on the openscenegraph.org website.
+ * 
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the 
+ * OpenSceneGraph Public License for more details.
+*/
+
+#ifndef OSGANIMATION_ANIMATION
+#define OSGANIMATION_ANIMATION 1
+
+#include <VBF_Engine/VBF_SceneGraph/VBF_Object.h>
+#include <VBF_Engine/VBF_Animation/Export>
+#include <VBF_Engine/VBF_Animation/Channel>
+#include <VBF_Base/ref_ptr>
+#include <vector>
+#include <map>
+
+namespace osgAnimation
+{
+	// 动画：将多个频道整合到一起
+    class OSGANIMATION_EXPORT Animation : public osg::CVBF_Object
+    {
+    public:
+        META_Object(osgAnimation, Animation)
+
+        Animation() : _duration(0), _weight(0), _startTime(0), _playmode(LOOP) {}
+        Animation(const osgAnimation::Animation&, const osg::CopyOp&);
+
+        enum PlayMode //播放模式
+        {
+            ONCE,	// 播放一次后结束
+            STAY,	// 播放一次后停留在最后时刻
+            LOOP,	// 循环播放
+            PPONG	// 往复播放（乒乓）
+        };
+
+  		// 添加一个动画频道，并调用computeDuration
+        void addChannel (Channel* pChannel);
+
+		// 获取频道列表
+        ChannelList& getChannels();
+        const ChannelList& getChannels() const;
+
+		// 更改动画持续时间，缩放动画时间到0-duration
+        void setDuration(double duration);
+
+		// 根据频道和关键帧计算持续时间
+        void computeDuration();
+
+        double getDuration() const;
+
+		// 设置/获取动画的权重值
+        void setWeight (float weight);
+        float getWeight() const;
+
+		// 更新动画内容
+        bool update (double time, int priority = 0);
+
+        void resetTargets();
+
+		// 设置/获取播放模式
+        void setPlayMode (PlayMode mode) { _playmode = mode; }
+        PlayMode getPlayMode() const { return _playmode; }
+        
+		// 设置/获取动画运行的起始时间
+        void setStartTime(double time)  { _startTime = time;}
+        double getStartTime() const { return _startTime;}
+
+    protected:
+
+        double computeDurationFromChannels() const;
+
+        ~Animation() {}
+  
+        double _duration;
+        double _originalDuration;
+        float _weight;
+        double _startTime;
+        PlayMode _playmode;
+        ChannelList _channels;
+
+    };
+
+    typedef std::vector<ref_ptr<osgAnimation::Animation> > AnimationList;
+    typedef std::map<std::string, ref_ptr<osgAnimation::Animation> > AnimationMap;
+
+
+}
+
+#endif

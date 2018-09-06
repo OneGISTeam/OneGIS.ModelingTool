@@ -1,0 +1,88 @@
+#ifndef OSG_MULTISWITCH
+#define OSG_MULTISWITCH 1
+
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGroupImpl.h>
+#include <VBF_Engine/VBF_Sim/Export>
+
+namespace osgSim 
+{
+
+// MultiSwitch是一个组节点，基于OpenFlight的switch，含有多个SwitchSet，允许同时显示或隐藏多个选中的子节点
+class OSGSIM_EXPORT MultiSwitch : public osg::IVBF_SGNodeGroupImpl<osg::IVBF_SGNodeGroup>
+{
+public :
+	MultiSwitch();
+	MultiSwitch(const MultiSwitch&,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY);
+
+	META_Node(osgSim, MultiSwitch);
+
+	virtual void traverse(osg::NodeVisitor& nv);
+
+	// 设置/获取新子节点的默认值
+	void setNewChildDefaultValue(bool value) { _newChildDefaultValue = value; }
+	bool getNewChildDefaultValue() const { return _newChildDefaultValue; }
+
+	// 添加/插入/移除子节点
+	virtual bool addChild( osg::IVBF_SGNode *child );
+	virtual bool insertChild( unsigned int index, osg::IVBF_SGNode *child );
+	virtual bool removeChild( osg::IVBF_SGNode *child );
+
+	// 设置/获取某个特定位置的子节点的值
+	void setValue(unsigned int switchSet, unsigned int pos,bool value);
+	bool getValue(unsigned int switchSet, unsigned int pos) const;
+
+
+	void setChildValue(const osg::IVBF_SGNode* child,unsigned int switchSet, bool value);
+	bool getChildValue(const osg::IVBF_SGNode* child,unsigned int switchSet) const;
+
+	// 设置所有的子节点为OFF（false）并设置新子节点的默认值为OFF
+	bool setAllChildrenOff(unsigned int switchSet);
+
+	// 设置所有的子节点为ON（true）并设置新子节点的默认值为ON
+	bool setAllChildrenOn(unsigned int switchSet);
+
+	// 设置单个子节点为ON，关闭其他所有的子节点
+	bool setSingleChildOn(unsigned int switchSet, unsigned int pos);
+
+	// 激活SwitchSet，该SwitchSet（ValueList）可用
+	void setActiveSwitchSet(unsigned int switchSet) { _activeSwitchSet = switchSet; }
+
+	// 获取激活的SwitchSet
+	unsigned int getActiveSwitchSet() const { return _activeSwitchSet; }
+
+	typedef std::vector<bool>        ValueList;
+	typedef std::vector<ValueList>   SwitchSetList;
+	typedef std::vector<std::string> SwitchSetNameList;
+
+	/** Set the compile set of different values.*/
+	void setSwitchSetList(const SwitchSetList& switchSetList);
+
+	/** Get the compile set of different values.*/
+	const SwitchSetList& getSwitchSetList() const { return _values; }
+
+	/** Set the a single set of different values for a particular switch set.*/
+	void setValueList(unsigned int switchSet, const ValueList& values);
+
+	/** Get the a single set of different values for a particular switch set.*/
+	const ValueList& getValueList(unsigned int switchSet) const { return _values[switchSet]; }
+
+	void setValueName(unsigned int switchSet, const std::string& name);
+
+	const std::string& getValueName(unsigned int switchSet) const { return _valueNames[switchSet]; }
+
+protected :
+
+	virtual ~MultiSwitch() {}
+
+	void expandToEncompassSwitchSet(unsigned int switchSet);
+
+	// this is effectively a list of bit mask.
+	bool              _newChildDefaultValue;
+	unsigned int      _activeSwitchSet;
+	SwitchSetList     _values;
+	SwitchSetNameList _valueNames;
+};
+
+}
+
+#endif

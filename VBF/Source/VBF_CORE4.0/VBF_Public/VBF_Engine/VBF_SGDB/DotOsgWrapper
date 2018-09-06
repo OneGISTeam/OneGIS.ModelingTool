@@ -1,0 +1,158 @@
+#ifndef VBF_SGDB_DOTOSGWRAPPER
+#define VBF_SGDB_DOTOSGWRAPPER 1
+
+#include <VBF_Base/ref_ptr>
+#include <VBF_Engine/VBF_SceneGraph/VBF_Object.h>
+
+#include <VBF_Engine/VBF_SGDB/Input>
+#include <VBF_Engine/VBF_SGDB/Output>
+
+#include <string>
+#include <vector>
+
+namespace osgDB {
+
+
+/** deprecated. */
+class VBF_SGDB_EXPORT DotOsgWrapper : public ::CVBF_Referenced
+{
+    public:
+
+        typedef std::vector<std::string> Associates;
+        typedef bool (*ReadFunc)(osg::CVBF_Object&,osgDB::Input&);
+        typedef bool (*WriteFunc)(const osg::CVBF_Object&,osgDB::Output&);
+        
+        enum ReadWriteMode
+        {
+            READ_AND_WRITE,
+            READ_ONLY
+        };
+
+        DotOsgWrapper(osg::CVBF_Object* proto,
+                      const std::string& name,
+                      const std::string& associates,
+                      ReadFunc readFunc,
+                      WriteFunc writeFunc,
+                      ReadWriteMode readWriteMode=READ_AND_WRITE);
+                      
+
+        inline const osg::CVBF_Object* getPrototype() const { return _prototype.get(); }
+        inline const std::string& getName() const      { return m_sName; }
+        inline const Associates& getAssociates() const { return _associates; }
+        inline ReadFunc getReadFunc() const            { return _readFunc; }
+        inline WriteFunc getWriteFunc() const          { return _writeFunc; }
+        inline ReadWriteMode getReadWriteMode() const  { return _readWriteMode; }
+
+    protected:
+
+        /// protected to prevent inappropriate creation of wrappers.
+        DotOsgWrapper();
+
+        /// protected to prevent inappropriate creation of wrappers.
+        DotOsgWrapper(DotOsgWrapper&);
+
+        /// protected to prevent wrapper being created on stack.
+        virtual ~DotOsgWrapper();
+
+        ref_ptr<osg::CVBF_Object>   _prototype;
+        
+        std::string                 m_sName;
+        Associates                  _associates;
+        
+        ReadFunc                    _readFunc;
+        WriteFunc                   _writeFunc;
+
+        ReadWriteMode               _readWriteMode;
+};
+
+
+/** deprecated. */
+class VBF_SGDB_EXPORT DeprecatedDotOsgWrapperManager : public ::CVBF_Referenced
+{
+    public:
+
+        DeprecatedDotOsgWrapperManager();
+
+        void addDotOsgWrapper(DotOsgWrapper* wrapper);
+        void removeDotOsgWrapper(DotOsgWrapper* wrapper);
+
+        osg::CVBF_Object*         readObjectOfType(const osg::CVBF_Object& compObj,Input& fr);
+        osg::CVBF_Object*         readObjectOfType(const basic_type_wrapper &btw, Input& fr);
+
+        osg::CVBF_Object*         readObject(Input& fr);
+        osg::Image*          readImage(Input& fr);
+        osg::Drawable*       readDrawable(Input& fr);
+        osg::Uniform*        readUniform(Input& fr);
+        osg::StateAttribute* readStateAttribute(Input& fr);
+        osg::IVBF_SGNode*           readNode(Input& fr);
+        osg::Shader*         readShader(Input& fr);
+
+        bool                 writeObject(const osg::CVBF_Object& obj,Output& fw);
+
+        typedef std::list<std::string> FileNames;
+        bool getLibraryFileNamesToTry(const std::string& name, FileNames& fileNames);
+
+    private:
+
+        virtual ~DeprecatedDotOsgWrapperManager();
+
+        typedef std::map< std::string, ref_ptr<DotOsgWrapper> >    DotOsgWrapperMap;
+
+        osg::CVBF_Object*       readObject(DotOsgWrapperMap& dowMap,Input& fr);
+        void eraseWrapper(DotOsgWrapperMap& wrappermap,DotOsgWrapper* wrapper);
+
+        DotOsgWrapperMap   _objectWrapperMap;
+        DotOsgWrapperMap   _imageWrapperMap;
+        DotOsgWrapperMap   _drawableWrapperMap;
+        DotOsgWrapperMap   _stateAttrWrapperMap;
+        DotOsgWrapperMap   _uniformWrapperMap;
+        DotOsgWrapperMap   _nodeWrapperMap;
+        DotOsgWrapperMap   _shaderWrapperMap;
+
+        DotOsgWrapperMap   _classNameWrapperMap;
+
+};
+
+
+/** deprecated. */
+class VBF_SGDB_EXPORT RegisterDotOsgWrapperProxy
+{
+    public:
+
+        RegisterDotOsgWrapperProxy(osg::CVBF_Object* proto,
+                                   const std::string& name,
+                                   const std::string& associates,
+                                   DotOsgWrapper::ReadFunc readFunc,
+                                   DotOsgWrapper::WriteFunc writeFunc,
+                                   DotOsgWrapper::ReadWriteMode readWriteMode=DotOsgWrapper::READ_AND_WRITE);
+
+        ~RegisterDotOsgWrapperProxy();
+
+    protected:
+        ref_ptr<DotOsgWrapper> _wrapper;
+};
+
+/** deprecated. */
+template<class T>
+class TemplateRegisterDotOsgWrapperProxy : public RegisterDotOsgWrapperProxy, public T
+{
+    public:
+
+        TemplateRegisterDotOsgWrapperProxy(osg::CVBF_Object* proto,
+                                   const std::string& name,
+                                   const std::string& associates,
+                                   DotOsgWrapper::ReadFunc readFunc,
+                                   DotOsgWrapper::WriteFunc writeFunc,
+                                   DotOsgWrapper::ReadWriteMode readWriteMode=DotOsgWrapper::READ_AND_WRITE):
+            RegisterDotOsgWrapperProxy(proto, name, associates, readFunc, writeFunc, readWriteMode) {}
+
+};
+
+
+#define REGISTER_DOTOSGWRAPPER(classname) \
+    extern "C" void dotosgwrapper_##classname(void) {} \
+    static osgDB::RegisterDotOsgWrapperProxy dotosgwrapper_proxy_##classname
+
+}
+
+#endif 

@@ -1,0 +1,17 @@
+#ifndef OSGEARTH_SHADOW_UTILS_H
+#define OSGEARTH_SHADOW_UTILS_H  1
+
+#include <VBF_3DMap/VBF_EarthUtil/Common>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGroup.h>
+#include <VBF_Engine/VBF_Shadow/VBF_ShadowedScene.h>
+
+namespace osgEarth { namespace Util 
+{
+    struct OSGEARTHUTIL_EXPORT ShadowUtils
+    {
+        static bool setUpShadows( osgShadow::ShadowedScene* sscene, osg::IVBF_SGNodeGroup* root);
+    };
+
+} } // namespace osgEarth::Util
+
+#endif // OSGEARTH_SHADOW_UTILS_H

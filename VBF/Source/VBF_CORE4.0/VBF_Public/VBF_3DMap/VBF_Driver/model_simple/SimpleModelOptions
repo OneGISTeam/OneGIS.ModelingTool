@@ -1,0 +1,115 @@
+/* -*-c++-*- */
+/* osgEarth - Dynamic map generation toolkit for OpenSceneGraph
+ * Copyright 2008-2013 Pelican Mapping
+ * http://osgearth.org
+ *
+ * osgEarth is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ */
+#ifndef OSGEARTH_DRIVER_SIMPLE_MODEL_OPTIONS
+#define OSGEARTH_DRIVER_SIMPLE_MODEL_OPTIONS 1
+
+#include <VBF_3DMap/VBF_Terrain/Common.h>
+#include <VBF_3DMap/VBF_Terrain/VBF_SourceModel.h>
+#include <VBF_3DMap/VBF_Terrain/URI.h>
+#include <VBF_3DMap/VBF_Terrain/ShaderUtils.h>
+
+namespace osgEarth { namespace Drivers
+{
+    using namespace osgEarth;
+
+    class SimpleModelOptions : public CVBF_OptionsDriverSourceModel // NO EXPORT; header only
+    {
+    public:
+        CVBF_Optional<URI>& url() { return _url; }
+        const CVBF_Optional<URI>& url() const { return _url; }
+
+        CVBF_Optional<float>& lodScale() { return _lod_scale; }
+        const CVBF_Optional<float>& lodScale() const { return _lod_scale; }
+
+        CVBF_Optional<osg::Vec3>& location() { return _location; }
+        const CVBF_Optional<osg::Vec3>& location() const { return _location; }
+
+        CVBF_Optional<osg::Vec3>& orientation() { return _orientation;}
+        const CVBF_Optional<osg::Vec3>& orientation() const { return _orientation;}
+
+        CVBF_Optional<ShaderPolicy>& shaderPolicy() { return _shaderPolicy; }
+        const CVBF_Optional<ShaderPolicy>& shaderPolicy() const { return _shaderPolicy; }
+        
+        /**
+         If specified, use this node instead try to load from url
+        */
+        ref_ptr<osg::IVBF_SGNode>& node() { return _node; }
+        const ref_ptr<osg::IVBF_SGNode>& node() const { return _node; }
+
+
+
+    public:
+        SimpleModelOptions( const CVBF_Options& options=CVBF_Options() )
+            : CVBF_OptionsDriverSourceModel( options ),
+              _shaderPolicy( SHADERPOLICY_GENERATE )
+        {
+            setDriver( "simple" );
+            fromConfig( m_conf );
+        }
+
+        virtual ~SimpleModelOptions() { }
+
+    public:
+        CVBF_Config getConfig() const {
+            CVBF_Config conf = CVBF_OptionsDriverSourceModel::getConfig();
+            conf.updateIfSet( "url", _url );
+            conf.updateIfSet( "lod_scale", _lod_scale );
+            conf.updateIfSet( "location", _location );
+            conf.updateIfSet( "orientation", _orientation);
+
+            conf.addIfSet( "shader_policy", "disable",  _shaderPolicy, SHADERPOLICY_DISABLE );
+            conf.addIfSet( "shader_policy", "inherit",  _shaderPolicy, SHADERPOLICY_INHERIT );
+            conf.addIfSet( "shader_policy", "generate", _shaderPolicy, SHADERPOLICY_GENERATE );
+
+            conf.updateNonSerializable( "SimpleModelOptions::Node", _node.get() );
+            return conf;
+        }
+
+    protected:
+        void mergeConfig( const CVBF_Config& conf ) {
+            CVBF_OptionsDriverSourceModel::mergeConfig( conf );
+            fromConfig( conf );
+        }
+
+    private:
+        void fromConfig( const CVBF_Config& conf ) {
+            conf.getIfSet( "url", _url );
+            conf.getIfSet( "lod_scale", _lod_scale );
+            conf.getIfSet( "location", _location);
+            conf.getIfSet( "orientation", _orientation);
+
+            conf.getIfSet( "shader_policy", "disable",  _shaderPolicy, SHADERPOLICY_DISABLE );
+            conf.getIfSet( "shader_policy", "inherit",  _shaderPolicy, SHADERPOLICY_INHERIT );
+            conf.getIfSet( "shader_policy", "generate", _shaderPolicy, SHADERPOLICY_GENERATE );
+
+            _node = conf.getNonSerializable<osg::IVBF_SGNode>( "SimpleModelOptions::Node" );
+        }
+
+        CVBF_Optional<URI> _url;
+        CVBF_Optional<float> _lod_scale;
+        CVBF_Optional<osg::Vec3> _location;
+        CVBF_Optional<osg::Vec3> _orientation;
+        CVBF_Optional<ShaderPolicy> _shaderPolicy;
+        ref_ptr<osg::IVBF_SGNode> _node;
+    };
+
+} } // namespace osgEarth::Drivers
+
+#endif // OSGEARTH_DRIVER_SIMPLE_MODEL_OPTIONS
+

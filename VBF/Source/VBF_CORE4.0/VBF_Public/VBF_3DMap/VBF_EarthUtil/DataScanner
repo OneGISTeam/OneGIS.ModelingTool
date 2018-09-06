@@ -1,0 +1,25 @@
+
+#ifndef OSGEARTHUTIL_DATA_SCANNER_H
+#define OSGEARTHUTIL_DATA_SCANNER_H
+
+#include <VBF_3DMap/VBF_EarthUtil/Common>
+#include <VBF_3DMap/VBF_Terrain/VBF_LayerTerrainImage.h>
+#include <string>
+
+namespace osgEarth { namespace Util
+{
+    // 扫描本地目录，查找影像和高程工具
+    class OSGEARTHUTIL_EXPORT DataScanner
+    {
+    public:
+        DataScanner() { }
+        virtual ~DataScanner() { }
+
+    public:
+        void findImageLayers( const std::string& absRootPath, const std::vector<std::string>& extensions, 
+			                  CVBF_LayersImage& out_imageLayers) const;
+    };
+
+} }
+
+#endif

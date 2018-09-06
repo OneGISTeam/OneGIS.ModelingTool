@@ -1,0 +1,29 @@
+#ifndef OSG_GLOBJECTS
+#define OSG_GLOBJECTS 1
+
+#include <VBF_Engine/VBF_SceneGraph/Export>
+
+namespace osg {
+
+/** Flush all deleted OpenGL objects within the specified availableTime.
+  * Note, must be called from a thread which has current the graphics context associated with contextID. */
+extern OSG_EXPORT void flushDeletedGLObjects(unsigned int contextID, double currentTime, double& availableTime);
+
+/** Flush all deleted OpenGL objects.
+  * Note, must be called from a thread which has current the graphics context associated with contextID. */
+extern OSG_EXPORT void flushAllDeletedGLObjects(unsigned int contextID);
+
+/** Do a GL delete all OpenGL objects.
+  * Note, must be called from a thread which has current the graphics context associated with contextID. */
+extern OSG_EXPORT void deleteAllGLObjects(unsigned int contextID);
+
+/** Discard all OpenGL objects.
+  * Note, unlike deleteAllObjectObjects discard does not
+  * do any OpenGL calls so can be called from any thread, but as a consequence it
+  * also doesn't remove the associated OpenGL resource so discard should only be
+  * called when the associated graphics context is being/has been closed. */
+extern OSG_EXPORT void discardAllGLObjects(unsigned int contextID);
+
+}
+
+#endif

@@ -1,0 +1,47 @@
+#ifndef OSGTEXT_FADETEXT
+#define OSGTEXT_FADETEXT 1
+
+#include <VBF_Engine/VBF_Text/Text>
+
+namespace osgText {
+
+// 渐变文字
+class OSGTEXT_EXPORT FadeText : public osgText::Text
+{
+public:
+
+    FadeText();
+    FadeText(const Text& text,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY);
+
+    META_Object(osgText,FadeText)
+
+    // 设置/获取Alpha值变换的速度
+    void setFadeSpeed(float fadeSpeed) { _fadeSpeed = fadeSpeed; }
+    float getFadeSpeed() const { return _fadeSpeed; }
+
+    // 绘制文字
+    virtual void drawImplementation(osg::RenderInfo& renderInfo) const;
+
+protected:
+
+    virtual ~FadeText() {}
+
+    void init();
+  
+    struct FadeTextUpdateCallback;
+    friend struct FadeTextUpdateCallback;
+
+    typedef std::map<osg::IVBF_ViewBrief*, osg::Vec4 > ViewBlendColourMap;
+    
+    ViewBlendColourMap& getViewBlendColourMap() { return _viewBlendColourMap; }
+    const ViewBlendColourMap& getViewBlendColourMap() const { return _viewBlendColourMap; }
+
+    float _fadeSpeed;
+    
+    mutable ViewBlendColourMap _viewBlendColourMap;
+};
+
+}
+
+
+#endif

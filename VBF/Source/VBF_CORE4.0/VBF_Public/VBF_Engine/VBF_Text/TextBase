@@ -1,0 +1,299 @@
+#ifndef OSGTEXT_TEXTBASE
+#define OSGTEXT_TEXTBASE 1
+
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGDrawable.h>
+
+#include <VBF_Engine/VBF_Text/String>
+#include <VBF_Engine/VBF_Text/KerningType>
+#include <VBF_Engine/VBF_Text/Font>
+
+namespace osgText {
+
+// 文字基类，定义了文字渲染的基本接口。文字的主要属性包括颜色、位置、方向、大小模式、分辨率、
+// 对齐方式、输出格式、绘制模式、背景类型、颜色倾斜模式等
+// 注意：显示中文时需要先将中文变成宽字符（L或W2A（）等），字体需要中文字体
+class OSGTEXT_EXPORT TextBase : public osg::Drawable
+{
+public:
+
+    TextBase();
+    TextBase(const TextBase& text,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY);
+
+    //virtual osg::CVBF_Object* cloneType() const { return new Text(); }
+    //virtual osg::CVBF_Object* clone(const osg::CopyOp& copyop) const { return new Text(*this,copyop); }
+    virtual bool isSameKindAs(const osg::CVBF_Object* obj) const { return dynamic_cast<const TextBase*>(obj)!=NULL; }
+    virtual const char* className() const { return "TextBase"; }
+    virtual const char* libraryName() const { return "osgText"; }
+
+	// 设置/获取颜色
+    void setColor(const osg::Vec4& color);
+    const osg::Vec4& getColor() const { return _color; }
+
+
+	// 设置字体，setFont(0)设置默认字体
+    virtual void setFont(Font* font=0) { setFont(ref_ptr<Font>(font)); };
+    virtual void setFont(ref_ptr<Font> font);
+
+ 	// 设置字体，setFont("")设置默认字体
+    virtual void setFont(const std::string& fontfile);
+    // 获取字体，返回0表示默认字体
+    const Font* getFont() const { return _font.get(); }
+
+
+	// 设置/获取文字的样式
+    void setStyle(Style* style) { _style = style; }
+    Style* getStyle() { return _style.get(); }
+    const Style* getStyle() const { return _style.get(); }
+    Style* getOrCreateStyle() { if (!_style) _style = new Style; return _style.get(); }
+
+	// 设置字体的分辨率。默认情况下，为每个文字图形分配32×32个像素单元。改变字体纹理贴图的分辨率可以调整文字
+	// 的清晰程度，分辨率越大越清晰，渲染负担也越大。
+    void setFontResolution(unsigned int width, unsigned int height);
+
+    unsigned int getFontWidth() const { return _fontSize.first; }
+    unsigned int getFontHeight() const { return _fontSize.second; }
+        
+    // 设置字符串
+    void setText(const String& text);
+    void setText(const std::string& text);
+    void setText(const std::string& text,String::Encoding encoding);
+    void setText(const wchar_t* text);
+    void SetChineseText(const std::string& text);
+
+
+    // 获取字符串。如果更改了字符串，必须调用Text::update()以便更新内部的 glyph。
+    String& getText() { return _text; }
+    const String& getText() const { return _text; }
+
+	// 更新内部的glyph和包围体
+    void update() { computeGlyphRepresentation(); }
+
+
+	// 设置/获取字符大小（使用对象坐标）
+    void setCharacterSize(float height);
+    void setCharacterSize(float height, float aspectRatio);
+    float getCharacterHeight() const { return _characterHeight; }
+    float getCharacterAspectRatio() const { return _style.valid()? _style->getWidthRatio() : 1.0f; }
+
+
+    enum CharacterSizeMode // 大小模式
+    {
+        OBJECT_COORDS, // 默认模式，对象坐标系
+        SCREEN_COORDS, // 屏幕坐标系，以屏幕坐标为常量，进行缩放
+        OBJECT_COORDS_WITH_MAXIMUM_SCREEN_SIZE_CAPPED_BY_FONT_HEIGHT // 根据视点自动缩放
+		                   // text that behavaves like OBJECT_COORDS sized text when a long distance way, but has its screen sized capped automatically when the viewer gets near.
+    };
+
+	// 设置/获取文字的大小模式
+    void setCharacterSizeMode(CharacterSizeMode mode) { _characterSizeMode = mode; }
+    CharacterSizeMode getCharacterSizeMode() const { return _characterSizeMode; }
+
+
+    /** Set the maximum width of the text box.
+      * With horizontal layouts any characters which do not fit are wrapped around.
+      * 0 or negative values indicate that no maximum width is set, lines can be as long as 
+      * they need be to fit thre required text*/
+    void setMaximumWidth(float maximumWidth);
+    
+    /** Get the maximim width of the text box.*/
+    float getMaximumWidth() const { return _maximumWidth; }
+
+    /** Set the maximum height of the text box.
+      * With horizontal layouts any characters which do not fit are wrapped around.
+      * 0 or negative values indicate that no maximum height is set, lines can be as long as 
+      * they need be to fit the required text*/
+    void setMaximumHeight(float maximumHeight);
+    
+    /** Get the maximum height of the text box.*/
+    float getMaximumHeight() const { return _maximumHeight; }
+
+    /** Set the line spacing of the text box, given as a percentage of
+      * the character height. The default value is 0 for backward 
+      * compatibility. For longer paragraphs of text, a value of at 
+      * least 25% (i.e. set line spacing to 0.25) is recommended. */
+    void setLineSpacing(float lineSpacing);
+
+    /** Get the line spacing of the text box. */
+    float getLineSpacing() const { return _lineSpacing; }
+
+
+
+    // 设置/获取位置
+    void setPosition(const osg::Vec3& pos);
+    const osg::Vec3& getPosition() const { return _position; }
+    
+
+    enum AlignmentType // 对齐方式
+    {
+        LEFT_TOP,		// 左上
+        LEFT_CENTER,	// 左中
+        LEFT_BOTTOM,	// 左下
+
+        CENTER_TOP,		// 中上
+        CENTER_CENTER,	// 中心
+        CENTER_BOTTOM,	// 中下
+
+        RIGHT_TOP,		// 右上
+        RIGHT_CENTER,	// 右中
+        RIGHT_BOTTOM,	// 右下
+        
+        LEFT_BASE_LINE,		// 左基线
+        CENTER_BASE_LINE,	// 中间的基线
+        RIGHT_BASE_LINE,	// 右基线
+    
+        LEFT_BOTTOM_BASE_LINE,	// 左下基线
+        CENTER_BOTTOM_BASE_LINE,// 中下基线
+        RIGHT_BOTTOM_BASE_LINE,	// 右下基线
+    
+        BASE_LINE = LEFT_BASE_LINE // 默认值，左基线
+    
+    };
+    
+    void setAlignment(AlignmentType alignment);
+    AlignmentType getAlignment() const { return _alignment; }
+
+
+
+
+    enum AxisAlignment      // 轴对齐模式
+    {
+        XY_PLANE,			// XY平面
+        REVERSED_XY_PLANE,	// XY平面的反面
+        XZ_PLANE,			// XZ平面
+        REVERSED_XZ_PLANE,	// XZ平面的反面
+        YZ_PLANE,			// YZ平面
+        REVERSED_YZ_PLANE,	// YZ平面的反面
+        SCREEN,				// 屏幕
+        USER_DEFINED_ROTATION // 用户自定义旋转
+    };
+	// 设置/获取轴对齐模式（方向）
+    void setAxisAlignment(AxisAlignment axis);
+    AxisAlignment getAxisAlignment() const { return _axisAlignment; }
+    
+
+
+    void setRotation(const osg::Quat& quat);
+    const osg::Quat& getRotation() const { return _rotation; }
+
+    void setAutoRotateToScreen(bool autoRotateToScreen);
+    bool getAutoRotateToScreen() const { return _autoRotateToScreen; }
+
+    enum Layout	// 输出格式
+    {
+        LEFT_TO_RIGHT,	// 从左到右，默认
+        RIGHT_TO_LEFT,	// 从由到左
+        VERTICAL		// 垂直
+    };
+    // 设置输出格式
+    void setLayout(Layout layout);   
+    Layout getLayout() const { return _layout; }
+
+
+    enum DrawModeMask	// 绘制模式
+    {
+        TEXT              = 1,	// 文字，默认
+        BOUNDINGBOX       = 2,	// 包围盒
+        FILLEDBOUNDINGBOX = 4,	// 填充的包围盒
+        ALIGNMENT         = 8	// 
+    };
+
+	// 设置/获取绘制模式，可以组合
+    void setDrawMode(unsigned int mode);  
+    unsigned int getDrawMode() const { return _drawMode; }
+
+	// 设置包围盒边的大小
+    void setBoundingBoxMargin(float margin);    
+    float getBoundingBoxMargin() const { return _textBBMargin; }
+
+	// 设置包围盒的颜色
+    void setBoundingBoxColor(const osg::Vec4& color){ _textBBColor = color; }  
+    const osg::Vec4& getBoundingBoxColor() const { return _textBBColor; }
+
+    
+    void setKerningType(KerningType kerningType) { _kerningType = kerningType; }
+    KerningType getKerningType() const { return _kerningType; }
+
+    // 获取行数 - 在调用computeGlyphRepresentation()之后才有效，否则返回0。
+    unsigned int getLineCount() const { return _lineCount; }
+
+
+    // 设置是否使用mutex确保ref()和unref()的线程安全性
+    virtual void setThreadSafeRefUnref(bool threadSafe);
+
+    // 改变每个上下文GLObject buffers 为指定大小
+    virtual void resizeGLObjectBuffers(unsigned int maxSize);
+
+	// 如果State非0, 释放特定GC的OpenGL对象，否则释放所有GC的OpenGL对象。
+    virtual void releaseGLObjects(osg::State* state=0) const;
+
+    
+    virtual osg::BoundingBox computeBound() const;
+
+protected:
+
+    virtual ~TextBase();
+
+    void positionCursor(const osg::Vec2 & endOfLine_coords, osg::Vec2 & cursor, unsigned int linelength);
+    void computePositions();
+    String::iterator computeLastCharacterOnLine(osg::Vec2& cursor, String::iterator first,String::iterator last);
+
+
+    virtual void computePositions(unsigned int contextID) const = 0;
+    virtual void computeGlyphRepresentation() = 0;
+    
+    
+    // members which have public access.
+    osg::Vec4                               _color;
+    ref_ptr<Font>                      _font;
+    ref_ptr<Style>                     _style;
+    FontResolution                          _fontSize;
+    float                                   _characterHeight;
+    CharacterSizeMode                       _characterSizeMode;
+    float                                   _maximumWidth;
+    float                                   _maximumHeight;
+    float                                   _lineSpacing;
+
+    String                                  _text;
+    osg::Vec3                               _position;
+    AlignmentType                           _alignment;
+    AxisAlignment                           _axisAlignment;
+    osg::Quat                               _rotation;
+    bool                                    _autoRotateToScreen;
+    Layout                                  _layout;
+    unsigned int                            _drawMode;
+    float                                   _textBBMargin;
+    osg::Vec4                               _textBBColor;
+    KerningType                             _kerningType;
+    unsigned int                            _lineCount;
+
+    
+
+    // internal caches of the positioning of the text.
+    
+    struct AutoTransformCache
+    {    
+        AutoTransformCache():
+            _traversalNumber(-1),
+            _width(0),
+            _height(0) {}
+    
+        int         _traversalNumber;
+        int         _width;
+        int         _height;
+        osg::Vec3   _transformedPosition;
+        osg::Matrix _modelview;
+        osg::Matrix _projection;
+        osg::Matrix _matrix;
+    };
+    
+    mutable osg::buffered_object<AutoTransformCache>    _autoTransformCache;
+    mutable osg::Vec3                                   _offset;
+    mutable osg::Vec3                                   _normal;
+    mutable osg::BoundingBox                            _textBB;
+};
+
+}
+
+
+#endif
+ 

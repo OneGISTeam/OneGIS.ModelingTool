@@ -1,0 +1,91 @@
+#ifndef OSGEARTHUTIL_FEATURE_DRAGGER_TOOL_H
+#define OSGEARTHUTIL_FEATURE_DRAGGER_TOOL_H 1
+
+#include <VBF_3DMap/VBF_EarthUtil/Common>
+
+#include <VBF_3DMap/VBF_EarthUtil/FeatureQueryTool>
+#include <VBF_3DMap/VBF_Features/FeatureDrawSet.h>
+#include <VBF_3DMap/VBF_Annotation/CircleNode.h>
+#include <VBF_3DMap/VBF_Annotation/AnnotationEditing.h>
+#include <VBF_3DMap/VBF_Terrain/VBF_MapNode.h>
+#include <VBF_3DMap/VBF_Terrain/Draggers.h>
+#include <VBF_Common/VBF_Utils/VBF_Units.h>
+#include <VBF_Display/VBF_Manipulator/VBF_GUIEventHandler.h>
+#include <VBF_Engine/VBF_SceneGraph/VBF_CameraSlave.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGNodeGroupTransformMatrix.h>
+
+namespace osgEarth { namespace Util
+{
+    using namespace osgEarth;
+    using namespace osgEarth::Annotation;
+
+
+    // 选中一个 feature并拖动它
+    class OSGEARTHUTIL_EXPORT FeatureManipTool : public FeatureQueryTool, public FeatureQueryTool::Callback
+    {
+    public:
+
+        FeatureManipTool( CVBFO_SGNodeMap* mapNode, bool verticalEnabled=false );
+        virtual ~FeatureManipTool() { }
+
+        /**
+         * Sets the position of the dragger
+         */
+        void setPosition( const GeoPoint& pos );
+
+        /**
+         * Sets the rotation of the dragger
+         */
+        void setRotation( const Angle& angle );
+
+        /**
+         * Cancels a manipulation in progress
+         */
+        void cancel();
+
+        /**
+         * Commits a manipulation in progress, buring in the new verts.
+         */
+        void commit();
+
+
+    public: // FeatureQueryTool::Callback
+        virtual void onHit( FeatureSourceIndexNode* index, FeatureID fid, const EventArgs& args );
+        virtual void onMiss( const EventArgs& args );
+
+    public: // GUIEventHandler
+        virtual bool handle( const osgGA::GUIEventAdapter& ea, ::IVBF_GUIActionAdapter& aa );
+
+    public: // internal
+        void syncToDraggers(bool wasVertical=false);
+
+    protected:
+
+        /**
+         * Alters the appearance of the "manipulated" model. Override this method to provide a
+         * custom appearance.
+         */
+        virtual osg::IVBF_SGNode* configureManip( osg::IVBF_SGNode* node ) const;
+
+        /**
+         * Alters the appearance of the "ghost" model. Override this method to provide a
+         * custom appearance.
+         */
+        virtual osg::IVBF_SGNode* configureGhost( osg::IVBF_SGNode* node ) const;
+
+    protected:
+        FeatureDrawSet                     _drawSet;
+        ref_ptr<osg::IVBF_SGNodeGroupTransformMatrix> _manipModel;
+        ref_ptr<osg::IVBF_SGNode>            _ghostModel;
+        bool                               _verticalEnabled;
+        double                             _verticalOffset;
+        double                             _verticalDraggerOffset;
+        ref_ptr<CircleNode>           _circle;
+        ref_ptr<CircleNodeEditor>     _circleEditor;
+        ref_ptr<SphereDragger>        _verticalDragger;
+        ref_ptr<osg::IVBF_SGNodeGroup>           _workGroup;
+    };
+
+} } // namespace VBF_EarthUtil
+
+#endif // OSGEARTHUTIL_FEATURE_DRAGGER_TOOL_H

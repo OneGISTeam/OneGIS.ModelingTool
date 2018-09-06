@@ -1,0 +1,60 @@
+#ifndef OSGFX_VALIDATOR_
+#define OSGFX_VALIDATOR_
+
+#include <VBF_Engine/VBF_FX/VBF_Effect.h>
+
+#include <VBF_Base/ref_ptr>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_StateAttribute.h>
+
+#include <vector>
+
+namespace osgFX
+{
+
+    /**
+     该类用于osgFX::Effect在不同的技术之间动态选择。
+	 apply()调用每个技术（technique）的validate()方法并把结果存储到一个buffered array。	 
+	 Effect选择GC支持的第一个有效的技术  
+     */
+    class OSGFX_EXPORT Validator: public osg::StateAttribute 
+	{
+    public:
+        
+        Validator();
+        Validator(Effect* effect);
+        Validator(const Validator& copy, const osg::CopyOp& copyop = osg::CopyOp::SHALLOW_COPY);
+
+        META_StateAttribute(osgFX, Validator, VALIDATOR);
+
+        void apply(osg::State& state) const;
+        void compileGLObjects(osg::State& state) const;
+
+        inline int compare(const osg::StateAttribute& sa) const;
+        
+        inline void disable() { _effect = 0; }
+
+    protected:
+        virtual ~Validator() {}
+        Validator& operator=(const Validator&) { return *this; }
+
+    private:
+        mutable Effect* _effect;
+    };
+
+    // INLINE METHODS
+
+    inline int Validator::compare(const osg::StateAttribute& sa) const
+    {
+        // check the types are equal and then create the rhs variable
+        //used by the COMPARE_StateAttribute_Parameter macros below.
+        COMPARE_StateAttribute_Types(Validator,sa)
+        
+        // compare parameters
+        COMPARE_StateAttribute_Parameter(_effect)
+
+        return 0;
+    }
+
+}
+
+#endif

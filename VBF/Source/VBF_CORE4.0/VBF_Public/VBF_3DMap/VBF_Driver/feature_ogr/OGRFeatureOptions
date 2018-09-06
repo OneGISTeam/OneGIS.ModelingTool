@@ -1,0 +1,112 @@
+/* -*-c++-*- */
+/* osgEarth - Dynamic map generation toolkit for OpenSceneGraph
+ * Copyright 2008-2013 Pelican Mapping
+ * http://osgearth.org
+ *
+ * osgEarth is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ */
+#ifndef OSGEARTH_DRIVER_OGR_FEATURE_SOURCE_OPTIONS
+#define OSGEARTH_DRIVER_OGR_FEATURE_SOURCE_OPTIONS 1
+
+#include <VBF_3DMap/VBF_Terrain/Common.h>
+#include <VBF_3DMap/VBF_Features/VBF_SourceFeature.h>
+
+namespace osgEarth { namespace Drivers
+{
+    using namespace osgEarth;
+    using namespace osgEarth::Features;
+
+    class OGRFeatureOptions : public CVBF_OptionsDriverSourceFeature // NO EXPORT; header only
+    {
+    public:
+        CVBF_Optional<URI>& url() { return _url; }
+        const CVBF_Optional<URI>& url() const { return _url; }
+
+        CVBF_Optional<std::string>& connection() { return _connection; }
+        const CVBF_Optional<std::string>& connection() const { return _connection; }
+
+        CVBF_Optional<std::string>& ogrDriver() { return _ogrDriver; }
+        const CVBF_Optional<std::string>& ogrDriver() const { return _ogrDriver; }
+
+        CVBF_Optional<bool>& buildSpatialIndex() { return _buildSpatialIndex; }
+        const CVBF_Optional<bool>& buildSpatialIndex() const { return _buildSpatialIndex; }
+
+        CVBF_Optional<CVBF_Config>& geometryConfig() { return _geometryConf; }
+        const CVBF_Optional<CVBF_Config>& geometryConfig() const { return _geometryConf; }
+
+        CVBF_Optional<std::string>& geometryUrl() { return _geometryUrl; }
+        const CVBF_Optional<std::string>& geometryUrl() const { return _geometryUrl; }
+
+        CVBF_Optional<unsigned int>& layer() { return _layer; }
+        const CVBF_Optional<unsigned int>& layer() const { return _layer; }
+
+        // does not serialize
+        ref_ptr<Symbology::Geometry>& geometry() { return _geometry; }
+        const ref_ptr<Symbology::Geometry>& geometry() const { return _geometry; }
+
+    public:
+        OGRFeatureOptions( const CVBF_Options& opt =CVBF_Options() ) : CVBF_OptionsDriverSourceFeature( opt ) {
+            setDriver( "ogr" );
+            fromConfig( m_conf );
+        }
+
+        virtual ~OGRFeatureOptions() { }
+
+    public:
+        CVBF_Config getConfig() const {
+            CVBF_Config conf = CVBF_OptionsDriverSourceFeature::getConfig();
+            conf.updateIfSet( "url", _url );
+            conf.updateIfSet( "connection", _connection );
+            conf.updateIfSet( "ogr_driver", _ogrDriver );
+            conf.updateIfSet( "build_spatial_index", _buildSpatialIndex );
+            conf.updateIfSet( "geometry", _geometryConf );    
+            conf.updateIfSet( "geometry_url", _geometryUrl );
+            conf.updateIfSet( "layer", _layer );
+            conf.updateNonSerializable( "OGRFeatureOptions::geometry", _geometry.get() );
+            return conf;
+        }
+
+    protected:
+        void mergeConfig( const CVBF_Config& conf ) {
+            CVBF_OptionsDriverSourceFeature::mergeConfig( conf );
+            fromConfig( conf );
+        }
+
+    private:
+        void fromConfig( const CVBF_Config& conf ) {
+            conf.getIfSet( "url", _url );
+            conf.getIfSet( "connection", _connection );
+            conf.getIfSet( "ogr_driver", _ogrDriver );
+            conf.getIfSet( "build_spatial_index", _buildSpatialIndex );
+            conf.getIfSet( "geometry", _geometryConf );
+            conf.getIfSet( "geometry_url", _geometryUrl );
+            conf.getIfSet( "layer", _layer);
+            _geometry = conf.getNonSerializable<Symbology::Geometry>( "OGRFeatureOptions::geometry" );
+        }
+
+        CVBF_Optional<URI>                     _url;
+        CVBF_Optional<std::string>             _connection;
+        CVBF_Optional<std::string>             _ogrDriver;
+        CVBF_Optional<bool>                    _buildSpatialIndex;
+        CVBF_Optional<CVBF_Config>                  _geometryConf;
+        CVBF_Optional<CVBF_Config>                  _geometryProfileConf;
+        CVBF_Optional<std::string>             _geometryUrl;
+        CVBF_Optional<unsigned int >           _layer;
+        ref_ptr<Symbology::Geometry> _geometry;
+    };
+
+} } // namespace osgEarth::Drivers
+
+#endif // OSGEARTH_DRIVER_OGR_FEATURE_SOURCE_OPTIONS
+

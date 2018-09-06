@@ -1,0 +1,39 @@
+#ifndef OSGANIMATION_BASIC_ANIMATION_MANAGER_H
+#define OSGANIMATION_BASIC_ANIMATION_MANAGER_H
+
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGroupImpl.h>
+#include <VBF_Engine/VBF_Animation/AnimationManagerBase>
+#include <VBF_Engine/VBF_Animation/Export>
+#include <VBF_Base/VBF_FrameStamp.h>
+
+namespace osgAnimation
+{
+    class OSGANIMATION_EXPORT BasicAnimationManager : public AnimationManagerBase
+    {
+    public:
+
+        META_Object(osgAnimation, BasicAnimationManager);
+  
+        BasicAnimationManager();
+        BasicAnimationManager(const AnimationManagerBase& b, const osg::CopyOp& copyop = osg::CopyOp::SHALLOW_COPY); 
+        virtual ~BasicAnimationManager();
+
+        void update (double time);
+
+        void playAnimation (Animation* pAnimation, int priority = 0, float weight = 1.0);
+        bool stopAnimation (Animation* pAnimation);
+
+        bool findAnimation (Animation* pAnimation);
+        bool isPlaying (Animation* pAnimation);
+        bool isPlaying (const std::string& animationName);
+
+        void stopAll();
+    
+    protected:
+        typedef std::map<int, AnimationList > AnimationLayers;
+        AnimationLayers _animationsPlaying;
+        double _lastUpdate;
+    };
+
+}
+#endif

@@ -1,0 +1,191 @@
+#ifndef OSGUTIL_RENDERBIN
+#define OSGUTIL_RENDERBIN 1
+
+#include <VBF_Engine/VBF_SGUtil/StateGraph>
+
+#include <map>
+#include <vector>
+#include <string>
+
+namespace osgUtil {
+
+class RenderStage;
+class Statistics;
+/*
+
+渲染元：它是OSG 渲染树的分支节点，负责管理自定义渲染顺序的末端StateGraph节点（附带渲染页）。
+不过对于没有特殊要求的场景渲染来说，更多的渲染树分支也许并不需要：
+场景中需要渲染的元素及其渲染属性被保存到各个“状态节点”和“渲染叶”当中；渲染树只要按照遍历的顺序，把这些数据记录
+到作为根节点的“渲染台”当中（即分别保存到std::vector 成员量RenderBin::_stateGraphList
+和RenderBin::_renderLeafList 当中，注意RenderStage 派生自RenderBin），就可以执行场景
+的绘制工作了。
+但是，很多时候我们需要某些几何体在其它对象之前被绘制，比如天空总是要被任何飞
+过的物体所遮挡；很多时候我们也需要在大部分对象绘制完成之后才绘制某个几何体的数据
+（例如HUD 文字总是显示在所有对象之上）。这种情况下，就有必要对“渲染台”中的数
+据进行排序，甚至为其创建新的分支“渲染元”，以实现这种复杂的渲染顺序处理。
+在用户程序中，渲染顺序通过StateSet::setRenderBinDetails 实现设置。这个函数有两个
+传入参数，整型数表示渲染的顺序，以0 为标准，小于0 的渲染状态集（亦即包含了这个
+StateSet 的StateGraph 状态节点）将排列在前，大于0 的则排列在后；字符串参数“RenderBin”
+或者“DepthSortedBin”作为名称时有特殊含义，其中“RenderBin”表示在渲染树中新建分
+支进行渲染，“DepthSortedBin”表示新建分支，并且所有要渲染的数据将按照深度值降序进
+行排序。
+注意，当字符串参数不为“RenderBin”或“DepthSortedBin”时，渲染顺序的设定也是
+无效的；当字符串参数和整型参数均有效时，OSG 系统将尝试寻找同类型的渲染元节点并
+将StateSet 记录到此“渲染元”中，或者创建新的“渲染元”节点。相关的示例代码如下：
+// 缺省渲染方式，渲染顺序0，此时状态节点直接置入“渲染台”
+
+不同的渲染元可以提高性能或使用不同的渲染算法
+ */
+class OSGUTIL_EXPORT RenderBin : public osg::CVBF_Object
+{
+    public:
+
+        typedef std::vector<RenderLeaf*>                    RenderLeafList; 
+        typedef std::vector<StateGraph*>                    StateGraphList;
+        typedef std::map< int, ref_ptr<RenderBin> >    RenderBinList; 
+
+        enum SortMode //排序模式
+        {
+            SORT_BY_STATE,						// 按状态排序：事实上不排序，用于不透明体
+            SORT_BY_STATE_THEN_FRONT_TO_BACK,   // 首先获取当前渲染元所保存的所有头状态节点（StateGraph），将每个节点中所有的渲染叶对象按深度升序排序；然后将各个状态节点按最小深度值升序排序（即，保存有深度值最小的渲染叶的节点排在最前）。
+            SORT_FRONT_TO_BACK,					// 与SORT_BACK_TO_FRONT相反
+            SORT_BACK_TO_FRONT,					// 按深度排序，从后向前，用于透明体
+            TRAVERSAL_ORDER
+        };
+
+        
+
+        static RenderBin* createRenderBin(const std::string& binName);			// 创建渲染元
+        static RenderBin* getRenderBinPrototype(const std::string& binName);	// 获取渲染元
+        static void addRenderBinPrototype(const std::string& binName,RenderBin* proto);	// 添加渲染元
+        static void removeRenderBinPrototype(RenderBin* proto);							// 移除渲染元
+
+        static void setDefaultRenderBinSortMode(SortMode mode);	// 设置渲染元默认的排序方式
+        static SortMode getDefaultRenderBinSortMode();			// 获取渲染元默认的排序方式
+
+
+
+        RenderBin();
+        RenderBin(SortMode mode);
+        RenderBin(const RenderBin& rhs,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY);
+
+
+        virtual osg::CVBF_Object* cloneType() const { return new RenderBin(); }
+        virtual osg::CVBF_Object* clone(const osg::CopyOp& copyop) const { return new RenderBin(*this,copyop); } // note only implements a clone of type.
+        virtual bool isSameKindAs(const osg::CVBF_Object* obj) const { return dynamic_cast<const RenderBin*>(obj)!=0L; }
+        virtual const char* libraryName() const { return "osgUtil"; }
+        virtual const char* className() const { return "RenderBin"; }
+
+        virtual void reset();
+
+
+		// 状态集合
+        void setStateSet(osg::StateSet* stateset) { _stateset = stateset; }
+        osg::StateSet* getStateSet() { return _stateset.get(); }
+        const osg::StateSet* getStateSet() const { return _stateset.get(); }
+
+
+		// 父子关系
+        RenderBin* getParent() { return _parent; }
+        const RenderBin* getParent() const { return _parent; }
+
+        RenderStage* getStage() { return _stage; }
+        const RenderStage* getStage() const { return _stage; }
+
+        int getBinNum() const { return _binNum; }
+
+        StateGraphList& getStateGraphList() { return _stateGraphList; }
+        const StateGraphList& getStateGraphList() const { return _stateGraphList; }
+
+        RenderBinList& getRenderBinList() { return _bins; }
+        const RenderBinList& getRenderBinList() const { return _bins; }
+
+        RenderLeafList& getRenderLeafList() { return _renderLeafList; }
+        const RenderLeafList& getRenderLeafList() const { return _renderLeafList; }
+
+
+        RenderBin* find_or_insert(int binNum,const std::string& binName);
+
+        void addStateGraph(StateGraph* rg)
+        {
+            _stateGraphList.push_back(rg);
+        }
+
+        virtual void sort();
+        virtual void sortImplementation();
+
+		// 设置/获取排序模式
+        void setSortMode(SortMode mode);
+        SortMode getSortMode() const { return _sortMode; }
+
+        virtual void sortByState();
+        virtual void sortByStateThenFrontToBack();
+        virtual void sortFrontToBack();
+        virtual void sortBackToFront();
+        virtual void sortTraversalOrder();
+
+
+		// 设置自定义的渲染树排序
+        struct SortCallback : public ::CVBF_Referenced    
+        {
+            virtual void sortImplementation(RenderBin*) = 0;
+        };		
+        void setSortCallback(SortCallback* sortCallback) { _sortCallback = sortCallback; }
+        SortCallback* getSortCallback() { return _sortCallback.get(); }
+        const SortCallback* getSortCallback() const { return _sortCallback.get(); }
+
+
+
+        virtual void draw(osg::RenderInfo& renderInfo,RenderLeaf*& previous);
+        virtual void drawImplementation(osg::RenderInfo& renderInfo,RenderLeaf*& previous);
+
+		// 自定义的绘制
+        struct DrawCallback : public ::CVBF_Referenced    
+        {
+            virtual void drawImplementation(RenderBin* bin,osg::RenderInfo& renderInfo,RenderLeaf*& previous) = 0;
+        };
+        void setDrawCallback(DrawCallback* drawCallback) { _drawCallback = drawCallback; }
+        DrawCallback* getDrawCallback() { return _drawCallback.get(); }
+        const DrawCallback* getDrawCallback() const { return _drawCallback.get(); }
+
+
+	
+        bool getStats(Statistics& primStats) const;// 获取当前绘制列表的统计数据
+
+        virtual unsigned int computeNumberOfDynamicRenderLeaves() const; // 计算动态渲染页的个数
+
+        void copyLeavesFromStateGraphListToRenderLeafList();
+
+ 		// 如果State非0, 释放特定GC的OpenGL对象，否则释放所有GC的OpenGL对象。 //!!!注意：State需要优化掉，改为unsigned int contextID*/	
+        virtual void releaseGLObjects(osg::State* state= 0) const;
+
+    protected:
+
+        virtual ~RenderBin();
+   
+        int                             _binNum;
+        RenderBin*                      _parent;
+        RenderStage*                    _stage;
+
+		// 树
+        RenderBinList                   _bins;           // 分支"渲染元"
+        StateGraphList                  _stateGraphList; // 状态树枝列表（当前渲染元）
+        RenderLeafList                  _renderLeafList; // 渲染树页列表（当前渲染元）
+
+		// 排序
+        bool                            _sorted;          // 是否已经排序     
+        SortMode                        _sortMode;		  // 排序模式
+        ref_ptr<SortCallback>      _sortCallback;    // 自定义的渲染树排序
+
+
+        ref_ptr<DrawCallback>      _drawCallback;
+
+        ref_ptr<osg::StateSet>     _stateset;
+
+};
+
+}
+
+#endif
+
+    

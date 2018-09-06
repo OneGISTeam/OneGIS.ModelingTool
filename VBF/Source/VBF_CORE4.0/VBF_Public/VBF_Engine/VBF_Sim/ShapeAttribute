@@ -1,0 +1,115 @@
+#ifndef OSGSIM_SHAPEATTRIBUTE
+#define OSGSIM_SHAPEATTRIBUTE 1
+
+#include <VBF_Engine/VBF_SceneGraph/VBF_Object.h>
+#include <Types/MixinVector>
+
+#include <VBF_Engine/VBF_Sim/Export>
+
+namespace osgSim
+{
+
+class OSGSIM_EXPORT ShapeAttribute
+{
+    public:
+        /// ShapeAttribute data type. 
+        enum Type
+        {
+            UNKNOWN,
+            INTEGER,
+            DOUBLE,
+            STRING
+        };
+      
+        ShapeAttribute();
+        ShapeAttribute(const char * name);
+        ShapeAttribute(const char * name, int value);
+        ShapeAttribute(const char * name, double value);
+        
+        /** Note, ShapeAttribute takes a copy of both name and value, the calling code should manage its own clean up of the original strings.*/
+        ShapeAttribute(const char * name, const char * value);
+        
+        ShapeAttribute(const ShapeAttribute & sa);
+            
+        ~ShapeAttribute();
+        
+        ShapeAttribute& operator = (const ShapeAttribute& sa);
+        
+        /** return -1 if *this < *rhs, 0 if *this==*rhs, 1 if *this>*rhs.*/
+        int compare(const osgSim::ShapeAttribute& sa) const;
+
+        inline bool operator == (const osgSim::ShapeAttribute& sa) const { return compare(sa)==0; }
+        inline bool operator != (const osgSim::ShapeAttribute& sa) const { return compare(sa)!=0; }
+        inline bool operator <  (const osgSim::ShapeAttribute& sa) const { return compare(sa)<0; }
+
+        /// Get the attribute name.
+        const std::string & getName() const { return m_sName; }
+
+        /// Set the attribute name.
+        void setName(const std::string& name) { m_sName = name; }
+
+        /// Get the attribute data type.
+        const Type getType() const { return _type; }
+        
+        /// Get the attribute data as an int.
+        int getInt() const { return _integer; }
+
+        /// Get the attribute data as a double.
+        double getDouble() const { return _double; }
+
+        /// Get the attribute data as a string.
+        const char * getString() const { return _string; }
+       
+        /// Set an integer attribute data.
+        void setValue(int value) { free(); _type = INTEGER; _integer = value; }
+
+        /// Set a double attribute data.
+        void setValue(double value) { free(); _type = DOUBLE; _double = value; }
+
+        /// Set a string attribute data.
+        void setValue(const char * value);
+
+        
+    private:
+    
+        void free();
+        void copy(const ShapeAttribute& sa);
+        
+        std::string m_sName;
+        Type _type;
+        
+        union
+        {
+            int _integer;
+            double _double;
+            char* _string;
+        };
+};
+
+class OSGSIM_EXPORT ShapeAttributeList : public osg::CVBF_Object, public osg::MixinVector<ShapeAttribute>
+{
+    public:
+        META_Object(osgSim, ShapeAttributeList)
+    
+        ShapeAttributeList():
+            CVBF_Object()
+        {}
+        
+        /** Copy constructor, optional CopyOp object can be used to control
+          * shallow vs deep copying of dynamic data.*/
+        ShapeAttributeList(const ShapeAttributeList& sal,const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY):
+            osg::CVBF_Object(sal, copyop),
+            osg::MixinVector<ShapeAttribute>(sal)
+        {
+        }
+    
+        /** return -1 if *this < *rhs, 0 if *this==*rhs, 1 if *this>*rhs.*/
+        virtual int compare(const osgSim::ShapeAttributeList& sal) const;
+        
+    protected:
+        virtual ~ShapeAttributeList() {}
+};
+
+}
+
+#endif // ** SHAPEATTRIBUTE_ ** //

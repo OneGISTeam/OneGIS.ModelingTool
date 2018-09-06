@@ -1,0 +1,53 @@
+#ifndef OSGEARTHUTIL_DETAIL_TEXTURE_H
+#define OSGEARTHUTIL_DETAIL_TEXTURE_H
+
+#include <VBF_3DMap/VBF_EarthUtil/Common>
+#include <VBF_Engine/VBF_SceneGraph/Image>
+#include <VBF_Engine/VBF_SceneGraph/Uniform>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeImpl.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_StateAttrTexture2D.h>
+#include <VBF_Base/observer_ptr>
+
+namespace osgEarth { namespace Util
+{
+	// 细节纹理：在地形上使用细节纹理的控制器
+    class OSGEARTHUTIL_EXPORT DetailTexture
+    {
+    public:
+        DetailTexture();
+        virtual ~DetailTexture();
+
+		// 把细节纹理关联到地形，设置NULL解除关联细节纹理
+        void setTerrainNode( osg::IVBF_SGNode* node );
+
+		// 设置/获取开始使用细节纹理的LOD级
+        void setBaseLOD( unsigned lod );
+        unsigned getBaseLOD() const { return _baseLOD; }
+
+        // 设置/获取亮度(0=none, 1=full)
+        void setIntensity( float value );
+        float getIntensity() const { return _intensity; }
+		
+		// 设置/获取细节纹理的图像
+        void setImage( const osg::Image* image );
+        const osg::Image* getImage() const { return _texture->getImage(); }
+
+		// 设置/获取GPU使用纹理单元（默认为1）
+        void setImageUnit( unsigned unit );
+        unsigned getImageUnit() const { return _unit; }
+
+    protected:
+        observer_ptr<osg::IVBF_SGNode> _terrain;
+        unsigned                     _unit;
+        float                        _intensity;
+        unsigned                     _baseLOD;
+
+        ref_ptr<osg::Uniform>   _intensityUniform;
+        ref_ptr<osg::Uniform>   _baseLODUniform;
+        ref_ptr<osg::Uniform>   _samplerUniform;
+        ref_ptr<osg::Texture2D> _texture;
+    };
+
+} } // namespace osgEarth::Util
+
+#endif // OSGEARTHUTIL_DATA_SCANNER_H

@@ -1,0 +1,119 @@
+#ifndef OSGUTIL_RENDERLEAF
+#define OSGUTIL_RENDERLEAF 1
+
+#include <VBF_Base/ref_ptr>
+#include <Types/VBF_Matrix.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGDrawable.h>
+#include <VBF_Engine/VBF_SceneGraph/VBF_StateMachine.h>
+
+#include <VBF_Engine/VBF_SGUtil/Export>
+
+namespace osgUtil {
+
+#define OSGUTIL_RENDERBACKEND_USE_REF_PTR
+
+class StateGraph;
+
+/** Container class for all data required for rendering of drawables.
+  */
+class OSGUTIL_EXPORT RenderLeaf : public CVBF_Referenced
+{
+    public:
+
+	    //h00017
+		//inline RenderLeaf(osg::Drawable* drawable,osg::RefMatrix* projection,osg::RefMatrix* modelview,float depth=0.0f, unsigned int traversalNumber=0):
+        inline RenderLeaf(osg::Drawable* drawable,osg::RefMatrix* projection,osg::RefMatrix* modelview,osg::RefMatrix* world, float depth=0.0f, unsigned int traversalNumber=0):
+            CVBF_Referenced(false),
+            _parent(0),
+            _drawable(drawable),
+            _projection(projection),
+            _modelview(modelview),
+			//h00017
+			_worldMat(world),
+			//h00017
+            _depth(depth),
+            _traversalNumber(traversalNumber)
+        {
+            _dynamic = (drawable->getDataVariance()==osg::CVBF_Object::DYNAMIC);
+        }
+
+		//h00017
+		//inline void set(osg::Drawable* drawable,osg::RefMatrix* projection,osg::RefMatrix* modelview,float depth=0.0f, unsigned int traversalNumber=0)
+        inline void set(osg::Drawable* drawable,osg::RefMatrix* projection,osg::RefMatrix* modelview, osg::RefMatrix* world,float depth=0.0f, unsigned int traversalNumber=0)
+        {
+            _parent = 0;
+            _drawable = drawable;
+            _projection = projection,
+            _modelview = modelview,
+			//h00017
+			_worldMat = world;
+			//h00017
+            _depth = depth;
+            _dynamic = (drawable->getDataVariance()==osg::CVBF_Object::DYNAMIC);
+            _traversalNumber = traversalNumber;
+        }
+
+        inline void reset()
+        {
+            _parent = 0;
+            _drawable = 0;
+            _projection = 0;
+            _modelview = 0;
+			//h00017
+			_worldMat = 0;
+			//h00017
+            _depth = 0.0f;
+            _dynamic = false;
+            _traversalNumber = 0;
+        }
+
+        virtual void render(osg::RenderInfo& renderInfo,RenderLeaf* previous);
+
+        /// Allow StateGraph to change the RenderLeaf's _parent.
+        friend class osgUtil::StateGraph;
+
+    public:
+
+
+
+        StateGraph*                     _parent;
+
+#ifdef OSGUTIL_RENDERBACKEND_USE_REF_PTR
+        ref_ptr<osg::Drawable>     _drawable;
+        const osg::Drawable* getDrawable() const { return _drawable.get(); }
+#else
+        osg::Drawable*                  _drawable;
+        const osg::Drawable* getDrawable() const { return _drawable; }
+#endif
+        ref_ptr<osg::RefMatrix>    _projection;
+        ref_ptr<osg::RefMatrix>    _modelview;
+	//h00017
+	ref_ptr<osg::RefMatrix>    _worldMat;
+	//h00017
+        float                           _depth;
+        bool                            _dynamic;
+        unsigned int                    _traversalNumber;
+
+    private:
+
+        // Ω˚÷π¥¥Ω®ø’µƒ‰÷»æ“≥
+        RenderLeaf(): CVBF_Referenced(false), 
+            _parent(0),
+            _drawable(0),
+            _projection(0),
+            _modelview(0),
+		//h00017
+		_worldMat(0),
+		//h00017
+            _depth(0.0f),
+            _traversalNumber(0) {}
+
+        // Ω˚÷πøΩ±¥‰÷»æ“≥
+        RenderLeaf(const RenderLeaf&):CVBF_Referenced(false) {}
+        RenderLeaf& operator = (const RenderLeaf&) { return *this; }
+
+};
+
+}
+
+#endif

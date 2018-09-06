@@ -1,0 +1,54 @@
+#ifndef OSGEARTH_DRIVER_GMV_FEATURE_SOURCE_OPTIONS
+#define OSGEARTH_DRIVER_GMV_FEATURE_SOURCE_OPTIONS 1
+
+#include <VBF_3DMap/VBF_Terrain/Common.h>
+#include <VBF_3DMap/VBF_Features/VBF_SourceFeature.h>
+
+namespace osgEarth { namespace Drivers
+{
+    using namespace osgEarth;
+    using namespace osgEarth::Features;
+
+    class GMVFeatureOptions : public CVBF_OptionsDriverSourceFeature // NO EXPORT; header only
+    {
+    public:
+        CVBF_Optional<URI>& url() { return _url; }
+        const CVBF_Optional<URI>& url() const { return _url; }
+
+    public:
+        GMVFeatureOptions( const CVBF_Options& opt =CVBF_Options() ) : CVBF_OptionsDriverSourceFeature( opt )
+        {
+            setDriver( "GMV" );
+            fromConfig( m_conf );
+        }
+
+        virtual ~GMVFeatureOptions() { }
+
+    public:
+        CVBF_Config getConfig() const
+        {
+            CVBF_Config conf = CVBF_OptionsDriverSourceFeature::getConfig();
+            conf.updateIfSet( "url", _url );
+            return conf;
+        }
+
+    protected:
+        void mergeConfig( const CVBF_Config& conf )
+        {
+            CVBF_OptionsDriverSourceFeature::mergeConfig( conf );
+            fromConfig( conf );
+        }
+
+    private:
+        void fromConfig( const CVBF_Config& conf )
+        {
+            conf.getIfSet( "url", _url );
+         }
+
+        CVBF_Optional<URI>                     _url;// ÎÄ¼þÃû
+    };
+
+} } // namespace osgEarth::Drivers
+
+#endif // OSGEARTH_DRIVER_GMV_FEATURE_SOURCE_OPTIONS
+

@@ -1,0 +1,303 @@
+#ifndef OSGUTIL_STATEGRAPH
+#define OSGUTIL_STATEGRAPH 1
+
+#include <Types/VBF_Matrix.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGDrawable.h>
+#include <VBF_Engine/VBF_SceneGraph/StateSet>
+#include <VBF_Engine/VBF_SceneGraph/VBF_StateMachine.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_StateAttrLight.h>
+
+#include <VBF_Engine/VBF_SGUtil/RenderLeaf>
+
+#include <set>
+#include <vector>
+#include <algorithm>
+
+namespace osgUtil {
+
+struct LessDepthSortFunctor
+{
+    bool operator() (const ref_ptr<RenderLeaf>& lhs,const ref_ptr<RenderLeaf>& rhs)
+    {
+        return (lhs->_depth < rhs->_depth);
+    }
+};
+
+/** 包含在renderBin中，定义被绘制的场景（按照渲染树而不是场景树）。
+“状态节点”。相当于场景树的组节点（Group），将StateGraph理解为OSG 渲染后台的组节点。
+它的组织结构与场景图形的节点结构类似，但是状态树的构建主要以节点的渲染状态集（StateSet）为依据：
+设置了StateSet 的场景节点，其渲染状态会被记录到“状态节点”中，并保持它在原场景树中的相对位置；
+状态节点采用映射表std::map 来组织它的子节点，同一层次的子节点如果渲染状态相同，则合并到同一个“状态节点”中。
+每个“状态节点”中都包含了一个渲染叶的列表（StateGraph::_leaves），不过只有最末端的“状态节点”会负责记录场景中的“渲染叶”。
+  */
+class OSGUTIL_EXPORT StateGraph : public ::CVBF_Referenced
+{
+    public:
+    
+
+        typedef std::map< const osg::StateSet*, ref_ptr<StateGraph> >   ChildList;
+        typedef std::vector< ref_ptr<RenderLeaf> >                      LeafList;
+
+        StateGraph*                         _parent;
+
+#ifdef OSGUTIL_RENDERBACKEND_USE_REF_PTR
+        ref_ptr<const osg::StateSet> _stateset;
+#else
+        const osg::StateSet* _stateset;
+#endif
+
+        int                                 _depth;
+        ChildList                           _children;
+        LeafList                            _leaves;
+        
+        mutable float                       _averageDistance;
+        mutable float                       _minimumDistance;
+        
+        ref_ptr<CVBF_Referenced>       _userData;
+
+        bool                                _dynamic;
+
+        StateGraph(): CVBF_Referenced(false),
+            _parent(NULL),
+            _stateset(NULL),
+            _depth(0),
+            _averageDistance(0),
+            _minimumDistance(0),
+            _userData(NULL),
+            _dynamic(false)
+        {
+        }
+
+        StateGraph(StateGraph* parent,const osg::StateSet* stateset): CVBF_Referenced(false),
+            _parent(parent),
+            _stateset(stateset),
+            _depth(0),
+            _averageDistance(0),
+            _minimumDistance(0),
+            _userData(NULL),
+            _dynamic(false)
+        {
+            if (_parent) _depth = _parent->_depth + 1;
+            
+            if (_parent && _parent->_dynamic) _dynamic = true;
+            else _dynamic = stateset->getDataVariance()==osg::CVBF_Object::DYNAMIC;
+        }
+            
+        ~StateGraph() {}
+        
+        StateGraph* cloneType() const { return new StateGraph; }
+        
+        void setUserData(::CVBF_Referenced* obj) { _userData = obj; }
+        ::CVBF_Referenced* getUserData() { return _userData.get(); }
+        const ::CVBF_Referenced* getUserData() const { return _userData.get(); }
+
+		// 杜莹添加：2018-04-07
+		void setStateSet(const osg::StateSet* stateset) { _stateset = stateset; }
+        
+#ifdef OSGUTIL_RENDERBACKEND_USE_REF_PTR
+        const osg::StateSet* getStateSet() const { return _stateset.get(); }
+#else
+        const osg::StateSet* getStateSet() const { return _stateset; }
+#endif
+
+        /** return true if all of drawables, lights and children are empty.*/
+        inline bool empty() const
+        {
+            return _leaves.empty() && _children.empty();
+        }
+        
+        inline bool leaves_empty() const
+        {
+            return _leaves.empty();
+        }
+
+
+        inline float getAverageDistance() const
+        {
+            if (_averageDistance==FLT_MAX && !_leaves.empty())
+            {
+                _averageDistance = 0.0f;
+                for(LeafList::const_iterator itr=_leaves.begin(); itr!=_leaves.end();  ++itr)
+                {
+                   _averageDistance += (*itr)->_depth;
+                }
+                _averageDistance /= (float)_leaves.size();
+                
+            }
+            return _averageDistance;
+        }
+        
+        inline float getMinimumDistance() const
+        {
+            if (_minimumDistance==FLT_MAX && !_leaves.empty())
+            {
+                LeafList::const_iterator itr=_leaves.begin();
+                _minimumDistance = (*itr)->_depth;
+                ++itr;
+                for(; itr!=_leaves.end(); ++itr)
+                {
+                   if ((*itr)->_depth<_minimumDistance) _minimumDistance=(*itr)->_depth;
+                }
+                
+            }
+            return _minimumDistance;
+        }
+
+        inline void sortFrontToBack()
+        {
+            std::sort(_leaves.begin(),_leaves.end(),LessDepthSortFunctor());
+        }
+
+        /** Reset the internal contents of a StateGraph, including deleting all children.*/
+        void reset();
+
+        /** Recursively clean the StateGraph of all its drawables, lights and depths.
+          * Leaves children intact, and ready to be populated again.*/
+        void clean();
+
+        /** Recursively prune the StateGraph of empty children.*/
+        void prune();
+        
+        // 查找或创建（插入）一个子StateGraph
+        inline StateGraph* find_or_insert(const osg::StateSet* pStateSet)
+        {
+            // 查找子StateGraph
+            ChildList::iterator itr = _children.find(pStateSet);
+            if (itr!=_children.end()) return itr->second.get();
+            
+   			// 创建一个子StateGraph
+            StateGraph* pStateGraph = new StateGraph(this,pStateSet);
+            _children[pStateSet] = pStateGraph;
+            return pStateGraph;
+        }
+
+        /** add a render leaf.*/
+        inline void addLeaf(RenderLeaf* leaf)
+        {
+            if (leaf)
+            {
+                _averageDistance = FLT_MAX; // signify dirty.
+                _minimumDistance = FLT_MAX; // signify dirty.
+                _leaves.push_back(leaf);
+                leaf->_parent = this;
+                if (_dynamic) leaf->_dynamic = true;
+            }
+        }
+
+        static inline void moveStateGraph(osg::State& state,StateGraph* sg_curr,StateGraph* sg_new)
+        {
+            if (sg_new==sg_curr || sg_new==NULL) return;
+
+            if (sg_curr==NULL)
+            {
+
+                // use return path to trace back steps to sg_new.
+                std::vector<StateGraph*> return_path;
+
+                // need to pop back root render graph.
+                do 
+                {
+                    return_path.push_back(sg_new);
+                    sg_new = sg_new->_parent;
+                } while (sg_new);
+
+                for(std::vector<StateGraph*>::reverse_iterator itr=return_path.rbegin();
+                    itr!=return_path.rend();
+                    ++itr)
+                {
+                    StateGraph* rg = (*itr);
+                    if (rg->getStateSet()) state.pushStateSet(rg->getStateSet());
+                }
+                return;
+            }
+        
+
+            // first handle the typical case which is two state groups
+            // are neighbours.
+            if (sg_curr->_parent==sg_new->_parent)
+            {
+                
+                // state has changed so need to pop old state.
+                if (sg_curr->getStateSet()) state.popStateSet();
+                // and push new state.
+                if (sg_new->getStateSet()) state.pushStateSet(sg_new->getStateSet());
+                return;
+            }
+        
+
+            // need to pop back up to the same depth as the new state group.
+            while (sg_curr->_depth>sg_new->_depth)
+            {
+                if (sg_curr->getStateSet()) state.popStateSet();
+                sg_curr = sg_curr->_parent;
+            }
+            
+            // use return path to trace back steps to sg_new.
+            std::vector<StateGraph*> return_path;
+
+            // need to pop back up to the same depth as the curr state group.
+            while (sg_new->_depth>sg_curr->_depth)
+            {
+                return_path.push_back(sg_new);
+                sg_new = sg_new->_parent;
+            }
+            
+            // now pop back up both parent paths until they agree.
+
+            // DRT - 10/22/02
+            // should be this to conform with above case where two StateGraph
+            // nodes have the same parent
+            while (sg_curr != sg_new)
+            {
+                if (sg_curr->getStateSet()) state.popStateSet();
+                sg_curr = sg_curr->_parent;
+
+                return_path.push_back(sg_new);
+                sg_new = sg_new->_parent;
+            }
+            
+            for(std::vector<StateGraph*>::reverse_iterator itr=return_path.rbegin(); itr!=return_path.rend(); ++itr)
+            {
+                StateGraph* rg = (*itr);
+                if (rg->getStateSet()) state.pushStateSet(rg->getStateSet());
+            }
+
+        }
+
+        inline static void moveToRootStateGraph(osg::State& state,StateGraph* sg_curr)
+        {
+            // need to pop back all statesets and matrices.
+            while (sg_curr)
+            {
+                if (sg_curr->getStateSet()) state.popStateSet();
+                sg_curr = sg_curr->_parent;
+            }
+            
+        }
+        
+        inline static int numToPop(StateGraph* sg_curr)
+        {
+            int numToPop = 0;
+            // need to pop back all statesets and matrices.
+            while (sg_curr)
+            {
+                if (sg_curr->getStateSet()) ++numToPop;
+                sg_curr = sg_curr->_parent;
+            }
+            
+            return numToPop;
+        }
+
+    private:
+
+        /// disallow copy construction.
+        StateGraph(const StateGraph&):CVBF_Referenced() {}
+        /// disallow copy operator.
+        StateGraph& operator = (const StateGraph&) { return *this; }
+
+};
+
+}
+
+#endif
+

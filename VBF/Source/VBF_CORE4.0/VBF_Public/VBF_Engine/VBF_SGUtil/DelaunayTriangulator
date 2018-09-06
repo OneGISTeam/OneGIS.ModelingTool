@@ -1,0 +1,165 @@
+#ifndef OSGUTIL_DELAUNAYTRIANGULATOR_
+#define OSGUTIL_DELAUNAYTRIANGULATOR_
+
+#include <list>
+
+#include <VBF_Base/ref_ptr>
+#include <VBF_Engine/VBF_SceneGraph/Array>
+#include <VBF_Base/VBF_Referenced.h>
+#include <VBF_Engine/VBF_SceneGraph/CopyOp>
+#include <VBF_Engine/VBF_SceneGraph/PrimitiveSet>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGDrawableGeometry.h>
+
+#include <VBF_Engine/VBF_SGUtil/Export>
+
+namespace osgUtil 
+{
+
+// DelaunayTriangulator: 工具类，用于把采样点三角化为不规则网格。
+// 指定采样点数组并调用triangulate() 函数开始三角化，然后，通过getTriangles()函数获得产生的图元（primitive）
+// 添加DelaunayConstraints (或子类) 进行约束
+
+
+// Delaunay约束
+class OSGUTIL_EXPORT DelaunayConstraint: public osg::Geometry 
+{
+    // 控制Delaunay三角化的边， 约束可以是边(带宽度)、面 (包含面积)
+    // 用途：在地形上重建路、湖等。 图元是LINE_LOOP或LINE_STRIP
+public:
+    DelaunayConstraint() { }
+
+    /** Each primitiveset is a list of vertices which may be closed by joining up to its start 
+     * to make a loop.  Constraints should be simple lines, not crossing themselves.
+     * Constraints which cross other constraints can cause difficulties - see the example
+     * for methods of dealing with them. */
+
+     /** collect up indices of triangle from delaunay triangles.
+      *  The delaunay triangles inside the DelaunayConstraint area can be used to fill
+      *  the area or generate geometry that terrain follows the area in some way.
+      *  These triangles can form a canopy or a field. */
+    void addtriangle(int i1, int i2, int i3);
+
+    /** Get the filling primitive. One:
+     * triangulate must have bneen called and
+     * two:  triangle list is filled when 
+     * DelaunayTriangulator::removeInternalTriangles is called.
+     * These return the triangles removed from the delaunay triangulation by 
+     * DelaunayTriangulator::removeInternalTriangles. */
+    inline const osg::DrawElementsUInt *getTriangles() const { return prim_tris_.get(); }
+
+    inline osg::DrawElementsUInt *getTriangles() { return prim_tris_.get(); }
+
+    /** Call BEFORE makeDrawable to reorder points to make optimised set
+     */
+    osg::Vec3Array *getPoints(const osg::Vec3Array *points);
+
+    /** converts simple list of triangles into a drawarray.
+     */
+    osg::DrawElementsUInt *makeDrawable();
+
+    /** Add vertices and constraint loops from dco
+     * Can be used to generate extra vertices where dco crosses 'this' using
+     * osgUtil::Tessellator to insert overlap vertices.
+     */
+    void merge(DelaunayConstraint *dco);
+
+    /** remove from line the vertices that are inside dco
+     */
+    void removeVerticesInside(const DelaunayConstraint *dco);
+    
+     /** return winding number as a float of loop around testpoint; may use multiple loops
+      * does not reject points on the edge or very very close to the edge */
+    float windingNumber(const osg::Vec3 &testpoint) const ;
+
+     /** true if testpoint is internal (or external) to constraint. */
+    virtual bool contains(const osg::Vec3 &testpoint) const;
+    virtual bool outside(const osg::Vec3 &testpoint) const;
+
+    /** Tessellate the constraint loops so that the crossing points are interpolated
+     * and added to the contraints for the triangulation. */
+    void handleOverlaps(void);
+
+protected:
+    virtual ~DelaunayConstraint() {}
+
+    typedef std::vector< int* > trilist; // array of indices in points array defining triangles
+
+    trilist _interiorTris; // list of triangles that fits the area.
+
+    ref_ptr<osg::DrawElementsUInt> prim_tris_; // returns a PrimitiveSet to draw the interior of this DC
+};
+
+// Delaunay三角网生成工具
+
+class OSGUTIL_EXPORT DelaunayTriangulator: public ::CVBF_Referenced 
+{
+public:
+
+    DelaunayTriangulator();
+    explicit DelaunayTriangulator(osg::Vec3Array *points, osg::Vec3Array *normals = 0);
+    DelaunayTriangulator(const DelaunayTriangulator &copy, const osg::CopyOp &copyop = osg::CopyOp::SHALLOW_COPY);
+
+    typedef std::vector< ref_ptr<DelaunayConstraint> > linelist;
+
+    /** Set the input point array. */
+    inline void setInputPointArray(osg::Vec3Array* points) { points_ = points; }
+
+    /** Get the const input point array. */
+    inline const osg::Vec3Array* getInputPointArray() const {  return points_.get(); }
+
+    /** Get the input point array. */
+    inline osg::Vec3Array* getInputPointArray() {  return points_.get(); }
+
+
+    /** Set the output normal array (optional). */
+    inline void setOutputNormalArray(osg::Vec3Array* normals) { normals_ = normals; }
+
+    /** Get the const output normal array (optional). */
+    inline const osg::Vec3Array *getOutputNormalArray() const { return normals_.get(); }
+
+    /** Get the output normal array (optional). */
+    inline osg::Vec3Array *getOutputNormalArray() { return normals_.get(); }
+
+
+	// 添加限制条件。如果remove!=0, 内部的约束三角形被移走;
+    void addInputConstraint(DelaunayConstraint *dc) { constraint_lines.push_back(dc); }
+
+
+    // 开始三角化
+    bool triangulate();
+
+    /** Get the generated primitive (call triangulate() first). */
+    inline const osg::DrawElementsUInt *getTriangles() const { return prim_tris_.get(); }
+
+    /** Get the generated primitive (call triangulate() first). */
+    inline osg::DrawElementsUInt *getTriangles() { return prim_tris_.get(); }
+    
+    /** remove the triangles internal to the constraint loops.
+     * (Line strips cannot remove any internal triangles). */
+    void removeInternalTriangles(DelaunayConstraint *constraint);
+
+
+protected:
+    virtual ~DelaunayTriangulator();
+    DelaunayTriangulator &operator=(const DelaunayTriangulator &) { return *this; }
+    int getindex(const osg::Vec3 &pt,const osg::Vec3Array *points);
+
+private:
+    ref_ptr<osg::Vec3Array> points_;
+    ref_ptr<osg::Vec3Array> normals_;
+    ref_ptr<osg::DrawElementsUInt> prim_tris_;
+
+    // GWM these lines provide required edges in the triangulated shape.
+    linelist constraint_lines;
+
+    void _uniqueifyPoints();
+};
+
+// INLINE METHODS
+
+
+
+}
+
+#endif
+

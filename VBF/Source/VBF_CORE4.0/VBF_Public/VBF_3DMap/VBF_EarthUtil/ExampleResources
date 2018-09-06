@@ -1,0 +1,63 @@
+
+#ifndef OSGEARTH_UTIL_EXAMPLE_RESOURCES_H
+#define OSGEARTH_UTIL_EXAMPLE_RESOURCES_H 1
+
+#include <VBF_3DMap/VBF_EarthUtil/Common>
+
+#include <VBF_3DMap/VBF_EarthUtil/Controls>
+
+#include <VBF_3DMap/VBF_EarthUtil/EarthManipulator>
+#include <VBF_3DMap/VBF_Driver/ocean_surface/OceanSurface>
+#include <VBF_3DMap/VBF_Terrain/VBF_Viewpoint.h>
+#include <VBF_Base/VBF_ArgumentParser.h>
+#include <VBF_Display/VBF_Viewer/IVBF_View.h>
+
+#include <VBF_3DMap/VBF_EarthUtil/MapNodeHelper>
+
+/**
+ * This is a collection of resources used by the osgEarth example applications.
+ */
+namespace osgEarth { namespace Util
+{
+    using namespace osgEarth;
+    using namespace osgEarth::Util::Controls;
+    using namespace osgEarth::Drivers;
+
+ 
+
+    // 创建包含一系列可点击视点的控件
+    class OSGEARTHUTIL_EXPORT ViewpointControlFactory
+    {
+    public:
+        Control* create( const std::vector<CVBF_Viewpoint>& list, IVBF_View* view) const;
+    };
+
+
+    // 创建在鼠标位置显示地图坐标的控件
+    class OSGEARTHUTIL_EXPORT MouseCoordsControlFactory
+    {
+    public:
+        Control* create( CVBFO_SGNodeMap* mapNode, IVBF_View* view ) const;
+    };
+
+
+    /**
+     * Creates a UI Control reflecting all the named Annotations found in a
+     * scene graph.
+     */
+    class OSGEARTHUTIL_EXPORT AnnotationGraphControlFactory
+    {
+    public:
+        Control* create(  osg::IVBF_SGNode* node, IVBF_View* view) const;
+    };
+
+    // 创建操作海洋表面模型的控件
+    class OSGEARTHUTIL_EXPORT OceanControlFactory
+    {
+    public:
+        Control* create( OceanSurfaceNode* ocean, IVBF_View*  view ) const;
+    };
+
+} } // namespace osgEarth::Util
+
+#endif // OSGEARTH_UTIL_EXAMPLE_RESOURCES_H

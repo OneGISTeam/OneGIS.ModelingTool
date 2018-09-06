@@ -1,0 +1,539 @@
+#ifndef OSGUTIL_SCENEVIEW
+#define OSGUTIL_SCENEVIEW 1
+
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeImpl.h>
+#include <VBF_Engine/VBF_SceneGraph/StateSet>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_StateAttrLight.h>
+#include <VBF_Base/VBF_FrameStamp.h>
+#include <VBF_Engine/VBF_SceneGraph/DisplaySettings.h>
+#include <VBF_Engine/VBF_SceneGraph/VBF_SGNVisitOpCollectOccluders.h>
+#include <VBF_Engine/VBF_SceneGraph/CullSettings>
+#include <VBF_Engine/VBF_SceneGraph/VBF_Camera.h>
+
+#include <VBF_Engine/VBF_SGUtil/CullVisitor>
+
+namespace osgUtil {
+
+/**
+ * SceneView is deprecated, and is now just kept for backwards compatibility.
+ * It is recommend that you use CVBF_ViewerSimple/Composite in combination
+ * with osgViewer::GraphicsWindowEmbedded for embedded rendering support as
+ * this provides a greater range of functionality and consistency of API.
+
+场景视图：渲染后台的入口和调度中心。这个类由渲染器（Renderer）加以调用或由GC调用（单线程）。
+每个渲染器当中都会自动创建两个 SceneView 对象（Renderer::_sceneView[2]），从而实现了渲染后台双缓存的支持，
+不过SingleThreaded 和CullDrawThreadPerContext 环境下只使用到第一个场景视图（SceneView）。
+
+渲染后台由以下部分组成
+CullVisitor：筛选访问器、osg::RenderInfo：渲染信息管理器、StateGraph：状态节点、RenderLeaf：渲染叶、RenderStage：渲染台、RenderBin：渲染元
+
+渲染后台的调度中心是场景视图（SceneView），它负责保存和执行筛选访问器（CullVisitor）。
+CullVisitor 负责遍历并裁减场景，同时在遍历过程中构建对于场景绘制至关重要的渲染树和状态树；SceneView 负责保存和维护状态树和渲染树。
+状态树以StateGraph为根节点和各级子节点（保存场景树的渲染状态StateSet数据），以RenderLeaf 为末端叶节点（保存场景树中的Drawable对象）；
+渲染树则以RenderStage为根节点，RenderBin为各级子节点，根据渲染顺序和方法的设定，状态树中的节点和渲染叶（RenderLeaf）被记录到RenderStage和各级RenderBin中。
+*/
+
+class OSGUTIL_EXPORT SceneView : public osg::CVBF_Object, public osg::CullSettings
+{
+    public:
+
+        SceneView(osg::DisplaySettings* ds=NULL);
+        SceneView(const SceneView& sceneview, const osg::CopyOp& copyop = osg::CopyOp());
+
+        META_Object(osgUtil, SceneView);
+
+        enum Options
+        {
+            NO_SCENEVIEW_LIGHT = 0x0,
+            HEADLIGHT = 0x1,
+            SKY_LIGHT = 0x2,
+            COMPILE_GLOBJECTS_AT_INIT = 0x4,
+            STANDARD_SETTINGS = HEADLIGHT | COMPILE_GLOBJECTS_AT_INIT                                
+        };
+
+        // 缺省设置
+        virtual void setDefaults() { setDefaults(STANDARD_SETTINGS); }
+        virtual void setDefaults(unsigned int options);
+
+        /** 设置/获取相机 */
+        void setCamera(osg::IVBF_Camera* camera, bool assumeOwnershipOfCamera = true);
+        osg::IVBF_Camera* getCamera() { return _camera.get(); }
+        const osg::IVBF_Camera* getCamera() const { return _camera.get(); }
+
+
+        /** 设置数据，通常是 osg::Scene 但也可以是任何osg::IVBF_SGNode类型。 */
+        void setSceneData(osg::IVBF_SGNode* node);
+        
+        /** Get the scene data to view. The data will typically be
+         *  an osg::Scene but can be any osg::IVBF_SGNode type.
+         */
+        osg::IVBF_SGNode* getSceneData(unsigned int childNo=0) { return (_camera->getNumChildren()>childNo) ? _camera->getChild(childNo) : 0; }
+
+        /** Get the const scene data which to view. The data will typically be
+         *  an osg::Scene but can be any osg::IVBF_SGNode type.
+         */
+        const osg::IVBF_SGNode* getSceneData(unsigned int childNo=0) const { return (_camera->getNumChildren()>childNo) ? _camera->getChild(childNo) : 0; }
+        
+        /** Get the number of scene data subgraphs added to the SceneView's camera.*/
+        unsigned int getNumSceneData() const { return _camera->getNumChildren(); }
+
+        /** Set the viewport of the scene view to use specified osg::Viewport. */
+        void setViewport(osg::Viewport* viewport) { _camera->setViewport(viewport); }
+
+        /** Set the viewport of the scene view to specified dimensions. */
+        void setViewport(int x,int y,int width,int height) { _camera->setViewport(x,y,width,height); }
+
+
+        /** Get the viewport. */
+        osg::Viewport* getViewport() { return (_camera->getViewport()!=0) ? _camera->getViewport() : 0; }
+
+        /** Get the const viewport. */
+        const osg::Viewport* getViewport() const { return (_camera->getViewport()!=0) ? _camera->getViewport() : 0; }
+        
+        /** Set the DisplaySettings. */
+        inline void setDisplaySettings(osg::DisplaySettings* vs) { _displaySettings = vs; }
+        
+        /** Get the const DisplaySettings */
+        inline const osg::DisplaySettings* getDisplaySettings() const { return _displaySettings.get(); }
+
+        /** Get the DisplaySettings */
+        inline osg::DisplaySettings* getDisplaySettings() { return _displaySettings.get(); }
+
+
+        /** Set the color used in glClearColor().
+            Defaults to an off blue color.*/
+        void setClearColor(const osg::Vec4& color) { _camera->setClearColor(color); }
+
+        /** Get the color used in glClearColor.*/
+        const osg::Vec4& getClearColor() const { return _camera->getClearColor(); }
+        
+        
+        /** Manually set the redraw interlaced stereo stencil mask request flag to control whether to redraw the stencil buffer on the next frame.*/  
+        void setRedrawInterlacedStereoStencilMask(bool flag) { _redrawInterlacedStereoStencilMask = flag; }
+
+        /** Get the redraw interlaced stereo stencil mask request flag.*/  
+        bool getRedrawInterlacedStereoStencilMask() const { return _redrawInterlacedStereoStencilMask; }
+
+
+        void setGlobalStateSet(osg::StateSet* state) { _globalStateSet = state; }
+        osg::StateSet* getGlobalStateSet() { return _globalStateSet.get(); }
+        const osg::StateSet* getGlobalStateSet() const { return _globalStateSet.get(); }
+
+        void setSecondaryStateSet(osg::StateSet* state) { _secondaryStateSet = state; }
+        osg::StateSet* getSecondaryStateSet() { return _secondaryStateSet.get(); }
+        const osg::StateSet* getSecondaryStateSet() const { return _secondaryStateSet.get(); }
+
+        void setLocalStateSet(osg::StateSet* state) { _localStateSet = state; }
+        osg::StateSet* getLocalStateSet() { return _localStateSet.get(); }
+        const osg::StateSet* getLocalStateSet() const { return _localStateSet.get(); }
+        
+        enum ActiveUniforms
+        {
+            FRAME_NUMBER_UNIFORM            = 1,
+            FRAME_TIME_UNIFORM              = 2,
+            DELTA_FRAME_TIME_UNIFORM        = 4,
+            SIMULATION_TIME_UNIFORM         = 8,
+            DELTA_SIMULATION_TIME_UNIFORM   = 16,
+            VIEW_MATRIX_UNIFORM             = 32,
+            VIEW_MATRIX_INVERSE_UNIFORM     = 64,
+            DEFAULT_UNIFORMS                = FRAME_NUMBER_UNIFORM |
+                                              FRAME_TIME_UNIFORM |
+                                              DELTA_FRAME_TIME_UNIFORM |
+                                              SIMULATION_TIME_UNIFORM |
+                                              DELTA_SIMULATION_TIME_UNIFORM |
+                                              VIEW_MATRIX_UNIFORM |
+                                              VIEW_MATRIX_INVERSE_UNIFORM,
+            ALL_UNIFORMS                    = 0x7FFFFFFF
+        };
+
+        /** Set the uniforms that SceneView should set set up on each frame.*/        
+        void setActiveUniforms(int activeUniforms) { _activeUniforms = activeUniforms; }
+
+        /** Get the uniforms that SceneView should set set up on each frame.*/
+        int getActiveUniforms() const { return _activeUniforms; }
+
+        void updateUniforms();
+        
+
+        typedef Options LightingMode;
+
+        void setLightingMode(LightingMode mode);
+        LightingMode getLightingMode() const { return _lightingMode; }
+
+        void setLight(osg::Light* light) { _light = light; }
+        osg::Light* getLight() { return _light.get(); }
+        const osg::Light* getLight() const { return _light.get(); }
+        
+        void setState(osg::State* state) { _renderInfo.setState(state); }
+        osg::State* getState() { return _renderInfo.getState(); }
+        const osg::State* getState() const { return _renderInfo.getState(); }
+        
+        void setView(osg::IVBF_ViewBrief* view) { _camera->setView(view); }
+        osg::IVBF_ViewBrief* getView() { return _camera->getView(); }
+        const osg::IVBF_ViewBrief* getView() const { return _camera->getView(); }
+
+		
+        void setRenderInfo(osg::RenderInfo& renderInfo) { _renderInfo = renderInfo; }//？？是否可优化掉，并把RenderInfo优化掉
+        osg::RenderInfo& getRenderInfo() { return _renderInfo; }
+        const osg::RenderInfo& getRenderInfo() const { return _renderInfo; }
+        
+
+
+        /** Set the projection matrix. Can be thought of as setting the lens of a camera. */
+        inline void setProjectionMatrix(const osg::Matrixf& matrix) { _camera->setProjectionMatrix(matrix); }
+
+        /** Set the projection matrix. Can be thought of as setting the lens of a camera. */
+        inline void setProjectionMatrix(const osg::Matrixd& matrix) { _camera->setProjectionMatrix(matrix); }
+
+        /** Set to an orthographic projection. See OpenGL glOrtho for documentation further details.*/
+        void setProjectionMatrixAsOrtho(double left, double right, double bottom, double top,
+                                        double zNear, double zFar);
+
+        /** Set to a 2D orthographic projection. See OpenGL glOrtho2D documentation for further details.*/
+        void setProjectionMatrixAsOrtho2D(double left, double right,
+                                          double bottom, double top);
+
+        /** Set to a perspective projection. See OpenGL glFrustum documentation for further details.*/
+        void setProjectionMatrixAsFrustum(double left, double right, double bottom, double top,
+                                          double zNear, double zFar);
+
+        /** Create a symmetrical perspective projection, See OpenGL gluPerspective documentation for further details.
+          * Aspect ratio is defined as width/height.*/
+        void setProjectionMatrixAsPerspective(double fovy,double aspectRatio,
+                                              double zNear, double zFar);
+
+        /** Get the projection matrix.*/
+        osg::Matrixd& getProjectionMatrix() { return _camera->getProjectionMatrix(); }
+
+        /** Get the const projection matrix.*/
+        const osg::Matrixd& getProjectionMatrix() const { return _camera->getProjectionMatrix(); }
+
+        /** Get the orthographic settings of the orthographic projection matrix. 
+          * Returns false if matrix is not an orthographic matrix, where parameter values are undefined.*/
+        bool getProjectionMatrixAsOrtho(double& left, double& right, double& bottom, double& top,
+                                        double& zNear, double& zFar) const;
+
+        /** Get the frustum setting of a perspective projection matrix.
+          * Returns false if matrix is not a perspective matrix, where parameter values are undefined.*/
+        bool getProjectionMatrixAsFrustum(double& left, double& right, double& bottom, double& top,
+                                          double& zNear, double& zFar) const;
+
+        /** Get the frustum setting of a symmetric perspective projection matrix.
+          * Returns false if matrix is not a perspective matrix, where parameter values are undefined. 
+          * Note, if matrix is not a symmetric perspective matrix then the shear will be lost.
+          * Asymmetric matrices occur when stereo, power walls, caves and reality center display are used.
+          * In these configurations one should use the 'getProjectionMatrixAsFrustum' method instead.*/
+        bool getProjectionMatrixAsPerspective(double& fovy,double& aspectRatio,
+                                              double& zNear, double& zFar) const;
+
+
+        /** Set the view matrix. Can be thought of as setting the position of the world relative to the camera in camera coordinates. */
+        inline void setViewMatrix(const osg::Matrixf& matrix) { _camera->setViewMatrix(matrix); }
+        
+        /** Set the view matrix. Can be thought of as setting the position of the world relative to the camera in camera coordinates. */
+        inline void setViewMatrix(const osg::Matrixd& matrix) { _camera->setViewMatrix(matrix); }
+
+        /** Set to the position and orientation of view matrix, using the same convention as gluLookAt. */
+        void setViewMatrixAsLookAt(const osg::Vec3& eye,const osg::Vec3& center,const osg::Vec3& up);
+
+        /** Get the view matrix. */
+        osg::Matrixd& getViewMatrix() { return _camera->getViewMatrix(); }
+
+        /** Get the const view matrix. */
+        const osg::Matrixd& getViewMatrix() const { return _camera->getViewMatrix(); }
+
+        /** Get to the position and orientation of a modelview matrix, using the same convention as gluLookAt. */
+        void getViewMatrixAsLookAt(osg::Vec3& eye,osg::Vec3& center,osg::Vec3& up,float lookDistance=1.0f) const;
+
+
+
+        
+        void setInitVisitor(osg::NodeVisitor* av) { _initVisitor = av; }
+        osg::NodeVisitor* getInitVisitor() { return _initVisitor.get(); }
+        const osg::NodeVisitor* getInitVisitor() const { return _initVisitor.get(); }
+
+
+        void setUpdateVisitor(osg::NodeVisitor* av) { _updateVisitor = av; }
+        osg::NodeVisitor* getUpdateVisitor() { return _updateVisitor.get(); }
+        const osg::NodeVisitor* getUpdateVisitor() const { return _updateVisitor.get(); }
+
+
+        void setCullVisitor(osgUtil::CullVisitor* cv) { _cullVisitor = cv; }
+        osgUtil::CullVisitor* getCullVisitor() { return _cullVisitor.get(); }
+        const osgUtil::CullVisitor* getCullVisitor() const { return _cullVisitor.get(); }
+
+        void setCullVisitorLeft(osgUtil::CullVisitor* cv) { _cullVisitorLeft = cv; }
+        osgUtil::CullVisitor* getCullVisitorLeft() { return _cullVisitorLeft.get(); }
+        const osgUtil::CullVisitor* getCullVisitorLeft() const { return _cullVisitorLeft.get(); }
+
+        void setCullVisitorRight(osgUtil::CullVisitor* cv) { _cullVisitorRight = cv; }
+        osgUtil::CullVisitor* getCullVisitorRight() { return _cullVisitorRight.get(); }
+        const osgUtil::CullVisitor* getCullVisitorRight() const { return _cullVisitorRight.get(); }
+        
+        void setCollectOccludersVisitor(osg::CollectOccludersVisitor* cov) { _collectOccludersVisitor = cov; }
+        osg::CollectOccludersVisitor* getCollectOccludersVisitor() { return _collectOccludersVisitor.get(); }
+        const osg::CollectOccludersVisitor* getCollectOccludersVisitor() const { return _collectOccludersVisitor.get(); }
+
+
+        void setStateGraph(osgUtil::StateGraph* rg) { _stateGraph = rg; }
+        osgUtil::StateGraph* getStateGraph() { return _stateGraph.get(); }
+        const osgUtil::StateGraph* getStateGraph() const { return _stateGraph.get(); }
+
+        void setStateGraphLeft(osgUtil::StateGraph* rg) { _stateGraphLeft = rg; }
+        osgUtil::StateGraph* getStateGraphLeft() { return _stateGraphLeft.get(); }
+        const osgUtil::StateGraph* getStateGraphLeft() const { return _stateGraphLeft.get(); }
+
+        void setStateGraphRight(osgUtil::StateGraph* rg) { _stateGraphRight = rg; }
+        osgUtil::StateGraph* getStateGraphRight() { return _stateGraphRight.get(); }
+        const osgUtil::StateGraph* getStateGraphRight() const { return _stateGraphRight.get(); }
+
+
+        void setRenderStage(osgUtil::RenderStage* rs) { _renderStage = rs; }
+        osgUtil::RenderStage* getRenderStage() { return _renderStage.get(); }
+        const osgUtil::RenderStage* getRenderStage() const { return _renderStage.get(); }
+
+        void setRenderStageLeft(osgUtil::RenderStage* rs) { _renderStageLeft = rs; }
+        osgUtil::RenderStage* getRenderStageLeft() { return _renderStageLeft.get(); }
+        const osgUtil::RenderStage* getRenderStageLeft() const { return _renderStageLeft.get(); }
+
+        void setRenderStageRight(osgUtil::RenderStage* rs) { _renderStageRight = rs; }
+        osgUtil::RenderStage* getRenderStageRight() { return _renderStageRight.get(); }
+        const osgUtil::RenderStage* getRenderStageRight() const { return _renderStageRight.get(); }
+
+        /** search through any pre and post RenderStage that reference a Camera, and take a reference to each of these cameras to prevent them being deleted while they are still be used by the drawing thread.*/
+        void collateReferencesToDependentCameras();
+
+        /** clear the refence to any any dependent cameras.*/
+        void clearReferencesToDependentCameras();
+
+
+        /** Set the draw buffer value used at the start of each frame draw.  Note, overridden in quad buffer stereo mode */
+        void setDrawBufferValue( GLenum drawBufferValue ) { _camera->setDrawBuffer(drawBufferValue); }
+
+        /** Get the draw buffer value used at the start of each frame draw. */
+        GLenum getDrawBufferValue() const { return _camera->getDrawBuffer(); }
+
+
+        enum FusionDistanceMode // 空间融合距离模式，用于立体
+        {
+            /** 使用设定的融合距离值 */
+            USE_FUSION_DISTANCE_VALUE,
+            /** 通过融合距离值乘以屏幕距离计算融合距离 */
+            PROPORTIONAL_TO_SCREEN_DISTANCE
+        };
+
+        /** 设置/获取融合距离模式和值 */
+        void setFusionDistance(FusionDistanceMode mode,float value=1.0f)
+        {
+            _fusionDistanceMode = mode;
+            _fusionDistanceValue = value;
+        }
+        FusionDistanceMode getFusionDistanceMode() const { return _fusionDistanceMode; }
+        float getFusionDistanceValue() const { return _fusionDistanceValue; } // 仅用于USE_FUSION_DISTANCE_VALUE & PROPORTIONAL_TO_SCREEN_DISTANCE模式
+
+
+        /** Set whether the draw method should call renderer->prioritizeTexture.*/
+        void setPrioritizeTextures(bool pt) { _prioritizeTextures = pt; }
+        
+        /** Get whether the draw method should call renderer->prioritizeTexture.*/
+        bool getPrioritizeTextures() const { return _prioritizeTextures; }
+
+        /** Callback for overidding the default method for compute the offset projection and view matrices.*/
+        struct ComputeStereoMatricesCallback : public ::CVBF_Referenced
+        {
+            virtual osg::Matrixd computeLeftEyeProjection(const osg::Matrixd& projection) const = 0;
+            virtual osg::Matrixd computeLeftEyeView(const osg::Matrixd& view) const = 0;
+
+            virtual osg::Matrixd computeRightEyeProjection(const osg::Matrixd& projection) const = 0;
+            virtual osg::Matrixd computeRightEyeView(const osg::Matrixd& view) const = 0;
+        };
+        
+        void setComputeStereoMatricesCallback(ComputeStereoMatricesCallback* callback) { _computeStereoMatricesCallback=callback; }
+        ComputeStereoMatricesCallback* getComputeStereoMatricesCallback() { return _computeStereoMatricesCallback.get(); }
+        const ComputeStereoMatricesCallback* getComputeStereoMatricesCallback() const { return _computeStereoMatricesCallback.get(); }
+
+        /** Calculate the object coordinates of a point in window coordinates.
+            Note, current implementation requires that SceneView::draw() has been previously called
+            for projectWindowIntoObject to produce valid values.  Consistent with OpenGL
+            windows coordinates are calculated relative to the bottom left of the window.
+            Returns true on successful projection.
+        */
+        bool projectWindowIntoObject(const osg::Vec3& window,osg::Vec3& object) const;
+
+        /** Calculate the object coordinates of a window x,y when projected onto the near and far planes.
+            Note, current implementation requires that SceneView::draw() has been previously called
+            for projectWindowIntoObject to produce valid values.  Consistent with OpenGL
+            windows coordinates are calculated relative to the bottom left of the window.
+            Returns true on successful projection.
+        */
+        bool projectWindowXYIntoObject(int x,int y,osg::Vec3& near_point,osg::Vec3& far_point) const;
+
+        /** Calculate the window coordinates of a point in object coordinates.
+            Note, current implementation requires that SceneView::draw() has been previously called
+            for projectWindowIntoObject to produce valid values.  Consistent with OpenGL
+            windows coordinates are calculated relative to the bottom left of the window,
+            whereas window API's normally have the top left as the origin,
+            so you may need to pass in (mouseX,window_height-mouseY,...).
+            Returns true on successful projection.
+        */
+        bool projectObjectIntoWindow(const osg::Vec3& object,osg::Vec3& window) const;
+
+
+        /** Set the frame stamp for the current frame.*/
+        inline void setFrameStamp(::CVBF_FrameStamp* fs) { _frameStamp = fs; }
+
+        /** Get the frame stamp for the current frame.*/
+        inline const ::CVBF_FrameStamp* getFrameStamp() const { return _frameStamp.get(); }
+
+
+
+
+        inline osg::Matrixd computeLeftEyeProjection(const osg::Matrixd& projection)  const
+        {
+            if (_computeStereoMatricesCallback.valid()) return _computeStereoMatricesCallback->computeLeftEyeProjection(projection);
+            else return computeLeftEyeProjectionImplementation(projection);
+        }
+
+        inline osg::Matrixd computeLeftEyeView(const osg::Matrixd& view) const
+        {
+            if (_computeStereoMatricesCallback.valid()) return _computeStereoMatricesCallback->computeLeftEyeView(view);
+            else return computeLeftEyeViewImplementation(view);
+        }
+        
+        inline osg::Matrixd computeRightEyeProjection(const osg::Matrixd& projection)  const
+        {
+            if (_computeStereoMatricesCallback.valid()) return _computeStereoMatricesCallback->computeRightEyeProjection(projection);
+            else return computeRightEyeProjectionImplementation(projection);
+        }
+
+        inline osg::Matrixd computeRightEyeView(const osg::Matrixd& view) const
+        {
+            if (_computeStereoMatricesCallback.valid()) return _computeStereoMatricesCallback->computeRightEyeView(view);
+            else return computeRightEyeViewImplementation(view);
+        }
+
+        virtual osg::Matrixd computeLeftEyeProjectionImplementation(const osg::Matrixd& projection) const;
+        virtual osg::Matrixd computeLeftEyeViewImplementation(const osg::Matrixd& view) const;
+
+        virtual osg::Matrixd computeRightEyeProjectionImplementation(const osg::Matrixd& projection) const;
+        virtual osg::Matrixd computeRightEyeViewImplementation(const osg::Matrixd& view) const;
+
+        /** Inherit the local cull settings variable from specified CullSettings object, according to the inheritance mask.*/
+        virtual void inheritCullSettings(const osg::CullSettings& settings) { inheritCullSettings(settings, _inheritanceMask); }
+
+        /** Inherit the local cull settings variable from specified CullSettings object, according to the inheritance mask.*/
+        virtual void inheritCullSettings(const osg::CullSettings& settings, unsigned int inheritanceMask);
+
+
+        /** Do init traversal of attached scene graph using Init NodeVisitor.
+          * The init traversal is called once for each SceneView, and should
+          * be used to compile display list, texture objects intialize data
+          * not otherwise intialized during scene graph loading. Note, is
+          * called automatically by update & cull if it hasn't already been called
+          * elsewhere. Also init() should only ever be called within a valid
+          * graphics context.*/
+        virtual void init();
+
+        /** Do app traversal of attached scene graph using App NodeVisitor.*/
+        virtual void update();
+
+        /** Do cull traversal of attached scene graph using Cull NodeVisitor.*/
+        virtual void cull(); //真正的场景筛选（裁减）工作的所在！
+
+        /** Do draw traversal of draw bins generated by cull traversal.*/
+        virtual void draw();
+        
+        /** Compute the number of dynamic objects that will be held in the rendering backend */
+        unsigned int getDynamicObjectCount() const { return _dynamicObjectCount; }
+        
+        /** Release all OpenGL objects from the scene graph, such as texture objects, display lists etc.
+          * These released scene graphs placed in the respective delete GLObjects cache, which
+          * then need to be deleted in OpenGL by SceneView::flushAllDeleteGLObjects(). */
+        virtual void releaseAllGLObjects();
+
+        /** Flush all deleted OpenGL objects, such as texture objects, display lists etc.*/
+        virtual void flushAllDeletedGLObjects();
+
+        /** Flush deleted OpenGL objects, such as texture objects, display lists etc within specified available time.*/
+        virtual void flushDeletedGLObjects(double& availableTime);
+        
+        /** Extract stats for current draw list. */
+        bool getStats(Statistics& primStats);
+
+        /** Set whether the SceneView should automatically call flishDeletedObjects() on each new frame.*/
+        void setAutomaticFlush(bool automaticFlush) { _automaticFlush = automaticFlush; }
+        bool getAutomaticFlush() const { return _automaticFlush; }
+
+    protected:
+
+        virtual ~SceneView();
+
+        /** Do cull traversal of attached scene graph using Cull NodeVisitor. Return true if computeNearFar has been done during the cull traversal.*/
+        virtual bool cullStage(const osg::Matrixd& projection,const osg::Matrixd& modelview,osgUtil::CullVisitor* cullVisitor, osgUtil::StateGraph* rendergraph, osgUtil::RenderStage* renderStage, osg::Viewport *viewport);
+        
+        void computeLeftEyeViewport(const osg::Viewport *viewport);
+        void computeRightEyeViewport(const osg::Viewport *viewport);
+
+        const osg::Matrix computeMVPW() const;
+
+        void clearArea(int x,int y,int width,int height,const osg::Vec4& color);
+
+        ref_ptr<osg::StateSet>                 _localStateSet;
+        osg::RenderInfo                             _renderInfo;
+        
+        bool                                        _initCalled;
+        ref_ptr<osg::NodeVisitor>              _initVisitor;
+        ref_ptr<osg::NodeVisitor>              _updateVisitor;
+        ref_ptr<osgUtil::CullVisitor>          _cullVisitor;
+        ref_ptr<osgUtil::StateGraph>           _stateGraph;
+        ref_ptr<osgUtil::RenderStage>          _renderStage;
+
+        ref_ptr<ComputeStereoMatricesCallback> _computeStereoMatricesCallback;
+
+        ref_ptr<osgUtil::CullVisitor>          _cullVisitorLeft;
+        ref_ptr<osgUtil::StateGraph>           _stateGraphLeft;
+        ref_ptr<osgUtil::RenderStage>          _renderStageLeft;
+        ref_ptr<osg::Viewport>                 _viewportLeft;
+
+        ref_ptr<osgUtil::CullVisitor>          _cullVisitorRight;
+        ref_ptr<osgUtil::StateGraph>           _stateGraphRight;
+        ref_ptr<osgUtil::RenderStage>          _renderStageRight;
+        ref_ptr<osg::Viewport>                 _viewportRight;
+
+        ref_ptr<osg::CollectOccludersVisitor>  _collectOccludersVisitor;
+        
+        ref_ptr< ::CVBF_FrameStamp >               _frameStamp;
+        
+        observer_ptr<osg::IVBF_Camera>              _camera;
+        ref_ptr<osg::IVBF_Camera>                   _cameraWithOwnership;
+        
+        ref_ptr<osg::StateSet>                 _globalStateSet; // 全局渲染状态
+        ref_ptr<osg::Light>                    _light;
+        ref_ptr<osg::DisplaySettings>          _displaySettings;
+        
+        ref_ptr<osg::StateSet>                 _secondaryStateSet;
+
+        FusionDistanceMode                          _fusionDistanceMode;
+        float                                       _fusionDistanceValue;
+
+        LightingMode                                _lightingMode;
+        
+        bool                                        _prioritizeTextures;
+        
+        bool                                        _automaticFlush;
+        bool                                        _requiresFlush;
+        
+        int                                         _activeUniforms;        
+        double                                      _previousFrameTime;
+        double                                      _previousSimulationTime;
+        
+        bool                                        _redrawInterlacedStereoStencilMask;
+        int                                         _interlacedStereoStencilWidth;
+        int                                         _interlacedStereoStencilHeight;
+
+        unsigned int                                _dynamicObjectCount;        
+};
+
+}
+
+#endif

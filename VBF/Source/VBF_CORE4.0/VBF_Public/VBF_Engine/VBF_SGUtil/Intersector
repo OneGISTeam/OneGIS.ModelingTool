@@ -1,0 +1,15 @@
+#ifndef VBF_INTERSECTION_H
+#define VBF_INTERSECTION_H 1
+
+#include <VBF_Engine/VBF_SGUtil/Export>
+#include <list>
+
+namespace osgUtil
+{
+
+
+
+}
+
+#endif
+

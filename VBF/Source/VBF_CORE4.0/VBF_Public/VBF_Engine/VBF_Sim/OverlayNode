@@ -1,0 +1,157 @@
+#ifndef OSGSIM_OVERLAYNODE
+#define OSGSIM_OVERLAYNODE 1
+
+#include <VBF_Engine/VBF_SceneGraph/buffered_value>
+#include <VBF_Engine/VBF_SceneGraph/VBF_Camera.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_StateAttrTexture2D.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGNodeGroupTexGen.h>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGeometry.h>
+
+#include <VBF_Engine/VBF_SGUtil/CullVisitor>
+
+#include <VBF_Engine/VBF_Sim/Export>
+
+namespace osgSim {
+
+// OverlayNode，可以在场景上创建一个覆盖图，该覆盖图的生成是通过预渲染一个子场景到一张贴图，并把该贴图贴到场景上
+ class OSGSIM_EXPORT OverlayNode : public osg::IVBF_SGNodeGroupImpl<osg::IVBF_SGNodeGroup>
+{
+    public :
+
+        enum OverlayTechnique
+        {
+            OBJECT_DEPENDENT_WITH_ORTHOGRAPHIC_OVERLAY,
+            VIEW_DEPENDENT_WITH_ORTHOGRAPHIC_OVERLAY,
+            VIEW_DEPENDENT_WITH_PERSPECTIVE_OVERLAY
+        };
+
+        OverlayNode(OverlayTechnique technique=OBJECT_DEPENDENT_WITH_ORTHOGRAPHIC_OVERLAY);
+        OverlayNode(const OverlayNode& es, const osg::CopyOp& copyop=osg::CopyOp::SHALLOW_COPY);
+            
+        META_Node(osgSim, OverlayNode);
+        
+        virtual void traverse(osg::NodeVisitor& nv);
+
+		// 设置/获取覆盖技术（生成覆盖子图的方法）
+        void setOverlayTechnique(OverlayTechnique technique);
+        OverlayTechnique getOverlayTechnique() const { return _overlayTechnique; }
+
+		// 设置用于创建覆盖图纹理的 渲染目标实现（帧缓存对象，纹理烘焙，像素缓存，帧缓存等）
+        void setRenderTargetImplementation(osg::Camera::RenderTargetImplementation impl);
+
+		// 设置/获取用于生成覆盖子图的场景图
+        void setOverlaySubgraph(osg::IVBF_SGNode* node);
+        osg::IVBF_SGNode* getOverlaySubgraph() { return _overlaySubgraph.get(); }
+        const osg::IVBF_SGNode* getOverlaySubgraph() const { return _overlaySubgraph.get(); }
+        
+		// 通知覆盖子图需要更新
+        void dirtyOverlayTexture();
+        
+		// 设置/获取覆盖子图是否需要每帧持续更新
+        void setContinuousUpdate(bool update) { _continuousUpdate = update; }
+        bool getContinuousUpdate() const { return _continuousUpdate; }
+
+		// 设置/获取覆盖子图投影所用的基面高度，一般情况下设置为刚刚低于地面，太高或太低效果都不好
+        void setOverlayBaseHeight(double baseHeight) { _overlayBaseHeight = baseHeight; }
+        double getOverlayBaseHeight() const { return _overlayBaseHeight; }
+
+		// 设置/获取覆盖子图的背景清除色
+        void setOverlayClearColor(const osg::Vec4& color) { _overlayClearColor = color; }
+        const osg::Vec4& getOverlayClearColor() const { return _overlayClearColor; }
+
+		// 设置/获取纹理环境模式（用于混合颜色和纹理到场景子图）
+        void setTexEnvMode(GLenum mode);
+        GLenum getTexEnvMode() const { return _texEnvMode; }
+
+		// 设置/获取覆盖子图所用的纹理单元
+        void setOverlayTextureUnit(unsigned int unit);
+        unsigned int getOverlayTextureUnit() const { return _textureUnit; }
+        
+        // 设置/获取覆盖子图纹理大小
+        void setOverlayTextureSizeHint(unsigned int size);
+        unsigned int getOverlayTextureSizeHint() const { return _textureSizeHint; }
+        
+        
+        // 设置是否使用mutex确保ref()和unref()的线程安全性
+        virtual void setThreadSafeRefUnref(bool threadSafe);
+
+        // 改变每个上下文GLObject buffers 为指定大小
+        virtual void resizeGLObjectBuffers(unsigned int /*maxSize*/);
+
+        // 释放OpenGL对象，如果State非0, 释放特定GC的OpenGL对象，否则释放所有GC的OpenGL对象。
+        virtual void releaseGLObjects(osg::State* = 0) const;
+
+    protected :
+
+        virtual ~OverlayNode() {}
+        
+        void init();
+        void init_OBJECT_DEPENDENT_WITH_ORTHOGRAPHIC_OVERLAY();
+        void init_VIEW_DEPENDENT_WITH_ORTHOGRAPHIC_OVERLAY();
+        void init_VIEW_DEPENDENT_WITH_PERSPECTIVE_OVERLAY();
+        
+        void traverse_OBJECT_DEPENDENT_WITH_ORTHOGRAPHIC_OVERLAY(osg::NodeVisitor& nv);
+        void traverse_VIEW_DEPENDENT_WITH_ORTHOGRAPHIC_OVERLAY(osg::NodeVisitor& nv);
+        void traverse_VIEW_DEPENDENT_WITH_PERSPECTIVE_OVERLAY(osg::NodeVisitor& nv);
+
+
+        void updateMainSubgraphStateSet();
+
+        typedef osg::buffered_value< int > TextureObjectValidList;
+        
+        mutable TextureObjectValidList _textureObjectValidList;
+
+        OverlayTechnique _overlayTechnique;
+
+
+        // overlay subgraph is render to a texture
+        ref_ptr<osg::IVBF_SGNode>         _overlaySubgraph;
+
+        ref_ptr<osg::StateSet>     _overlayStateSet;
+        ref_ptr<osg::StateSet>     _mainStateSet;
+        
+        // texture to render to, and to read from.
+        GLenum                          _texEnvMode;
+        unsigned int                    _textureUnit;
+        unsigned int                    _textureSizeHint;
+        osg::Vec4                       _overlayClearColor;
+
+        bool                            _continuousUpdate;
+        double                          _overlayBaseHeight;
+        bool                            _updateCamera;
+        
+        osg::Camera::RenderTargetImplementation _renderTargetImpl;
+
+        struct OverlayData : public ::CVBF_Referenced
+        {
+
+            void setThreadSafeRefUnref(bool threadSafe);
+            void resizeGLObjectBuffers(unsigned int maxSize);
+            void releaseGLObjects(osg::State* state= 0) const;
+
+            ref_ptr<osg::IVBF_Camera>       _camera;
+            ref_ptr<osg::StateSet>     _overlayStateSet;
+            ref_ptr<osg::StateSet>     _mainSubgraphStateSet;
+            ref_ptr<osg::TexGenNode>   _texgenNode;
+            ref_ptr<osg::Texture2D>    _texture;
+            osg::Polytope                   _textureFrustum;
+            ref_ptr<osg::IVBF_SGNodeGeometry>        _geode;
+
+            ref_ptr<osg::Program>      _mainSubgraphProgram;
+            
+            ref_ptr<osg::Uniform>      _y0;
+            ref_ptr<osg::Uniform>      _lightingEnabled;
+        };
+        
+        typedef std::map<osgUtil::CullVisitor*, ref_ptr<OverlayData> > OverlayDataMap;
+        
+        OpenThreads::Mutex              _overlayDataMapMutex;
+        OverlayDataMap                  _overlayDataMap;
+        
+        OverlayNode::OverlayData* getOverlayData(osgUtil::CullVisitor* cv);
+        
+};
+
+}
+
+#endif

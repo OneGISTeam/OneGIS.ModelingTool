@@ -1,0 +1,73 @@
+#ifndef OSGUTIL_TRISTRIPVISITOR
+#define OSGUTIL_TRISTRIPVISITOR 1
+
+#include <VBF_Engine/VBF_SceneGraph/VBF_SGNVisitOp.h>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGeometry.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGDrawableGeometry.h>
+
+#include <VBF_Engine/VBF_SGUtil/Optimizer>
+
+#include <set>
+
+namespace osgUtil {
+
+// 三角形条带化操作器
+class OSGUTIL_EXPORT TriStripVisitor : public BaseOptimizerVisitor
+{
+    public:
+
+        /// default to traversing all children.
+        TriStripVisitor(Optimizer* optimizer=0) : 
+                BaseOptimizerVisitor( optimizer, Optimizer::TRISTRIP_GEOMETRY), 
+                _cacheSize( 16 ),
+                _minStripSize( 2 ),
+                _generateFourPointPrimitivesQuads ( false)
+        {}
+
+		// 条带化几何体，把几何体的网格图元转换为三角形条带，除了点、线、线条
+        void stripify(osg::Geometry& drawable);
+
+        /** Stripify (make into strips of tria or quads) the accumulated list of Geometry drawables.*/
+        void stripify();
+
+        /// Accumulate the Geometry drawables to make into strips.
+        virtual void apply(osg::IVBF_SGNodeGeometry& geode);
+
+        inline void setCacheSize( unsigned int size )
+        {
+            _cacheSize = size;
+        }
+        
+        inline unsigned int getCacheSize() const
+        {
+            return _cacheSize;
+        }
+        
+        inline void setMinStripSize( unsigned int size )
+        {
+            _minStripSize = size;
+        }
+        
+        inline unsigned int getMinStripSize() const
+        {
+            return _minStripSize;
+        }
+        
+        
+        void setGenerateFourPointPrimitivesQuads(bool flag) { _generateFourPointPrimitivesQuads = flag; }
+        bool getGenerateFourPointPrimitivesQuads() const { return _generateFourPointPrimitivesQuads; }
+        
+
+    private:
+    
+        typedef std::set<osg::Geometry*> GeometryList;
+
+        unsigned int _cacheSize;
+        unsigned int _minStripSize;
+        GeometryList _geometryList;
+        bool         _generateFourPointPrimitivesQuads;
+};
+
+}
+
+#endif

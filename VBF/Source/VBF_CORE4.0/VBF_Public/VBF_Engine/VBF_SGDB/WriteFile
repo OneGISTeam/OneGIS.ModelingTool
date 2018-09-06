@@ -1,0 +1,55 @@
+#ifndef VBF_SGDB_WRITEFILE
+#define VBF_SGDB_WRITEFILE 1
+
+#include <VBF_Engine/VBF_SceneGraph/Image>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_Shape.h>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeImpl.h>
+
+#include <VBF_Engine/VBF_SGDB/Export>
+#include <VBF_Engine/VBF_SGDB/Registry>
+
+#include <string>
+
+namespace osgDB {
+
+// 向文件写入数据，成功则返回true，失败则返回false。
+// Options参数控制缓存操作和文件查找路径，注册器根据文件扩展名装载合适的数据读写插件，插件写入数据 
+
+// 写入对象数据
+extern VBF_SGDB_EXPORT bool writeObjectFile(const osg::CVBF_Object& object, const std::string& filename, const Options* options );
+inline bool writeObjectFile(const osg::CVBF_Object& object, const std::string& filename)
+{
+    return writeObjectFile( object, filename, Registry::instance()->getOptions() );
+}
+
+// 写入图像数据
+extern VBF_SGDB_EXPORT bool writeImageFile(const osg::Image& image, const std::string& filename, const Options* options );
+inline bool writeImageFile(const osg::Image& image, const std::string& filename)
+{
+    return writeImageFile( image, filename, Registry::instance()->getOptions() );
+}
+
+// 写入高程图数据
+extern VBF_SGDB_EXPORT bool writeHeightFieldFile(const osg::HeightField& hf, const std::string& filename, const Options* options );
+inline bool writeHeightFieldFile(const osg::HeightField& hf, const std::string& filename)
+{
+    return writeHeightFieldFile( hf, filename, Registry::instance()->getOptions() );
+}
+
+// 写入节点数据
+extern VBF_SGDB_EXPORT bool writeNodeFile(const osg::IVBF_SGNode& node, const std::string& filename, const Options* options );
+inline bool writeNodeFile(const osg::IVBF_SGNode& node, const std::string& filename)
+{
+    return writeNodeFile( node, filename, Registry::instance()->getOptions() );
+}
+
+// 写入着色器数据
+extern VBF_SGDB_EXPORT bool writeShaderFile(const osg::Shader& shader, const std::string& filename, const Options* options );
+inline bool writeShaderFile(const osg::Shader& shader, const std::string& filename)
+{
+    return writeShaderFile( shader, filename, Registry::instance()->getOptions() );
+}
+
+}
+
+#endif

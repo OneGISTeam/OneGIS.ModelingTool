@@ -1,0 +1,96 @@
+#ifndef OSGUTIL_UPDATEVISITOR
+#define OSGUTIL_UPDATEVISITOR 1
+
+#include <VBF_Engine/VBF_SceneGraph/VBF_SGNVisitOp.h>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeImpl.h>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGeometry.h>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGeometryBillboard.h>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGroupLODImpl.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGNodeGroupSwitch.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGNodeGroupLightSource.h>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGroupTransform.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGNodeGroupProjection.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGNodeGroupOccluder.h>
+
+#include <VBF_Engine/VBF_SGUtil/Export>
+
+namespace osgUtil {
+
+
+// 遍历场景的每个节点，调用其更新回调
+class OSGUTIL_EXPORT UpdateVisitor : public osg::NodeVisitor
+{
+    public:
+
+        UpdateVisitor();
+        virtual ~UpdateVisitor();
+
+        META_NodeVisitor("osgUtil","UpdateVisitor")
+
+        virtual void reset();
+
+        virtual void apply(osg::IVBF_SGNode& node)                  { handle_callbacks_and_traverse(node); }
+        
+        virtual void apply(osg::IVBF_SGNodeGeometry& node)          { handle_geode_callbacks(node); }
+        virtual void apply(osg::IVBF_SGNodeGeometryBillboard& node) { handle_geode_callbacks(node); }
+        
+        virtual void apply(osg::IVBF_SGNodeGroupLightSource& node)  { handle_callbacks_and_traverse(node); }
+        
+        virtual void apply(osg::IVBF_SGNodeGroup& node)             { handle_callbacks_and_traverse(node); }
+        virtual void apply(osg::IVBF_SGNodeGroupTransform& node)    { handle_callbacks_and_traverse(node); }
+        virtual void apply(osg::IVBF_SGNodeGroupProjection& node)   { handle_callbacks_and_traverse(node); }
+        virtual void apply(osg::IVBF_SGNodeGroupSwitch& node)       { handle_callbacks_and_traverse(node); }
+        virtual void apply(osg::IVBF_SGNodeGroupLOD& node)          { handle_callbacks_and_traverse(node); }
+        virtual void apply(osg::IVBF_SGNodeGroupOccluder& node)     { handle_callbacks_and_traverse(node); }
+
+		  
+    protected:
+        UpdateVisitor& operator = (const UpdateVisitor&) { return *this; } // 禁止拷贝
+        
+		// 处理回调函数
+        inline void handle_callbacks(osg::StateSet* pStateSet)
+        {
+            if (pStateSet && pStateSet->requiresUpdateTraversal())
+            {
+                pStateSet->runUpdateCallbacks(this);
+            }
+        }
+        
+        inline void handle_callbacks_and_traverse(osg::IVBF_SGNode& node)
+        {
+            handle_callbacks(node.getStateSet());
+
+            osg::NodeCallback* callback = node.getUpdateCallback();
+
+            if (callback) (*callback)(&node,this);
+            else if (node.getNumChildrenRequiringUpdateTraversal()>0) traverse(node);
+        }
+
+        inline void handle_geode_callbacks(osg::IVBF_SGNodeGeometry& geode)
+        {
+            handle_callbacks(geode.getStateSet());
+
+            osg::NodeCallback* callback = geode.getUpdateCallback();
+            if (callback) (*callback)(&geode,this);
+
+            // 处理Drawable的回调
+            for(unsigned int i=0;i<geode.getNumDrawables();++i)
+            {
+				osg::Drawable* pDrawable = geode.getDrawable(i);
+
+                osg::Drawable::UpdateCallback* callback = pDrawable->getUpdateCallback();
+                if (callback) callback->update(this,pDrawable);
+                
+                handle_callbacks(pDrawable->getStateSet());
+            }
+            
+            // should we traverse just in case a subclass of Geode adds children??  Won't for now as
+            // Geode's arn't designed to have children.
+            // traverse(geode);
+        }    
+};
+
+}
+
+#endif
+

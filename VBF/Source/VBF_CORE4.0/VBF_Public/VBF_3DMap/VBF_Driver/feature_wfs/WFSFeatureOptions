@@ -1,0 +1,110 @@
+/* -*-c++-*- */
+/* osgEarth - Dynamic map generation toolkit for OpenSceneGraph
+ * Copyright 2008-2013 Pelican Mapping
+ * http://osgearth.org
+ *
+ * osgEarth is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>
+ */
+#ifndef OSGEARTH_DRIVER_WFS_FEATURE_SOURCE_OPTIONS
+#define OSGEARTH_DRIVER_WFS_FEATURE_SOURCE_OPTIONS 1
+
+#include <VBF_3DMap/VBF_Terrain/Common.h>
+#include <VBF_3DMap/VBF_Terrain/URI.h>
+#include <VBF_3DMap/VBF_Features/VBF_SourceFeature.h>
+
+namespace osgEarth { namespace Drivers
+{
+    using namespace osgEarth;
+    using namespace osgEarth::Features;
+
+    /**
+     * Options for the WFS driver.
+     */
+    class WFSFeatureOptions : public CVBF_OptionsDriverSourceFeature // NO EXPORT; header only
+    {
+    public:
+        /** Base URL of the WFS service (not including any WFS parameters) */
+        CVBF_Optional<URI>& url() { return _url; }
+        const CVBF_Optional<URI>& url() const { return _url; }
+        
+        /** deprecated */
+        CVBF_Optional<CVBF_Config>& geometryProfileOptions() { return _geometryProfileConf; }
+        const CVBF_Optional<CVBF_Config>& geometryProfileOptions() const { return _geometryProfileConf; }
+
+        /** WFS typename parameter (see WFS spec) */
+        CVBF_Optional<std::string>& typeName() { return _typename; }
+        const CVBF_Optional<std::string>& typeName() const { return _typename; }
+
+        /** Cap on the number of features that the WFS service will return on a single request */
+        CVBF_Optional<unsigned int>& maxFeatures() { return _maxFeatures; }
+        const CVBF_Optional<unsigned int>& maxFeatures() const { return _maxFeatures;}
+
+        /** Response format to request (geojson, gml) */
+        CVBF_Optional<std::string>& outputFormat() { return _outputFormat; }
+        const CVBF_Optional<std::string>& outputFormat() const { return _outputFormat; }
+
+        /** Explicity disable a "TFS" tiled feature source queries */
+        CVBF_Optional<bool>& disableTiling() { return _disableTiling; }
+        const CVBF_Optional<bool>& disableTiling() const { return _disableTiling;}
+
+
+
+    public:
+        WFSFeatureOptions( const CVBF_Options& opt =CVBF_Options() ) : CVBF_OptionsDriverSourceFeature( opt ) {
+            setDriver( "wfs" );
+            fromConfig( m_conf );
+        }
+
+        virtual ~WFSFeatureOptions() { }
+
+    public:
+        CVBF_Config getConfig() const {
+            CVBF_Config conf = CVBF_OptionsDriverSourceFeature::getConfig();
+            conf.updateIfSet( "url", _url ); 
+            conf.updateIfSet( "geometry_profile", _geometryProfileConf );
+            conf.updateIfSet( "typename", _typename );
+            conf.updateIfSet( "outputformat", _outputFormat);
+            conf.updateIfSet( "maxfeatures", _maxFeatures );
+            conf.updateIfSet( "disable_tiling", _disableTiling );
+            return conf;
+        }
+
+    protected:
+        void mergeConfig( const CVBF_Config& conf ) {
+            CVBF_OptionsDriverSourceFeature::mergeConfig( conf );
+            fromConfig( conf );
+        }
+
+    private:
+        void fromConfig( const CVBF_Config& conf ) {
+            conf.getIfSet( "url", _url );
+            conf.getIfSet( "geometry_profile", _geometryProfileConf );
+            conf.getIfSet( "typename", _typename);
+            conf.getIfSet( "outputformat", _outputFormat );
+            conf.getIfSet( "maxfeatures", _maxFeatures );
+            conf.getIfSet( "disable_tiling", _disableTiling);
+        }
+
+        CVBF_Optional<URI>         _url;        
+        CVBF_Optional<std::string> _typename;
+        CVBF_Optional<CVBF_Config>      _geometryProfileConf;
+        CVBF_Optional<std::string> _outputFormat;
+        CVBF_Optional<unsigned>    _maxFeatures;            
+        CVBF_Optional<bool>    _disableTiling;            
+    };
+
+} } // namespace osgEarth::Drivers
+
+#endif // OSGEARTH_DRIVER_WFS_FEATURE_SOURCE_OPTIONS
+

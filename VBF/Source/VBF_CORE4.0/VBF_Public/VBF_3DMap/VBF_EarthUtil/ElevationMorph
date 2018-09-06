@@ -1,0 +1,41 @@
+#ifndef OSGEARTHUTIL_ELEVATION_MORPH_H
+#define OSGEARTHUTIL_ELEVATION_MORPH_H
+
+#include <VBF_3DMap/VBF_EarthUtil/Common>
+#include <VBF_Engine/VBF_SceneGraph/Uniform>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeImpl.h>
+#include <VBF_Base/observer_ptr>
+
+namespace osgEarth { namespace Util
+{
+	// 高程变形：在地形上应用高程LOD变形的控制器
+    class OSGEARTHUTIL_EXPORT ElevationMorph
+    {
+    public:
+        ElevationMorph();
+        virtual ~ElevationMorph();
+
+		// 把高程变形关联到地形，设置NULL解除关联高程变形
+        void setTerrainNode( osg::IVBF_SGNode* node );
+
+		// 设置/获取延迟时间（秒），从瓦片出现到开始变形
+        void setDelay( float value );
+        float getDelay() const { return _delay; }
+
+		// 设置变形持续时间
+        void setDuration( float value );
+        float getDuration() const { return _duration; }
+
+    protected:
+        observer_ptr<osg::IVBF_SGNode> _terrain;
+
+        float                        _delay;
+        float                        _duration;
+
+        ref_ptr<osg::Uniform>   _delayUniform;
+        ref_ptr<osg::Uniform>   _durationUniform;
+    };
+
+} } // namespace osgEarth::Util
+
+#endif // OSGEARTHUTIL_ELEVATION_MORPH_H

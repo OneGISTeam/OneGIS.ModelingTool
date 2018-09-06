@@ -1,0 +1,57 @@
+#ifndef __OSGCAL__HARDWAREMESH_H__
+#define __OSGCAL__HARDWAREMESH_H__
+
+#include <VBF_Engine/VBF_Cal/Mesh>
+
+namespace osgCal
+{
+    class HardwareMesh : public Mesh
+    {
+        public:
+           
+            osg::CVBF_Object* cloneType() const;
+            osg::CVBF_Object* clone( const osg::CopyOp& ) const;
+            virtual bool isSameKindAs(const osg::CVBF_Object* obj) const { return dynamic_cast<const HardwareMesh *>(obj)!=NULL; }
+            virtual const char* libraryName() const { return "osgCal"; }
+            virtual const char* className() const { return "HardwareMesh"; }
+
+            HardwareMesh( ModelData* modelData, const CoreMesh* mesh );
+
+
+            virtual void drawImplementation( osg::RenderInfo& renderInfo ) const;
+            /**
+             * Real draw implementation called from HardwareMesh & MeshDepth.
+             * They differ in only in state sets so pass it explicitly.
+             */
+            void drawImplementation( osg::RenderInfo&     renderInfo,
+                                     const osg::StateSet* stateSet) const;
+
+            virtual void compileGLObjects(osg::RenderInfo& renderInfo) const;
+
+            virtual void update();
+
+            /**
+             * For compiling all statesets when Model accepts osgUtil::GLObjectsVisitor.
+             */
+            virtual void accept( osgUtil::GLObjectsVisitor* glv );
+
+        private:
+
+            // TODO: merge MeshDepth & HardwareMesh into one
+            // class and move all shared part into other structure.
+            
+            /**
+             * Draw implementation part which resides in the display
+             * list.
+             * It performs all the drawing related calls except
+             * rotation/translation uniforms setup (which is mesh dependent).
+             */
+            void innerDrawImplementation( osg::RenderInfo& renderInfo,
+                                          GLuint           displayList = 0 ) const;
+
+            virtual void onParametersChanged( const MeshParameters* previousDs );
+    };
+
+}; //namespace osgCal
+
+#endif

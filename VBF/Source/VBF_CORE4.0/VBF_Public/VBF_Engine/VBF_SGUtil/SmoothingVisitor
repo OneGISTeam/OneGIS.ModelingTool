@@ -1,0 +1,38 @@
+#ifndef OSGUTIL_SMOOTHINGVISITOR
+#define OSGUTIL_SMOOTHINGVISITOR 1
+
+#include <VBF_Engine/VBF_SceneGraph/VBF_SGNVisitOp.h>
+#include <VBF_Engine/VBF_SceneGraph/IVBF_SGNodeGeometry.h>
+#include <VBF_Engine/VBF_SceneGraph/VBFO_SGDrawableGeometry.h>
+
+#include <VBF_Engine/VBF_SGUtil/Export>
+
+namespace osgUtil {
+
+// 生成法线操作器
+class OSGUTIL_EXPORT SmoothingVisitor : public osg::NodeVisitor
+{
+    public:
+        SmoothingVisitor();
+        virtual ~SmoothingVisitor();
+        
+        /// smooth geoset by creating per vertex normals.
+        static void smooth(osg::Geometry& geoset, double creaseAngle=osg::PI);
+
+        /// apply smoothing method to all geode geosets.
+        virtual void apply(osg::IVBF_SGNodeGeometry& geode);
+
+        /// set the maximum angle, in radians, at which angle between adjacent triangles that normals are smoothed
+        /// for edges that greater the shared vertices are duplicated
+        void setCreaseAngle(double angle) { _creaseAngle = angle; }
+        double getCreaseAngle() const { return _creaseAngle; }
+
+    protected:
+
+        double _creaseAngle;
+
+};
+
+}
+
+#endif

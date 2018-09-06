@@ -1,0 +1,71 @@
+#ifndef OSGEARTH_ANNO_REGISTRY_H
+#define OSGEARTH_ANNO_REGISTRY_H 1
+
+#include <VBF_3DMap/VBF_Annotation/AnnotationNode.h>
+#include <VBF_3DMap/VBF_Terrain/VBF_MapNode.h>
+
+namespace osgEarth { namespace Annotation
+{
+    // 注册注记节点类型
+    class OSGEARTHANNO_EXPORT AnnotationRegistry
+    {
+    public:
+        static AnnotationRegistry* instance();
+
+        // 从配置文件创建一个或多个注记节电，创建的注记节点被放在给定的group节点下
+        bool create( CVBFO_SGNodeMap* mapNode, const CVBF_Config& conf,
+                      const osgDB::Options* dbOptions, osg::IVBF_SGNodeGroup*& output ) const;
+
+        // 返回一个CVBF_Config，包含指定的场景图中找到的所有注记节点。
+        // 可以把该CVBF_Config传递给上面的create(...)函数重建注记节点
+        CVBF_Config getConfig( osg::IVBF_SGNode* graph ) const;
+
+    public:
+
+        // 向注册器中添加注记类型
+        void add( const std::string& key, class AnnotationFactory* factory );
+
+        virtual ~AnnotationRegistry() { }
+
+
+        AnnotationRegistry() { }
+   private:
+        typedef std::map<std::string, class AnnotationFactory*> FactoryMap;
+        FactoryMap _factories;
+
+        AnnotationNode* createOne( CVBFO_SGNodeMap* mapNode, const CVBF_Config& conf,
+                               const osgDB::Options* dbOptions, bool declutter =false ) const;
+    };
+
+    // 用于注册新的注记类型的宏
+#define OSGEARTH_REGISTER_ANNOTATION( KEY, CLASSNAME ) \
+    static AnnotationRegistrationProxy< CLASSNAME > s_VBF_AnnotationRegistrationProxy##KEY( #KEY )
+
+
+    //--------------------------------------------------------------------
+
+    // internal: interface class for an object that creates annotation node from a CVBF_Config
+    // (used by OSGEARTH_REGISTER_ANNOTATION macro)
+    class AnnotationFactory
+    {
+    public:
+        virtual AnnotationNode* create( CVBFO_SGNodeMap* mapNode,
+            const CVBF_Config& conf, const osgDB::Options* dbOptions) const =0;
+
+        virtual ~AnnotationFactory() { }
+    };
+
+    // internal: proxy class used by the registraion macro
+    template<typename T>
+    struct AnnotationRegistrationProxy : public AnnotationFactory
+    {
+        AnnotationRegistrationProxy(const std::string& key)
+        {
+             AnnotationRegistry::instance()->add(key, this);
+        }
+        AnnotationNode* create(CVBFO_SGNodeMap* mapNode, const CVBF_Config& conf, const osgDB::Options* options) const { return new T(mapNode, conf, options); }
+    };
+
+} } // namespace osgEarth::Annotation
+
+#endif // OSGEARTH_ANNO_FEATURE_NODE_H
